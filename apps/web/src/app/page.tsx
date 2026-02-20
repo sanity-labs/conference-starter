@@ -8,6 +8,10 @@ import type {
   SPEAKERS_QUERY_RESULT,
 } from '@repo/sanity-queries'
 import {SanityImage} from '@/components/sanity-image'
+import {JsonLd} from '@/components/json-ld'
+import type {Event} from 'schema-dts'
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://everything-nyc.sanity.dev'
 
 // Layer 1: Sync page with Suspense
 export default function HomePage() {
@@ -46,6 +50,32 @@ async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
 
   return (
     <>
+      <JsonLd<Event>
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Event',
+          name: conference.name ?? 'Everything NYC 2026',
+          ...(conference.description && {description: conference.description}),
+          ...(conference.startDate && {startDate: conference.startDate}),
+          ...(conference.endDate && {endDate: conference.endDate}),
+          eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+          eventStatus: 'https://schema.org/EventScheduled',
+          ...(conference.venue && {
+            location: {
+              '@type': 'Place',
+              name: conference.venue.name ?? undefined,
+              ...(conference.venue.address && {
+                address: conference.venue.address,
+              }),
+            },
+          }),
+          organizer: {
+            '@type': 'Organization',
+            name: 'Sanity',
+            url: 'https://www.sanity.io',
+          },
+        }}
+      />
       <HeroSection conference={conference} />
       <SpeakersPreview speakers={speakers} />
       <VenueSection conference={conference} />
@@ -112,6 +142,12 @@ function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RES
         <Link href="/speakers" className="font-medium underline">
           Speakers
         </Link>
+        <Link href="/sponsors" className="font-medium underline">
+          Sponsors
+        </Link>
+        <Link href="/venue" className="font-medium underline">
+          Venue
+        </Link>
       </nav>
     </section>
   )
@@ -164,6 +200,11 @@ function VenueSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RE
       <h2 className="text-2xl font-bold">Venue</h2>
       <p className="mt-2 text-lg">{conference.venue.name}</p>
       <address className="mt-1 text-gray-600 not-italic">{conference.venue.address}</address>
+      <p className="mt-4">
+        <Link href="/venue" className="font-medium underline">
+          Venue details
+        </Link>
+      </p>
     </section>
   )
 }

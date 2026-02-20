@@ -9,6 +9,10 @@ import {SPEAKER_DETAIL_QUERY, SPEAKER_SLUGS_QUERY} from '@repo/sanity-queries'
 import type {SPEAKER_DETAIL_QUERY_RESULT} from '@repo/sanity-queries'
 import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
+import {JsonLd} from '@/components/json-ld'
+import type {Person} from 'schema-dts'
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://everything-nyc.sanity.dev'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -70,8 +74,26 @@ async function SpeakerDetailCached({
 
   if (!speaker) notFound()
 
+  const sameAs = [
+    speaker.twitter && `https://x.com/${speaker.twitter}`,
+    speaker.github && `https://github.com/${speaker.github}`,
+    speaker.linkedin,
+    speaker.website,
+  ].filter(Boolean) as string[]
+
   return (
     <article>
+      <JsonLd<Person>
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Person',
+          name: speaker.name ?? undefined,
+          ...(speaker.role && {jobTitle: speaker.role}),
+          ...(speaker.company && {worksFor: {'@type': 'Organization', name: speaker.company}}),
+          url: `${SITE_URL}/speakers/${slug}`,
+          ...(sameAs.length > 0 && {sameAs}),
+        }}
+      />
       <header className="flex flex-col gap-6 sm:flex-row sm:items-start">
         {speaker.photo && (
           <SanityImage

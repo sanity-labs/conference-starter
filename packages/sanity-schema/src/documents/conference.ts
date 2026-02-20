@@ -9,6 +9,7 @@ export const conference = defineType({
   icon: CalendarIcon,
   groups: [
     {name: 'details', title: 'Details', default: true},
+    {name: 'cfp', title: 'Call for Papers'},
     {name: 'venue', title: 'Venue & Logistics'},
     {name: 'branding', title: 'Branding'},
     {name: 'seo', title: 'SEO'},
@@ -129,6 +130,42 @@ export const conference = defineType({
       group: 'branding',
       description:
         'The default Open Graph image (1200x630px). Shown when the site is shared on social media. Individual sessions and speakers can override this.',
+    }),
+    // CFP fields
+    defineField({
+      name: 'cfpOpen',
+      title: 'CFP Open',
+      type: 'boolean',
+      group: 'cfp',
+      description:
+        'Whether the Call for Papers is currently accepting submissions. When false, the CFP page shows a closed message.',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'cfpDeadline',
+      title: 'CFP Deadline',
+      type: 'datetime',
+      group: 'cfp',
+      description:
+        'The deadline for CFP submissions. Displayed on the CFP page. After this date, the form will close automatically even if cfpOpen is true.',
+    }),
+    defineField({
+      name: 'cfpGuidelines',
+      title: 'CFP Guidelines',
+      type: 'array',
+      of: [defineArrayMember({type: 'block'})],
+      group: 'cfp',
+      description:
+        'Public-facing guidelines displayed above the CFP form. Explain what topics you are looking for, expected session formats, and selection criteria.',
+    }),
+    defineField({
+      name: 'scoringCriteria',
+      title: 'Scoring Criteria',
+      type: 'text',
+      group: 'cfp',
+      rows: 6,
+      description:
+        'Internal scoring criteria used by the AI screener (Sprint 3). Describe what makes a strong submission — topic relevance, speaker experience, audience fit, novelty. Not displayed publicly.',
     }),
     ...seoFields('seo'),
   ],

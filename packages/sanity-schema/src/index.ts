@@ -8,6 +8,7 @@ import {scheduleSlot} from './documents/scheduleSlot'
 import {sponsor} from './documents/sponsor'
 import {page} from './documents/page'
 import {announcement} from './documents/announcement'
+import {submission} from './documents/submission'
 
 import {cta} from './objects/cta'
 import {hero} from './objects/hero'
@@ -30,6 +31,7 @@ export const schemaTypes = [
   sponsor,
   page,
   announcement,
+  submission,
   // Objects
   cta,
   hero,

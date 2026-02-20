@@ -19,7 +19,8 @@
     "next": "^16.0.0",
     "next-sanity": "13.0.0-cache-components.26",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.0",

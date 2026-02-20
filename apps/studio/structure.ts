@@ -9,6 +9,7 @@ import {
   StarIcon,
   DocumentIcon,
   BellIcon,
+  EnvelopeIcon,
 } from '@sanity/icons'
 
 export const structure: StructureResolver = (S) =>
@@ -159,6 +160,41 @@ export const structure: StructureResolver = (S) =>
               ),
             ]),
         ),
+
+      // CFP Submissions
+      S.listItem()
+        .title('CFP Submissions')
+        .icon(EnvelopeIcon)
+        .child(
+          S.list()
+            .title('CFP Submissions')
+            .items([
+              S.listItem()
+                .title('All Submissions')
+                .icon(EnvelopeIcon)
+                .child(
+                  S.documentTypeList('submission')
+                    .title('All Submissions')
+                    .defaultOrdering([{field: 'submittedAt', direction: 'desc'}]),
+                ),
+              S.divider(),
+              ...['submitted', 'screening', 'scored', 'in-review', 'accepted', 'rejected'].map(
+                (status) =>
+                  S.listItem()
+                    .title(status.charAt(0).toUpperCase() + status.slice(1).replace('-', ' '))
+                    .child(
+                      S.documentList()
+                        .title(
+                          `${status.charAt(0).toUpperCase() + status.slice(1).replace('-', ' ')} Submissions`,
+                        )
+                        .filter('_type == "submission" && status == $status')
+                        .params({status}),
+                    ),
+              ),
+            ]),
+        ),
+
+      S.divider(),
 
       // Pages
       S.listItem()

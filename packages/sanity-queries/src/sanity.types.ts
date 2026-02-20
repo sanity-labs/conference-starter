@@ -151,6 +151,39 @@ export type Cta = {
   style?: "primary" | "secondary" | "ghost";
 };
 
+export type ConferenceReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "conference";
+};
+
+export type Submission = {
+  _id: string;
+  _type: "submission";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  sessionTitle?: string;
+  sessionType?: "talk" | "lightning" | "panel" | "workshop";
+  abstract?: string;
+  level?: "beginner" | "intermediate" | "advanced";
+  topics?: Array<string>;
+  submitterName?: string;
+  submitterEmail?: string;
+  company?: string;
+  bio?: string;
+  status?: "submitted" | "screening" | "scored" | "in-review" | "accepted" | "rejected" | "withdrawn";
+  submittedAt?: string;
+  aiScreening?: {
+    score?: number;
+    summary?: string;
+    scoredAt?: string;
+  };
+  reviewNotes?: string;
+  conference?: ConferenceReference;
+};
+
 export type Announcement = {
   _id: string;
   _type: "announcement";
@@ -298,13 +331,6 @@ export type Sponsor = {
   }>;
   website?: string;
   order?: number;
-};
-
-export type ConferenceReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "conference";
 };
 
 export type RoomReference = {
@@ -519,6 +545,27 @@ export type Conference = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  cfpOpen?: boolean;
+  cfpDeadline?: string;
+  cfpGuidelines?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  scoringCriteria?: string;
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: {
@@ -718,9 +765,37 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerReference | SpeakerGrid | SanityImageAssetReference | RichText | Hero | PageReference | SessionReference | Cta | Announcement | SanityImageCrop | SanityImageHotspot | Slug | Page | Sponsor | ConferenceReference | RoomReference | ScheduleSlot | VenueReference | Room | TrackReference | Session | Track | Color | Speaker | Conference | Venue | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes = FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerReference | SpeakerGrid | SanityImageAssetReference | RichText | Hero | PageReference | SessionReference | Cta | ConferenceReference | Submission | Announcement | SanityImageCrop | SanityImageHotspot | Slug | Page | Sponsor | RoomReference | ScheduleSlot | VenueReference | Room | TrackReference | Session | Track | Color | Speaker | Conference | Venue | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 
 export declare const internalGroqTypeReferenceTo: unique symbol;
+
+// Source: ../../packages/sanity-queries/src/conference.ts
+// Variable: CFP_CONFIG_QUERY
+// Query: *[_type == "conference"][0]{    _id,    name,    cfpOpen,    cfpDeadline,    cfpGuidelines  }
+export type CFP_CONFIG_QUERY_RESULT = {
+  _id: string;
+  name: string | null;
+  cfpOpen: boolean | null;
+  cfpDeadline: string | null;
+  cfpGuidelines: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+} | null;
 
 // Source: ../../packages/sanity-queries/src/conference.ts
 // Variable: CONFERENCE_QUERY
@@ -1009,6 +1084,7 @@ export type SPEAKER_SLUGS_QUERY_RESULT = Array<{
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
+    "*[_type == \"conference\"][0]{\n    _id,\n    name,\n    cfpOpen,\n    cfpDeadline,\n    cfpGuidelines\n  }": CFP_CONFIG_QUERY_RESULT;
     "*[_type == \"conference\"][0]{\n    _id,\n    name,\n    \"slug\": slug.current,\n    tagline,\n    description,\n    startDate,\n    endDate,\n    venue->{\n      _id,\n      name,\n      address\n    },\n    tracks[]->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      color\n    },\n    logo { ..., alt },\n    socialCard\n  }": CONFERENCE_QUERY_RESULT;
     "*[_type == \"scheduleSlot\"\n    && conference._ref == $conferenceId\n    && startTime >= $dayStart\n    && startTime < $dayEnd\n  ] | order(startTime asc) {\n    _id,\n    startTime,\n    endTime,\n    isPlenary,\n    room->{\n      _id,\n      name,\n      capacity,\n      floor\n    },\n    session->{\n      _id,\n      title,\n      \"slug\": slug.current,\n      sessionType,\n      level,\n      duration,\n      track->{\n        _id,\n        name,\n        \"slug\": slug.current,\n        color\n      },\n      speakers[]->{\n        _id,\n        name,\n        \"slug\": slug.current,\n        photo { ..., alt },\n        role,\n        company\n      },\n      moderator->{\n        _id,\n        name,\n        \"slug\": slug.current\n      }\n    }\n  }": SCHEDULE_DAY_QUERY_RESULT;
     "*[_type == \"session\" && slug.current == $slug][0] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    sessionType,\n    level,\n    duration,\n    abstract,\n    track->{ _id, name, \"slug\": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      photo { ..., alt },\n      role,\n      company\n    },\n    moderator->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      photo { ..., alt },\n      role,\n      company\n    },\n    capacity,\n    prerequisites,\n    materials[] { title, url, type },\n    slidesUrl,\n    recordingUrl,\n    seoTitle,\n    seoDescription,\n    ogImage,\n    \"slot\": *[_type == \"scheduleSlot\" && session._ref == ^._id][0] {\n      startTime,\n      endTime,\n      room->{ name, floor }\n    }\n  }": SESSION_DETAIL_QUERY_RESULT;

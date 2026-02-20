@@ -5,5 +5,38 @@ import {track} from './documents/track'
 import {venue} from './documents/venue'
 import {room} from './documents/room'
 import {scheduleSlot} from './documents/scheduleSlot'
+import {sponsor} from './documents/sponsor'
+import {page} from './documents/page'
+import {announcement} from './documents/announcement'
 
-export const schemaTypes = [conference, speaker, session, track, venue, room, scheduleSlot]
+import {cta} from './objects/cta'
+import {hero} from './objects/hero'
+import {richText} from './objects/richText'
+import {speakerGrid} from './objects/speakerGrid'
+import {sponsorBar} from './objects/sponsorBar'
+import {schedulePreview} from './objects/schedulePreview'
+import {ctaBlock} from './objects/ctaBlock'
+import {faqSection} from './objects/faqSection'
+
+export const schemaTypes = [
+  // Documents
+  conference,
+  speaker,
+  session,
+  track,
+  venue,
+  room,
+  scheduleSlot,
+  sponsor,
+  page,
+  announcement,
+  // Objects
+  cta,
+  hero,
+  richText,
+  speakerGrid,
+  sponsorBar,
+  schedulePreview,
+  ctaBlock,
+  faqSection,
+]

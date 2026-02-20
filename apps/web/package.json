@@ -13,9 +13,8 @@
     "@repo/sanity-schema": "workspace:*",
     "@repo/sanity-queries": "workspace:*",
     "next": "^16.0.0",
-    "next-sanity": "^9.8.28",
+    "next-sanity": "13.0.0-cache-components.26",
     "@sanity/client": "^7.3.0",
-    "@sanity/visual-editing": "^5.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

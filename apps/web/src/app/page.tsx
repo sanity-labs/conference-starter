@@ -101,6 +101,7 @@ function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RES
               month: 'long',
               day: 'numeric',
               year: 'numeric',
+              timeZone: 'America/New_York',
             })}
           </time>
           {conference.endDate && (
@@ -112,6 +113,7 @@ function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RES
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric',
+                  timeZone: 'America/New_York',
                 })}
               </time>
             </>

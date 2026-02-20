@@ -43,19 +43,18 @@ async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
     return <p className="mt-8 text-gray-500">Schedule not available yet.</p>
   }
 
-  // Compute day boundaries for Day 1
+  // Compute day boundaries for Day 1 in NYC timezone
   const startDate = new Date(conference.startDate)
-  const dayStart = new Date(startDate)
-  dayStart.setHours(0, 0, 0, 0)
-  const dayEnd = new Date(dayStart)
-  dayEnd.setDate(dayEnd.getDate() + 1)
+  const dateStr = conference.startDate.slice(0, 10) // "2026-10-15"
+  const dayStartStr = `${dateStr}T00:00:00-04:00`
+  const dayEndStr = `${dateStr}T23:59:59-04:00`
 
   const {data: slots} = await sanityFetch({
     query: SCHEDULE_DAY_QUERY,
     params: {
       conferenceId: conference._id,
-      dayStart: dayStart.toISOString(),
-      dayEnd: dayEnd.toISOString(),
+      dayStart: dayStartStr,
+      dayEnd: dayEndStr,
     },
     perspective,
     stega,
@@ -84,6 +83,7 @@ async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
           month: 'long',
           day: 'numeric',
           year: 'numeric',
+          timeZone: 'America/New_York',
         })}
       </p>
       <ol className="space-y-8">
@@ -93,6 +93,7 @@ async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
               {new Date(time).toLocaleTimeString('en-US', {
                 hour: 'numeric',
                 minute: '2-digit',
+                timeZone: 'America/New_York',
               })}
             </time>
             <ul className="mt-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -59,7 +59,7 @@ async function CfpContentCached({perspective, stega}: DynamicFetchOptions) {
           The Call for Papers is currently closed.
           {config.cfpDeadline &&
             !isPastDeadline &&
-            ` It opens soon — check back before ${new Date(config.cfpDeadline).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})}.`}
+            ` It opens soon — check back before ${new Date(config.cfpDeadline).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/New_York'})}.`}
         </p>
       )}
     </>
@@ -89,6 +89,7 @@ function CfpStatus({
                 month: 'long',
                 day: 'numeric',
                 year: 'numeric',
+                timeZone: 'America/New_York',
               })}
             </time>
           </dd>

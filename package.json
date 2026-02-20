@@ -10,12 +10,16 @@
     "predev": "tsx scripts/check-next-version.ts"
   },
   "devDependencies": {
+    "@sanity/client": "^7.15.0",
     "tsx": "^4.19.0",
     "turbo": "^2.5.0",
     "typescript": "^5.8.0"
   },
   "packageManager": "pnpm@10.10.0",
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "sharp"]
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
   }
 }

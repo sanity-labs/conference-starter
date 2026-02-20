@@ -7,6 +7,7 @@ import type {DynamicFetchOptions} from '@/sanity/live'
 import {client} from '@/sanity/client'
 import {SESSION_DETAIL_QUERY, SESSION_SLUGS_QUERY} from '@repo/sanity-queries'
 import type {SESSION_DETAIL_QUERY_RESULT} from '@repo/sanity-queries'
+import {stegaClean} from '@sanity/client/stega'
 import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
 
@@ -199,7 +200,7 @@ function WorkshopDetails({
 }: {
   session: NonNullable<SESSION_DETAIL_QUERY_RESULT>
 }) {
-  if (session.sessionType !== 'workshop') return null
+  if (stegaClean(session.sessionType) !== 'workshop') return null
 
   return (
     <section className="mt-8 space-y-4">

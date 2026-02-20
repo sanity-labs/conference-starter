@@ -5,6 +5,7 @@ import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
 import {CONFERENCE_QUERY, SCHEDULE_DAY_QUERY} from '@repo/sanity-queries'
 import type {SCHEDULE_DAY_QUERY_RESULT} from '@repo/sanity-queries'
+import {stegaClean} from '@sanity/client/stega'
 import {SanityImage} from '@/components/sanity-image'
 
 export const metadata: Metadata = {
@@ -110,7 +111,8 @@ function SlotCard({slot}: {slot: SCHEDULE_DAY_QUERY_RESULT[number]}) {
   const session = slot.session
   if (!session) return null
 
-  const isBreak = session.sessionType === 'break' || session.sessionType === 'social'
+  const sessionType = stegaClean(session.sessionType)
+  const isBreak = sessionType === 'break' || sessionType === 'social'
 
   return (
     <li className={`border-l-2 pl-4 ${slot.isPlenary ? 'sm:col-span-2 lg:col-span-3' : ''}`}>

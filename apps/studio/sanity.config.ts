@@ -5,6 +5,7 @@ import {colorInput} from '@sanity/color-input'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from '@repo/sanity-schema'
 import {structure} from './structure'
+import {resolve} from './resolve'
 
 export default defineConfig({
   name: 'default',
@@ -18,6 +19,7 @@ export default defineConfig({
     visionTool(),
     colorInput(),
     presentationTool({
+      resolve,
       previewUrl: {
         previewMode: {
           enable: '/api/draft-mode/enable',

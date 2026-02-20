@@ -1,0 +1,24 @@
+{
+  "name": "@repo/studio",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev --port 3333",
+    "build": "sanity build",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@repo/sanity-schema": "workspace:*",
+    "sanity": "^3.86.0",
+    "@sanity/vision": "^3.86.0",
+    "@sanity/color-input": "^4.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "styled-components": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.8.0"
+  }
+}

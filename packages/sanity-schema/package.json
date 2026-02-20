@@ -1,0 +1,20 @@
+{
+  "name": "@repo/sanity-schema",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "sanity": "^3.86.0",
+    "@sanity/icons": "^3.6.0",
+    "@sanity/color-input": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  }
+}

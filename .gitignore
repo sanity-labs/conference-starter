@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+dist/
+.turbo/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sanity
+schema.json
+
+# Debug
+npm-debug.log*
+pnpm-debug.log*
+
+# Export data (large binary)
+production-export-*/

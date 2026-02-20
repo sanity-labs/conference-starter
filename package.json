@@ -6,6 +6,7 @@
     "build": "turbo build",
     "type-check": "turbo type-check",
     "lint": "turbo lint",
+    "typegen": "pnpm --filter @repo/studio exec sanity schema extract --enforce-required-fields && pnpm --filter @repo/studio exec sanity typegen generate",
     "predev": "tsx scripts/check-next-version.ts"
   },
   "devDependencies": {

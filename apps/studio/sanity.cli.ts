@@ -6,4 +6,18 @@ export default defineCliConfig({
     dataset: process.env.SANITY_STUDIO_DATASET || 'production',
   },
   studioHost: 'everything-nyc-2026',
+
+  schemaExtraction: {
+    enabled: true,
+  },
+
+  typegen: {
+    enabled: true,
+    path: [
+      '../../packages/sanity-queries/src/**/*.{ts,tsx}',
+      '../../apps/web/src/**/*.{ts,tsx}',
+    ],
+    generates: '../../packages/sanity-queries/src/sanity.types.ts',
+    overloadClientMethods: true,
+  },
 })

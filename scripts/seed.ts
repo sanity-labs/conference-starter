@@ -9,10 +9,13 @@
 
 import {createClient} from '@sanity/client'
 import {readFileSync} from 'node:fs'
-import {resolve} from 'node:path'
+import {resolve, dirname} from 'node:path'
+import {fileURLToPath} from 'node:url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // Load .env.local from studio
-const envPath = resolve(import.meta.dirname, '../apps/studio/.env.local')
+const envPath = resolve(__dirname, '../apps/studio/.env.local')
 const envContent = readFileSync(envPath, 'utf-8')
 const env: Record<string, string> = {}
 for (const line of envContent.split('\n')) {
@@ -57,7 +60,7 @@ interface PersonDoc {
 
 // Read the ndjson export to get person documents
 function readPersonsFromExport(): PersonDoc[] {
-  const ndjsonPath = resolve(import.meta.dirname, '../production-export-data.ndjson')
+  const ndjsonPath = resolve(__dirname, '../production-export-data.ndjson')
   try {
     const lines = readFileSync(ndjsonPath, 'utf-8').split('\n').filter(Boolean)
     return lines

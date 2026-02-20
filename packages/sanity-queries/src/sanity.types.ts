@@ -761,11 +761,261 @@ export type CONFERENCE_QUERY_RESULT = {
   } | null;
 } | null;
 
+// Source: ../../packages/sanity-queries/src/schedule.ts
+// Variable: SCHEDULE_DAY_QUERY
+// Query: *[_type == "scheduleSlot"    && conference._ref == $conferenceId    && startTime >= $dayStart    && startTime < $dayEnd  ] | order(startTime asc) {    _id,    startTime,    endTime,    isPlenary,    room->{      _id,      name,      capacity,      floor    },    session->{      _id,      title,      "slug": slug.current,      sessionType,      level,      duration,      track->{        _id,        name,        "slug": slug.current,        color      },      speakers[]->{        _id,        name,        "slug": slug.current,        photo { ..., alt },        role,        company      },      moderator->{        _id,        name,        "slug": slug.current      }    }  }
+export type SCHEDULE_DAY_QUERY_RESULT = Array<{
+  _id: string;
+  startTime: string | null;
+  endTime: string | null;
+  isPlenary: boolean | null;
+  room: {
+    _id: string;
+    name: string | null;
+    capacity: number | null;
+    floor: string | null;
+  } | null;
+  session: {
+    _id: string;
+    title: string | null;
+    slug: string | null;
+    sessionType: "break" | "keynote" | "lightning" | "panel" | "social" | "talk" | "workshop" | null;
+    level: "advanced" | "beginner" | "intermediate" | null;
+    duration: number | null;
+    track: {
+      _id: string;
+      name: string | null;
+      slug: string | null;
+      color: Color | null;
+    } | null;
+    speakers: Array<{
+      _id: string;
+      name: string | null;
+      slug: string | null;
+      photo: {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt: string | null;
+        _type: "image";
+      } | null;
+      role: string | null;
+      company: string | null;
+    }> | null;
+    moderator: {
+      _id: string;
+      name: string | null;
+      slug: string | null;
+    } | null;
+  } | null;
+}>;
+
+// Source: ../../packages/sanity-queries/src/sessions.ts
+// Variable: SESSION_DETAIL_QUERY
+// Query: *[_type == "session" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    sessionType,    level,    duration,    abstract,    track->{ _id, name, "slug": slug.current, color },    speakers[]->{      _id,      name,      "slug": slug.current,      photo { ..., alt },      role,      company    },    moderator->{      _id,      name,      "slug": slug.current,      photo { ..., alt },      role,      company    },    capacity,    prerequisites,    materials[] { title, url, type },    slidesUrl,    recordingUrl,    seoTitle,    seoDescription,    ogImage,    "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {      startTime,      endTime,      room->{ name, floor }    }  }
+export type SESSION_DETAIL_QUERY_RESULT = {
+  _id: string;
+  title: string | null;
+  slug: string | null;
+  sessionType: "break" | "keynote" | "lightning" | "panel" | "social" | "talk" | "workshop" | null;
+  level: "advanced" | "beginner" | "intermediate" | null;
+  duration: number | null;
+  abstract: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  track: {
+    _id: string;
+    name: string | null;
+    slug: string | null;
+    color: Color | null;
+  } | null;
+  speakers: Array<{
+    _id: string;
+    name: string | null;
+    slug: string | null;
+    photo: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt: string | null;
+      _type: "image";
+    } | null;
+    role: string | null;
+    company: string | null;
+  }> | null;
+  moderator: {
+    _id: string;
+    name: string | null;
+    slug: string | null;
+    photo: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt: string | null;
+      _type: "image";
+    } | null;
+    role: string | null;
+    company: string | null;
+  } | null;
+  capacity: number | null;
+  prerequisites: string | null;
+  materials: Array<{
+    title: string | null;
+    url: string | null;
+    type: "docs" | "other" | "repo" | "slides" | null;
+  }> | null;
+  slidesUrl: string | null;
+  recordingUrl: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  ogImage: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+  slot: {
+    startTime: string | null;
+    endTime: string | null;
+    room: {
+      name: string | null;
+      floor: string | null;
+    } | null;
+  } | null;
+} | null;
+
+// Source: ../../packages/sanity-queries/src/sessions.ts
+// Variable: SESSION_SLUGS_QUERY
+// Query: *[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current }
+export type SESSION_SLUGS_QUERY_RESULT = Array<{
+  slug: string | null;
+}>;
+
+// Source: ../../packages/sanity-queries/src/speakers.ts
+// Variable: SPEAKERS_QUERY
+// Query: *[_type == "speaker"] | order(name asc) {    _id,    name,    "slug": slug.current,    photo { ..., alt },    role,    company,    "sessionCount": count(*[_type == "session" && references(^._id)])  }
+export type SPEAKERS_QUERY_RESULT = Array<{
+  _id: string;
+  name: string | null;
+  slug: string | null;
+  photo: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt: string | null;
+    _type: "image";
+  } | null;
+  role: string | null;
+  company: string | null;
+  sessionCount: number;
+}>;
+
+// Source: ../../packages/sanity-queries/src/speakers.ts
+// Variable: SPEAKER_DETAIL_QUERY
+// Query: *[_type == "speaker" && slug.current == $slug][0] {    _id,    name,    "slug": slug.current,    photo { ..., alt },    role,    company,    bio,    twitter,    github,    linkedin,    website,    seoTitle,    seoDescription,    ogImage,    "sessions": *[_type == "session" && references(^._id)] {      _id,      title,      "slug": slug.current,      sessionType,      level,      track->{ name, color },      "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {        startTime,        endTime,        room->{ name }      }    }  }
+export type SPEAKER_DETAIL_QUERY_RESULT = {
+  _id: string;
+  name: string | null;
+  slug: string | null;
+  photo: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt: string | null;
+    _type: "image";
+  } | null;
+  role: string | null;
+  company: string | null;
+  bio: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  twitter: string | null;
+  github: string | null;
+  linkedin: string | null;
+  website: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  ogImage: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+  sessions: Array<{
+    _id: string;
+    title: string | null;
+    slug: string | null;
+    sessionType: "break" | "keynote" | "lightning" | "panel" | "social" | "talk" | "workshop" | null;
+    level: "advanced" | "beginner" | "intermediate" | null;
+    track: {
+      name: string | null;
+      color: Color | null;
+    } | null;
+    slot: {
+      startTime: string | null;
+      endTime: string | null;
+      room: {
+        name: string | null;
+      } | null;
+    } | null;
+  }>;
+} | null;
+
+// Source: ../../packages/sanity-queries/src/speakers.ts
+// Variable: SPEAKER_SLUGS_QUERY
+// Query: *[_type == "speaker" && defined(slug.current)]{ "slug": slug.current }
+export type SPEAKER_SLUGS_QUERY_RESULT = Array<{
+  slug: string | null;
+}>;
+
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "*[_type == \"conference\"][0]{\n    _id,\n    name,\n    \"slug\": slug.current,\n    tagline,\n    description,\n    startDate,\n    endDate,\n    venue->{\n      _id,\n      name,\n      address\n    },\n    tracks[]->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      color\n    },\n    logo { ..., alt },\n    socialCard\n  }": CONFERENCE_QUERY_RESULT;
+    "*[_type == \"scheduleSlot\"\n    && conference._ref == $conferenceId\n    && startTime >= $dayStart\n    && startTime < $dayEnd\n  ] | order(startTime asc) {\n    _id,\n    startTime,\n    endTime,\n    isPlenary,\n    room->{\n      _id,\n      name,\n      capacity,\n      floor\n    },\n    session->{\n      _id,\n      title,\n      \"slug\": slug.current,\n      sessionType,\n      level,\n      duration,\n      track->{\n        _id,\n        name,\n        \"slug\": slug.current,\n        color\n      },\n      speakers[]->{\n        _id,\n        name,\n        \"slug\": slug.current,\n        photo { ..., alt },\n        role,\n        company\n      },\n      moderator->{\n        _id,\n        name,\n        \"slug\": slug.current\n      }\n    }\n  }": SCHEDULE_DAY_QUERY_RESULT;
+    "*[_type == \"session\" && slug.current == $slug][0] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    sessionType,\n    level,\n    duration,\n    abstract,\n    track->{ _id, name, \"slug\": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      photo { ..., alt },\n      role,\n      company\n    },\n    moderator->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      photo { ..., alt },\n      role,\n      company\n    },\n    capacity,\n    prerequisites,\n    materials[] { title, url, type },\n    slidesUrl,\n    recordingUrl,\n    seoTitle,\n    seoDescription,\n    ogImage,\n    \"slot\": *[_type == \"scheduleSlot\" && session._ref == ^._id][0] {\n      startTime,\n      endTime,\n      room->{ name, floor }\n    }\n  }": SESSION_DETAIL_QUERY_RESULT;
+    "*[_type == \"session\" && defined(slug.current) && !(sessionType in [\"break\", \"social\"])]{ \"slug\": slug.current }": SESSION_SLUGS_QUERY_RESULT;
+    "*[_type == \"speaker\"] | order(name asc) {\n    _id,\n    name,\n    \"slug\": slug.current,\n    photo { ..., alt },\n    role,\n    company,\n    \"sessionCount\": count(*[_type == \"session\" && references(^._id)])\n  }": SPEAKERS_QUERY_RESULT;
+    "*[_type == \"speaker\" && slug.current == $slug][0] {\n    _id,\n    name,\n    \"slug\": slug.current,\n    photo { ..., alt },\n    role,\n    company,\n    bio,\n    twitter,\n    github,\n    linkedin,\n    website,\n    seoTitle,\n    seoDescription,\n    ogImage,\n    \"sessions\": *[_type == \"session\" && references(^._id)] {\n      _id,\n      title,\n      \"slug\": slug.current,\n      sessionType,\n      level,\n      track->{ name, color },\n      \"slot\": *[_type == \"scheduleSlot\" && session._ref == ^._id][0] {\n        startTime,\n        endTime,\n        room->{ name }\n      }\n    }\n  }": SPEAKER_DETAIL_QUERY_RESULT;
+    "*[_type == \"speaker\" && defined(slug.current)]{ \"slug\": slug.current }": SPEAKER_SLUGS_QUERY_RESULT;
   }
 }
 

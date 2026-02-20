@@ -1,0 +1,174 @@
+import {Suspense} from 'react'
+import {notFound} from 'next/navigation'
+import Link from 'next/link'
+import type {Metadata} from 'next'
+import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
+import type {DynamicFetchOptions} from '@/sanity/live'
+import {client} from '@/sanity/client'
+import {SPEAKER_DETAIL_QUERY, SPEAKER_SLUGS_QUERY} from '@repo/sanity-queries'
+import type {SPEAKER_DETAIL_QUERY_RESULT} from '@repo/sanity-queries'
+import {SanityImage} from '@/components/sanity-image'
+import {PortableText} from '@/components/portable-text'
+
+type Props = {params: Promise<{slug: string}>}
+
+export async function generateStaticParams() {
+  const speakers = await client.fetch(SPEAKER_SLUGS_QUERY)
+  return speakers.map((s) => ({slug: s.slug}))
+}
+
+export async function generateMetadata({params}: Props): Promise<Metadata> {
+  const {slug} = await params
+  const speaker = await fetchSpeakerForMetadata(slug)
+  if (!speaker) return {}
+  return {
+    title: `${speaker.seoTitle || speaker.name} — Everything NYC 2026`,
+    description: speaker.seoDescription || `${speaker.role} at ${speaker.company}`,
+  }
+}
+
+async function fetchSpeakerForMetadata(slug: string) {
+  'use cache'
+  const {data} = await sanityFetch({
+    query: SPEAKER_DETAIL_QUERY,
+    params: {slug},
+    perspective: 'published',
+    stega: false,
+  })
+  return data
+}
+
+export default async function SpeakerPage({params}: Props) {
+  const {slug} = await params
+  return (
+    <main className="mx-auto max-w-3xl px-6 py-24">
+      <Suspense>
+        <SpeakerDetailDynamic slug={slug} />
+      </Suspense>
+    </main>
+  )
+}
+
+async function SpeakerDetailDynamic({slug}: {slug: string}) {
+  const opts = await getDynamicFetchOptions()
+  return <SpeakerDetailCached slug={slug} {...opts} />
+}
+
+async function SpeakerDetailCached({
+  slug,
+  perspective,
+  stega,
+}: {slug: string} & DynamicFetchOptions) {
+  'use cache'
+
+  const {data: speaker} = await sanityFetch({
+    query: SPEAKER_DETAIL_QUERY,
+    params: {slug},
+    perspective,
+    stega,
+  })
+
+  if (!speaker) notFound()
+
+  return (
+    <article>
+      <header className="flex flex-col gap-6 sm:flex-row sm:items-start">
+        {speaker.photo && (
+          <SanityImage
+            value={speaker.photo}
+            className="h-32 w-32 rounded-lg object-cover"
+            width={256}
+            height={256}
+          />
+        )}
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight">{speaker.name}</h1>
+          {speaker.role && <p className="mt-1 text-lg text-gray-600">{speaker.role}</p>}
+          {speaker.company && <p className="text-gray-500">{speaker.company}</p>}
+          <SocialLinks speaker={speaker} />
+        </div>
+      </header>
+
+      {speaker.bio && (
+        <section className="prose mt-8">
+          <PortableText value={speaker.bio} />
+        </section>
+      )}
+
+      <SpeakerSessions sessions={speaker.sessions} />
+
+      <p className="mt-12">
+        <Link href="/speakers" className="text-sm underline">
+          &larr; All speakers
+        </Link>
+      </p>
+    </article>
+  )
+}
+
+function SocialLinks({speaker}: {speaker: NonNullable<SPEAKER_DETAIL_QUERY_RESULT>}) {
+  const links = [
+    speaker.twitter && {label: `@${speaker.twitter}`, href: `https://x.com/${speaker.twitter}`},
+    speaker.github && {label: 'GitHub', href: `https://github.com/${speaker.github}`},
+    speaker.linkedin && {label: 'LinkedIn', href: speaker.linkedin},
+    speaker.website && {label: 'Website', href: speaker.website},
+  ].filter(Boolean) as Array<{label: string; href: string}>
+
+  if (links.length === 0) return null
+
+  return (
+    <ul className="mt-2 flex gap-3 text-sm">
+      {links.map((link) => (
+        <li key={link.href}>
+          <a href={link.href} target="_blank" rel="noopener noreferrer" className="underline">
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function SpeakerSessions({
+  sessions,
+}: {
+  sessions: NonNullable<SPEAKER_DETAIL_QUERY_RESULT>['sessions']
+}) {
+  if (!sessions || sessions.length === 0) return null
+
+  return (
+    <section className="mt-12">
+      <h2 className="text-2xl font-bold">Sessions</h2>
+      <ul className="mt-4 space-y-4">
+        {sessions.map((session) => (
+          <li key={session._id} className="border-l-2 pl-4">
+            <Link href={`/sessions/${session.slug}`} className="font-medium underline">
+              {session.title}
+            </Link>
+            <p className="text-sm text-gray-600">
+              {[
+                session.sessionType &&
+                  session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1),
+                session.level,
+                session.track?.name,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
+            </p>
+            {session.slot && session.slot.startTime && (
+              <p className="text-sm text-gray-500">
+                <time dateTime={session.slot.startTime}>
+                  {new Date(session.slot.startTime).toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })}
+                </time>
+                {session.slot.room?.name && ` — ${session.slot.room.name}`}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}

@@ -10,19 +10,22 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@repo/sanity-schema": "workspace:*",
+    "@portabletext/react": "^6.0.2",
+    "@portabletext/types": "^4.0.1",
     "@repo/sanity-queries": "workspace:*",
+    "@repo/sanity-schema": "workspace:*",
+    "@sanity/client": "^7.3.0",
+    "@sanity/image-url": "^2.0.3",
     "next": "^16.0.0",
     "next-sanity": "13.0.0-cache-components.26",
-    "@sanity/client": "^7.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.0",
-    "tailwindcss": "^4.1.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "tailwindcss": "^4.1.0",
     "typescript": "^5.8.0"
   }
 }

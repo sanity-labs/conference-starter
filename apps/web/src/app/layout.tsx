@@ -8,14 +8,29 @@ import {Header} from '@/components/header'
 import {Footer} from '@/components/footer'
 import {JsonLd} from '@/components/json-ld'
 import type {WebSite} from 'schema-dts'
+import {SITE_URL, SITE_NAME, getDefaultOgImage} from '@/lib/metadata'
 import './globals.css'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://everything-nyc.sanity.dev'
-
-export const metadata: Metadata = {
-  title: 'Everything NYC 2026',
-  description:
-    'Where developers and creative thinkers explore what it means to build digital experiences that move people forward.',
+export async function generateMetadata(): Promise<Metadata> {
+  const ogImage = await getDefaultOgImage()
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: SITE_NAME,
+      template: `%s — ${SITE_NAME}`,
+    },
+    description:
+      'Where developers and creative thinkers explore what it means to build digital experiences that move people forward.',
+    openGraph: {
+      siteName: SITE_NAME,
+      locale: 'en_US',
+      type: 'website',
+      ...(ogImage && {images: [{url: ogImage, width: 1200, height: 630}]}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+    },
+  }
 }
 
 export default async function RootLayout({
@@ -59,7 +74,7 @@ async function CachedLayout({
           data={{
             '@context': 'https://schema.org',
             '@type': 'WebSite',
-            name: 'Everything NYC 2026',
+            name: SITE_NAME,
             url: SITE_URL,
           }}
         />

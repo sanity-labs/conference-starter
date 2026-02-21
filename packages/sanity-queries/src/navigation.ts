@@ -7,6 +7,15 @@ export const NAV_QUERY = defineQuery(
     registrationUrl,
     registrationLabel,
     socialLinks,
-    "pages": *[_type == "page"] | order(title asc) { _id, title, "slug": slug.current }
+    headerNav[] {
+      _key, title, linkType,
+      page->{ _type, title, "slug": slug.current },
+      route, url
+    },
+    footerNav[] {
+      _key, title, linkType,
+      page->{ _type, title, "slug": slug.current },
+      route, url
+    }
   }`,
 )

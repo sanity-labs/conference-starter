@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import type {NAV_QUERY_RESULT} from '@repo/sanity-queries'
+import {NavLink} from './nav-link'
 
 type NavData = NonNullable<NAV_QUERY_RESULT>
 
@@ -21,21 +21,17 @@ export function Footer({data}: {data: NavData}) {
 
   return (
     <footer>
-      <nav aria-label="Footer navigation">
-        <ul>
-          {data.pages?.map((page) => (
-            <li key={page._id}>
-              <Link href={`/${page.slug}`}>{page.title}</Link>
-            </li>
-          ))}
-          <li>
-            <Link href="/cfp">Call for Papers</Link>
-          </li>
-          <li>
-            <Link href="/announcements">Announcements</Link>
-          </li>
-        </ul>
-      </nav>
+      {data.footerNav && data.footerNav.length > 0 && (
+        <nav aria-label="Footer navigation">
+          <ul>
+            {data.footerNav.map((item) => (
+              <li key={item._key}>
+                <NavLink item={item} />
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
       {socialLinks.length > 0 && (
         <ul aria-label="Social links">
           {socialLinks.map((link) => (

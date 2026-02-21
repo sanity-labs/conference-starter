@@ -1066,7 +1066,7 @@ export type CONFERENCE_QUERY_RESULT = {
 
 // Source: ../../packages/sanity-queries/src/navigation.ts
 // Variable: NAV_QUERY
-// Query: *[_type == "conference"][0]{    name,    logo { ..., alt },    registrationUrl,    registrationLabel,    socialLinks,    "pages": *[_type == "page"] | order(title asc) { _id, title, "slug": slug.current }  }
+// Query: *[_type == "conference"][0]{    name,    logo { ..., alt },    registrationUrl,    registrationLabel,    socialLinks,    headerNav[] {      _key, title, linkType,      page->{ _type, title, "slug": slug.current },      route, url    },    footerNav[] {      _key, title, linkType,      page->{ _type, title, "slug": slug.current },      route, url    }  }
 export type NAV_QUERY_RESULT = {
   name: string;
   logo: {
@@ -1086,11 +1086,68 @@ export type NAV_QUERY_RESULT = {
     instagram?: string;
     mastodon?: string;
   } | null;
-  pages: Array<{
-    _id: string;
-    title: string;
-    slug: string;
-  }>;
+  headerNav: Array<{
+    _key: string;
+    title: string | null;
+    linkType: "external" | "page" | "route";
+    page:
+      | {
+          _type: "page";
+          title: string;
+          slug: string;
+        }
+      | {
+          _type: "session";
+          title: string;
+          slug: string;
+        }
+      | {
+          _type: "speaker";
+          title: null;
+          slug: string;
+        }
+      | null;
+    route:
+      | "/announcements"
+      | "/cfp"
+      | "/schedule"
+      | "/speakers"
+      | "/sponsors"
+      | "/venue"
+      | null;
+    url: string | null;
+  }> | null;
+  footerNav: Array<{
+    _key: string;
+    title: string | null;
+    linkType: "external" | "page" | "route";
+    page:
+      | {
+          _type: "page";
+          title: string;
+          slug: string;
+        }
+      | {
+          _type: "session";
+          title: string;
+          slug: string;
+        }
+      | {
+          _type: "speaker";
+          title: null;
+          slug: string;
+        }
+      | null;
+    route:
+      | "/announcements"
+      | "/cfp"
+      | "/schedule"
+      | "/speakers"
+      | "/sponsors"
+      | "/venue"
+      | null;
+    url: string | null;
+  }> | null;
 } | null;
 
 // Source: ../../packages/sanity-queries/src/pages.ts
@@ -1684,7 +1741,7 @@ declare module "@sanity/client" {
     '*[_type == "announcement" && defined(slug.current)]{ "slug": slug.current }': ANNOUNCEMENT_SLUGS_QUERY_RESULT;
     '*[_type == "conference"][0]{\n    _id,\n    name,\n    cfpOpen,\n    cfpDeadline,\n    cfpGuidelines\n  }': CFP_CONFIG_QUERY_RESULT;
     '*[_type == "conference"][0]{\n    _id,\n    name,\n    "slug": slug.current,\n    tagline,\n    description,\n    startDate,\n    endDate,\n    venue->{\n      _id,\n      name,\n      address\n    },\n    tracks[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      color\n    },\n    logo { ..., alt },\n    socialCard\n  }': CONFERENCE_QUERY_RESULT;
-    '*[_type == "conference"][0]{\n    name,\n    logo { ..., alt },\n    registrationUrl,\n    registrationLabel,\n    socialLinks,\n    "pages": *[_type == "page"] | order(title asc) { _id, title, "slug": slug.current }\n  }': NAV_QUERY_RESULT;
+    '*[_type == "conference"][0]{\n    name,\n    logo { ..., alt },\n    registrationUrl,\n    registrationLabel,\n    socialLinks,\n    headerNav[] {\n      _key, title, linkType,\n      page->{ _type, title, "slug": slug.current },\n      route, url\n    },\n    footerNav[] {\n      _key, title, linkType,\n      page->{ _type, title, "slug": slug.current },\n      route, url\n    }\n  }': NAV_QUERY_RESULT;
     '*[_type == "page" && slug.current == $slug][0]{\n    _id,\n    title,\n    "slug": slug.current,\n    sections[] {\n      _key,\n      _type,\n      _type == "hero" => {\n        heading,\n        subheading,\n        backgroundImage { ..., alt },\n        cta { label, linkType, style, externalUrl, internalLink->{ _type, "slug": slug.current } }\n      },\n      _type == "richText" => {\n        heading,\n        content[] { ... }\n      },\n      _type == "speakerGrid" => {\n        heading,\n        limit,\n        speakers[]->{ _id, name, "slug": slug.current, role, photo { ..., alt } }\n      },\n      _type == "sponsorBar" => {\n        heading,\n        tiers\n      },\n      _type == "schedulePreview" => {\n        heading,\n        day,\n        maxSlots\n      },\n      _type == "ctaBlock" => {\n        heading,\n        body,\n        cta { label, linkType, style, externalUrl, internalLink->{ _type, "slug": slug.current } }\n      },\n      _type == "faqSection" => {\n        heading,\n        items[] { _key, question, answer }\n      }\n    },\n    seoTitle,\n    seoDescription,\n    ogImage\n  }': PAGE_QUERY_RESULT;
     '*[_type == "page" && defined(slug.current)]{ "slug": slug.current }': PAGE_SLUGS_QUERY_RESULT;
     '*[_type == "scheduleSlot"\n    && conference._ref == $conferenceId\n    && startTime >= $dayStart\n    && startTime < $dayEnd\n  ] | order(startTime asc) {\n    _id,\n    startTime,\n    endTime,\n    isPlenary,\n    room->{\n      _id,\n      name,\n      capacity,\n      floor\n    },\n    session->{\n      _id,\n      title,\n      "slug": slug.current,\n      sessionType,\n      level,\n      duration,\n      track->{\n        _id,\n        name,\n        "slug": slug.current,\n        color\n      },\n      speakers[]->{\n        _id,\n        name,\n        "slug": slug.current,\n        photo { ..., alt },\n        role,\n        company\n      },\n      moderator->{\n        _id,\n        name,\n        "slug": slug.current\n      }\n    }\n  }': SCHEDULE_DAY_QUERY_RESULT;

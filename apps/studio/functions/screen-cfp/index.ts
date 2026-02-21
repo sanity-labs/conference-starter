@@ -28,45 +28,35 @@ export const handler = documentEventHandler<SubmissionEvent>(async ({context, ev
     console.log(`[dry-run] Would run AI evaluation, then set status to "scored"`)
     console.log(`[dry-run] Submission: "${data.sessionTitle}" (${data.sessionType}) by ${data.submitterName}`)
 
-    const criteria = await client.fetch<string | null>(
-      `*[_type == "conference"][0].scoringCriteria`,
+    const {criteria, instruction} = await client.fetch<{criteria: string | null; instruction: string | null}>(
+      `{"criteria": *[_type == "conference"][0].scoringCriteria, "instruction": *[_id == "prompt.cfpScreening"][0].instruction}`,
     )
     console.log(`[dry-run] Scoring criteria ${criteria ? `found (${criteria.length} chars)` : 'MISSING — would fail in production'}`)
+    console.log(`[dry-run] Prompt document ${instruction ? `found (${instruction.length} chars)` : 'MISSING — run: pnpm tsx scripts/seed-prompts.ts'}`)
     return
   }
 
   try {
-    // Fetch scoring criteria from conference document
-    const criteria = await client.fetch<string | null>(
-      `*[_type == "conference"][0].scoringCriteria`,
+    // Fetch scoring criteria and prompt instruction in a single query
+    const {criteria, instruction} = await client.fetch<{criteria: string | null; instruction: string | null}>(
+      `{"criteria": *[_type == "conference"][0].scoringCriteria, "instruction": *[_id == "prompt.cfpScreening"][0].instruction}`,
     )
 
     if (!criteria) {
       throw new Error('No scoring criteria found on conference document')
     }
 
+    if (!instruction) {
+      throw new Error(
+        'No prompt document found (prompt.cfpScreening). Run: pnpm tsx scripts/seed-prompts.ts',
+      )
+    }
+
     // Use Agent Actions generate with noWrite to get AI evaluation
     const result = await client.agent.action.generate({
       schemaId: process.env.SANITY_SCHEMA_ID!,
       documentId: data._id,
-      instruction: `Evaluate this CFP submission against the conference scoring criteria.
-
-Session title: $title
-Session type: $sessionType
-Abstract: $abstract
-Speaker bio: $bio
-
-Scoring criteria:
-$criteria
-
-Rate the submission on a scale of 0 to 100 based on:
-- Topic relevance and audience fit
-- Speaker expertise (based on bio)
-- Abstract quality and clarity
-- Session type appropriateness
-
-The score field must be a number between 0 and 100.
-Write a brief 2-3 sentence evaluation summary explaining the score.`,
+      instruction,
       instructionParams: {
         title: {type: 'field', path: 'sessionTitle'},
         sessionType: {type: 'field', path: 'sessionType'},

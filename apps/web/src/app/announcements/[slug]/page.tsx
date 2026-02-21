@@ -8,7 +8,9 @@ import {client} from '@/sanity/client'
 import {ANNOUNCEMENT_DETAIL_QUERY, ANNOUNCEMENT_SLUGS_QUERY} from '@repo/sanity-queries'
 import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
-import {ogImageUrl} from '@/lib/metadata'
+import {JsonLd} from '@/components/json-ld'
+import type {NewsArticle} from 'schema-dts'
+import {SITE_URL, ogImageUrl} from '@/lib/metadata'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -76,8 +78,31 @@ async function AnnouncementDetailCached({
 
   if (!announcement) notFound()
 
+  const image = ogImageUrl(announcement.coverImage)
+
   return (
     <article>
+      <JsonLd<NewsArticle>
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'NewsArticle',
+          headline: announcement.title ?? undefined,
+          url: `${SITE_URL}/announcements/${slug}`,
+          ...(announcement.publishedAt && {datePublished: announcement.publishedAt}),
+          ...(announcement.excerpt && {description: announcement.excerpt}),
+          ...(image && {image}),
+          author: {
+            '@type': 'Organization',
+            name: 'Sanity',
+            url: 'https://www.sanity.io',
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'Sanity',
+            url: 'https://www.sanity.io',
+          },
+        }}
+      />
       <header>
         <h1 className="text-4xl font-bold tracking-tight">{announcement.title}</h1>
         {announcement.publishedAt && (

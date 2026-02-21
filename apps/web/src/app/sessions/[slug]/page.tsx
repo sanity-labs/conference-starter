@@ -10,7 +10,9 @@ import type {SESSION_DETAIL_QUERY_RESULT} from '@repo/sanity-queries'
 import {stegaClean} from '@sanity/client/stega'
 import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
-import {ogImageUrl} from '@/lib/metadata'
+import {JsonLd} from '@/components/json-ld'
+import type {Event as EventSchema} from 'schema-dts'
+import {SITE_URL, ogImageUrl} from '@/lib/metadata'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -77,8 +79,41 @@ async function SessionDetailCached({
 
   if (!session) notFound()
 
+  const sessionType = stegaClean(session.sessionType)
+
   return (
     <article>
+      <JsonLd<EventSchema>
+        data={{
+          '@context': 'https://schema.org',
+          '@type': sessionType === 'workshop' ? 'EducationEvent' : 'Event',
+          name: session.title ?? undefined,
+          url: `${SITE_URL}/sessions/${slug}`,
+          ...(session.slot?.startTime && {startDate: session.slot.startTime}),
+          ...(session.slot?.endTime && {endDate: session.slot.endTime}),
+          eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+          eventStatus: 'https://schema.org/EventScheduled',
+          ...(session.slot?.room?.name && {
+            location: {
+              '@type': 'Place',
+              name: session.slot.room.name,
+            },
+          }),
+          ...(session.speakers &&
+            session.speakers.length > 0 && {
+              performer: session.speakers.map((s) => ({
+                '@type': 'Person' as const,
+                name: s.name ?? undefined,
+                url: `${SITE_URL}/speakers/${s.slug}`,
+              })),
+            }),
+          organizer: {
+            '@type': 'Organization',
+            name: 'Sanity',
+            url: 'https://www.sanity.io',
+          },
+        }}
+      />
       <header>
         <p className="text-sm text-gray-500">
           {[

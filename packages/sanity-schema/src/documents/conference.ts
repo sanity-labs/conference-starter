@@ -199,6 +199,26 @@ export const conference = defineType({
         defineField({name: 'mastodon', title: 'Mastodon', type: 'url'}),
       ],
     }),
+    defineField({
+      name: 'headerNav',
+      title: 'Header Navigation',
+      type: 'array',
+      of: [defineArrayMember({type: 'navItem'})],
+      group: 'links',
+      description:
+        'Links shown in the main site header. Drag to reorder. Content Agent: these are the primary navigation destinations for the conference website.',
+      validation: (rule) =>
+        rule.max(8).warning('More than 8 header links can overwhelm visitors'),
+    }),
+    defineField({
+      name: 'footerNav',
+      title: 'Footer Navigation',
+      type: 'array',
+      of: [defineArrayMember({type: 'navItem'})],
+      group: 'links',
+      description:
+        'Links shown in the site footer. Useful for secondary pages like Code of Conduct, FAQ, and CFP.',
+    }),
     ...seoFields('seo'),
   ],
   preview: {

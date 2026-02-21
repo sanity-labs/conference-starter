@@ -13,6 +13,42 @@
  */
 
 // Source: schema.json
+export type PageReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "page";
+};
+
+export type SessionReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "session";
+};
+
+export type SpeakerReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "speaker";
+};
+
+export type NavItem = {
+  _type: "navItem";
+  title?: string;
+  linkType: "route" | "page" | "external";
+  route?:
+    | "/schedule"
+    | "/speakers"
+    | "/sponsors"
+    | "/venue"
+    | "/cfp"
+    | "/announcements";
+  page?: PageReference | SessionReference | SpeakerReference;
+  url?: string;
+};
+
 export type FaqSection = {
   _type: "faqSection";
   heading?: string;
@@ -59,13 +95,6 @@ export type SponsorBar = {
   _type: "sponsorBar";
   heading?: string;
   tiers?: Array<string>;
-};
-
-export type SpeakerReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "speaker";
 };
 
 export type SpeakerGrid = {
@@ -139,20 +168,6 @@ export type Hero = {
     _type: "image";
   };
   cta?: Cta;
-};
-
-export type PageReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "page";
-};
-
-export type SessionReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "session";
 };
 
 export type Cta = {
@@ -625,6 +640,16 @@ export type Conference = {
     instagram?: string;
     mastodon?: string;
   };
+  headerNav?: Array<
+    {
+      _key: string;
+    } & NavItem
+  >;
+  footerNav?: Array<
+    {
+      _key: string;
+    } & NavItem
+  >;
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: {
@@ -836,17 +861,18 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
+  | PageReference
+  | SessionReference
+  | SpeakerReference
+  | NavItem
   | FaqSection
   | CtaBlock
   | SchedulePreview
   | SponsorBar
-  | SpeakerReference
   | SpeakerGrid
   | SanityImageAssetReference
   | RichText
   | Hero
-  | PageReference
-  | SessionReference
   | Cta
   | ConferenceReference
   | Submission

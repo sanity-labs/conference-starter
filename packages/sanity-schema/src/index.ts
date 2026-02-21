@@ -18,6 +18,7 @@ import {sponsorBar} from './objects/sponsorBar'
 import {schedulePreview} from './objects/schedulePreview'
 import {ctaBlock} from './objects/ctaBlock'
 import {faqSection} from './objects/faqSection'
+import {navItem} from './objects/navItem'
 
 export const schemaTypes = [
   // Documents
@@ -41,4 +42,5 @@ export const schemaTypes = [
   schedulePreview,
   ctaBlock,
   faqSection,
+  navItem,
 ]

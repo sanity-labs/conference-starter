@@ -12,6 +12,7 @@ import {PortableText} from '@/components/portable-text'
 import {JsonLd} from '@/components/json-ld'
 import type {Person} from 'schema-dts'
 import {SITE_URL, ogImageUrl} from '@/lib/metadata'
+import {BreadcrumbJsonLd} from '@/components/breadcrumb-json-ld'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -87,6 +88,12 @@ async function SpeakerDetailCached({
 
   return (
     <article>
+      <BreadcrumbJsonLd
+        items={[
+          {name: 'Speakers', path: '/speakers'},
+          {name: speaker.name ?? 'Speaker', path: `/speakers/${slug}`},
+        ]}
+      />
       <JsonLd<Person>
         data={{
           '@context': 'https://schema.org',

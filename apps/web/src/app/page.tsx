@@ -3,10 +3,11 @@ import Link from 'next/link'
 import type {Metadata} from 'next'
 import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
-import {CONFERENCE_QUERY, SPEAKERS_QUERY} from '@repo/sanity-queries'
+import {CONFERENCE_QUERY, SPEAKERS_QUERY, SESSIONS_SUMMARY_QUERY} from '@repo/sanity-queries'
 import type {
   CONFERENCE_QUERY_RESULT,
   SPEAKERS_QUERY_RESULT,
+  SESSIONS_SUMMARY_QUERY_RESULT,
 } from '@repo/sanity-queries'
 import {SanityImage} from '@/components/sanity-image'
 import {JsonLd} from '@/components/json-ld'
@@ -58,9 +59,10 @@ async function HomePageDynamic() {
 async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
   'use cache'
 
-  const [{data: conference}, {data: speakers}] = await Promise.all([
+  const [{data: conference}, {data: speakers}, {data: sessions}] = await Promise.all([
     sanityFetch({query: CONFERENCE_QUERY, perspective, stega}),
     sanityFetch({query: SPEAKERS_QUERY, perspective, stega}),
+    sanityFetch({query: SESSIONS_SUMMARY_QUERY, perspective, stega}),
   ])
 
   if (!conference) {
@@ -98,6 +100,14 @@ async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
             name: 'Sanity',
             url: 'https://www.sanity.io',
           },
+          ...(sessions &&
+            sessions.length > 0 && {
+              subEvent: sessions.map((s) => ({
+                '@type': 'Event' as const,
+                name: s.title ?? undefined,
+                url: `${SITE_URL}/sessions/${s.slug}`,
+              })),
+            }),
         }}
       />
       <HeroSection conference={conference} />

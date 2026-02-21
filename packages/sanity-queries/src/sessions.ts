@@ -42,6 +42,15 @@ export const SESSION_DETAIL_QUERY = defineQuery(
   }`,
 )
 
+export const SESSIONS_SUMMARY_QUERY = defineQuery(
+  `*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])] | order(title asc) {
+    _id,
+    title,
+    "slug": slug.current,
+    sessionType
+  }`,
+)
+
 export const SESSION_SLUGS_QUERY = defineQuery(
   `*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current }`,
 )

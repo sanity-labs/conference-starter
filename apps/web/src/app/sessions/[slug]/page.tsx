@@ -13,6 +13,7 @@ import {PortableText} from '@/components/portable-text'
 import {JsonLd} from '@/components/json-ld'
 import type {Event as EventSchema} from 'schema-dts'
 import {SITE_URL, ogImageUrl} from '@/lib/metadata'
+import {BreadcrumbJsonLd} from '@/components/breadcrumb-json-ld'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -83,6 +84,12 @@ async function SessionDetailCached({
 
   return (
     <article>
+      <BreadcrumbJsonLd
+        items={[
+          {name: 'Schedule', path: '/schedule'},
+          {name: session.title ?? 'Session', path: `/sessions/${slug}`},
+        ]}
+      />
       <JsonLd<EventSchema>
         data={{
           '@context': 'https://schema.org',

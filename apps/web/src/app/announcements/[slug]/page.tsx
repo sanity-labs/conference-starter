@@ -11,6 +11,7 @@ import {PortableText} from '@/components/portable-text'
 import {JsonLd} from '@/components/json-ld'
 import type {NewsArticle} from 'schema-dts'
 import {SITE_URL, ogImageUrl} from '@/lib/metadata'
+import {BreadcrumbJsonLd} from '@/components/breadcrumb-json-ld'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -82,6 +83,12 @@ async function AnnouncementDetailCached({
 
   return (
     <article>
+      <BreadcrumbJsonLd
+        items={[
+          {name: 'Announcements', path: '/announcements'},
+          {name: announcement.title ?? 'Announcement', path: `/announcements/${slug}`},
+        ]}
+      />
       <JsonLd<NewsArticle>
         data={{
           '@context': 'https://schema.org',

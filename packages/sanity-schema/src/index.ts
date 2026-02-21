@@ -11,6 +11,7 @@ import {announcement} from './documents/announcement'
 import {submission} from './documents/submission'
 import {emailTemplate} from './documents/emailTemplate'
 import {emailLog} from './documents/emailLog'
+import {prompt} from './documents/prompt'
 
 import {cta} from './objects/cta'
 import {hero} from './objects/hero'
@@ -37,6 +38,7 @@ export const schemaTypes = [
   submission,
   emailTemplate,
   emailLog,
+  prompt,
   // Objects
   cta,
   hero,

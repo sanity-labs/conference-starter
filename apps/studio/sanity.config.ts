@@ -6,6 +6,9 @@ import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from '@repo/sanity-schema'
 import {structure, defaultDocumentNode} from './structure'
 import {resolve} from './resolve'
+import {acceptSubmission} from './actions/acceptSubmission'
+import {rejectSubmission} from './actions/rejectSubmission'
+import {rescreenSubmission} from './actions/rescreenSubmission'
 
 export default defineConfig({
   name: 'default',
@@ -30,5 +33,14 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
+  },
+
+  document: {
+    actions: (prev, context) => {
+      if (context.schemaType === 'submission') {
+        return [...prev, acceptSubmission, rejectSubmission, rescreenSubmission]
+      }
+      return prev
+    },
   },
 })

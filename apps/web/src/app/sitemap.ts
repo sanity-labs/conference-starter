@@ -1,13 +1,20 @@
 import type {MetadataRoute} from 'next'
 import {client} from '@/sanity/client'
-import {SPEAKER_SLUGS_QUERY, SESSION_SLUGS_QUERY} from '@repo/sanity-queries'
+import {
+  SPEAKER_SLUGS_QUERY,
+  SESSION_SLUGS_QUERY,
+  PAGE_SLUGS_QUERY,
+  ANNOUNCEMENT_SLUGS_QUERY,
+} from '@repo/sanity-queries'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://everything-nyc.sanity.dev'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [speakers, sessions] = await Promise.all([
+  const [speakers, sessions, pages, announcements] = await Promise.all([
     client.fetch(SPEAKER_SLUGS_QUERY),
     client.fetch(SESSION_SLUGS_QUERY),
+    client.fetch(PAGE_SLUGS_QUERY),
+    client.fetch(ANNOUNCEMENT_SLUGS_QUERY),
   ])
 
   const staticPages: MetadataRoute.Sitemap = [
@@ -17,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {url: `${SITE_URL}/sponsors`, changeFrequency: 'monthly', priority: 0.6},
     {url: `${SITE_URL}/venue`, changeFrequency: 'monthly', priority: 0.6},
     {url: `${SITE_URL}/cfp`, changeFrequency: 'weekly', priority: 0.7},
+    {url: `${SITE_URL}/announcements`, changeFrequency: 'weekly', priority: 0.7},
   ]
 
   const speakerPages: MetadataRoute.Sitemap = speakers.map((s) => ({
@@ -31,5 +39,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...staticPages, ...speakerPages, ...sessionPages]
+  const dynamicPages: MetadataRoute.Sitemap = pages.map((p) => ({
+    url: `${SITE_URL}/${p.slug}`,
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }))
+
+  const announcementPages: MetadataRoute.Sitemap = announcements.map((a) => ({
+    url: `${SITE_URL}/announcements/${a.slug}`,
+    changeFrequency: 'monthly' as const,
+    priority: 0.5,
+  }))
+
+  return [...staticPages, ...speakerPages, ...sessionPages, ...dynamicPages, ...announcementPages]
 }

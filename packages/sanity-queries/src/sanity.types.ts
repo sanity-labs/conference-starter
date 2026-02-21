@@ -881,6 +881,96 @@ export type AllSanitySchemaTypes =
 
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
+// Source: ../../packages/sanity-queries/src/announcements.ts
+// Variable: ANNOUNCEMENTS_QUERY
+// Query: *[_type == "announcement"] | order(publishedAt desc) {    _id,    title,    "slug": slug.current,    publishedAt,    excerpt,    coverImage { ..., alt }  }
+export type ANNOUNCEMENTS_QUERY_RESULT = Array<{
+  _id: string;
+  title: string;
+  slug: string;
+  publishedAt: string;
+  excerpt: string | null;
+  coverImage: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt: string;
+    _type: "image";
+  } | null;
+}>;
+
+// Source: ../../packages/sanity-queries/src/announcements.ts
+// Variable: ANNOUNCEMENT_DETAIL_QUERY
+// Query: *[_type == "announcement" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    publishedAt,    excerpt,    body[] { ... },    coverImage { ..., alt },    seoTitle,    seoDescription,    ogImage  }
+export type ANNOUNCEMENT_DETAIL_QUERY_RESULT = {
+  _id: string;
+  title: string;
+  slug: string;
+  publishedAt: string;
+  excerpt: string | null;
+  body: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+        _key: string;
+      }
+  >;
+  coverImage: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt: string;
+    _type: "image";
+  } | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  ogImage: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+} | null;
+
+// Source: ../../packages/sanity-queries/src/announcements.ts
+// Variable: ANNOUNCEMENT_SLUGS_QUERY
+// Query: *[_type == "announcement" && defined(slug.current)]{ "slug": slug.current }
+export type ANNOUNCEMENT_SLUGS_QUERY_RESULT = Array<{
+  slug: string;
+}>;
+
 // Source: ../../packages/sanity-queries/src/conference.ts
 // Variable: CFP_CONFIG_QUERY
 // Query: *[_type == "conference"][0]{    _id,    name,    cfpOpen,    cfpDeadline,    cfpGuidelines  }
@@ -1563,6 +1653,9 @@ export type VENUE_QUERY_RESULT = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
+    '*[_type == "announcement"] | order(publishedAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    publishedAt,\n    excerpt,\n    coverImage { ..., alt }\n  }': ANNOUNCEMENTS_QUERY_RESULT;
+    '*[_type == "announcement" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    publishedAt,\n    excerpt,\n    body[] { ... },\n    coverImage { ..., alt },\n    seoTitle,\n    seoDescription,\n    ogImage\n  }': ANNOUNCEMENT_DETAIL_QUERY_RESULT;
+    '*[_type == "announcement" && defined(slug.current)]{ "slug": slug.current }': ANNOUNCEMENT_SLUGS_QUERY_RESULT;
     '*[_type == "conference"][0]{\n    _id,\n    name,\n    cfpOpen,\n    cfpDeadline,\n    cfpGuidelines\n  }': CFP_CONFIG_QUERY_RESULT;
     '*[_type == "conference"][0]{\n    _id,\n    name,\n    "slug": slug.current,\n    tagline,\n    description,\n    startDate,\n    endDate,\n    venue->{\n      _id,\n      name,\n      address\n    },\n    tracks[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      color\n    },\n    logo { ..., alt },\n    socialCard\n  }': CONFERENCE_QUERY_RESULT;
     '*[_type == "conference"][0]{\n    name,\n    logo { ..., alt },\n    registrationUrl,\n    registrationLabel,\n    socialLinks,\n    "pages": *[_type == "page"] | order(title asc) { _id, title, "slug": slug.current }\n  }': NAV_QUERY_RESULT;

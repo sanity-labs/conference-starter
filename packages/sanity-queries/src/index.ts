@@ -1,3 +1,8 @@
+export {
+  ANNOUNCEMENTS_QUERY,
+  ANNOUNCEMENT_DETAIL_QUERY,
+  ANNOUNCEMENT_SLUGS_QUERY,
+} from './announcements'
 export {CONFERENCE_QUERY, CFP_CONFIG_QUERY} from './conference'
 export {NAV_QUERY} from './navigation'
 export {PAGE_QUERY, PAGE_SLUGS_QUERY} from './pages'

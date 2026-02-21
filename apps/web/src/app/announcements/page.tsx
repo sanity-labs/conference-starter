@@ -1,0 +1,66 @@
+import {Suspense} from 'react'
+import Link from 'next/link'
+import type {Metadata} from 'next'
+import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
+import type {DynamicFetchOptions} from '@/sanity/live'
+import {ANNOUNCEMENTS_QUERY} from '@repo/sanity-queries'
+
+export const metadata: Metadata = {
+  title: 'Announcements — Everything NYC 2026',
+  description: 'Latest news and updates from Everything NYC 2026.',
+}
+
+export default function AnnouncementsPage() {
+  return (
+    <main className="mx-auto max-w-3xl px-6 py-24">
+      <h1 className="text-4xl font-bold tracking-tight">Announcements</h1>
+      <Suspense>
+        <AnnouncementsListDynamic />
+      </Suspense>
+    </main>
+  )
+}
+
+async function AnnouncementsListDynamic() {
+  const opts = await getDynamicFetchOptions()
+  return <AnnouncementsListCached {...opts} />
+}
+
+async function AnnouncementsListCached({perspective, stega}: DynamicFetchOptions) {
+  'use cache'
+
+  const {data: announcements} = await sanityFetch({
+    query: ANNOUNCEMENTS_QUERY,
+    perspective,
+    stega,
+  })
+
+  if (!announcements || announcements.length === 0) {
+    return <p className="mt-8 text-gray-500">No announcements yet.</p>
+  }
+
+  return (
+    <ul className="mt-8 space-y-8">
+      {announcements.map((item) => (
+        <li key={item._id}>
+          <article>
+            <Link href={`/announcements/${item.slug}`}>
+              <h2 className="text-xl font-semibold">{item.title}</h2>
+            </Link>
+            {item.publishedAt && (
+              <time dateTime={item.publishedAt} className="text-sm text-gray-500">
+                {new Date(item.publishedAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  timeZone: 'America/New_York',
+                })}
+              </time>
+            )}
+            {item.excerpt && <p className="mt-1 text-gray-600">{item.excerpt}</p>}
+          </article>
+        </li>
+      ))}
+    </ul>
+  )
+}

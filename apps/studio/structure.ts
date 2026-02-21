@@ -11,6 +11,7 @@ import {
   BellIcon,
   EnvelopeIcon,
   ComposeIcon,
+  ActivityIcon,
 } from '@sanity/icons'
 import {EmailPreview} from './components/EmailPreview'
 
@@ -238,6 +239,16 @@ export const structure: StructureResolver = (S) =>
                   ),
               ),
             ]),
+        ),
+
+      // Logs
+      S.listItem()
+        .title('Email Logs')
+        .icon(ActivityIcon)
+        .child(
+          S.documentTypeList('emailLog')
+            .title('Email Logs')
+            .defaultOrdering([{field: 'sentAt', direction: 'desc'}]),
         ),
     ])
 

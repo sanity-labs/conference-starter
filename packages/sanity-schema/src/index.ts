@@ -10,6 +10,7 @@ import {page} from './documents/page'
 import {announcement} from './documents/announcement'
 import {submission} from './documents/submission'
 import {emailTemplate} from './documents/emailTemplate'
+import {emailLog} from './documents/emailLog'
 
 import {cta} from './objects/cta'
 import {hero} from './objects/hero'
@@ -35,6 +36,7 @@ export const schemaTypes = [
   announcement,
   submission,
   emailTemplate,
+  emailLog,
   // Objects
   cta,
   hero,

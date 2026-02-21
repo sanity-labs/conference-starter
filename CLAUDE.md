@@ -39,6 +39,14 @@ packages/email/                  # React Email templates + Resend integration
 ### Three-Layer `use cache` Component Pattern
 Every page follows: (1) sync page with `<Suspense>`, (2) dynamic layer calling `getDynamicFetchOptions()` outside cache boundary, (3) cached component with `'use cache'` receiving `perspective` and `stega` as cache keys. See `plans/sanity-live-use-cache-docs.md` for full docs.
 
+### Editable AI Prompts
+AI instruction prompts (used by Sanity Functions) are stored as `prompt` documents in the Content Lake with path-based IDs (e.g., `prompt.cfpScreening`). This lets organizers tweak prompts in Studio without code changes. Key details:
+- `liveEdit: true` — edits take effect immediately, no draft/publish workflow
+- Functions fetch via `*[_id == "prompt.cfpScreening"][0].instruction`
+- Prompts use `$variable` placeholders that map to `instructionParams` in Agent Actions
+- Studio structure: "AI Prompts" section with singleton entries per prompt
+- Seed: `cd apps/studio && npx sanity exec ../../scripts/seed-prompts.ts --with-user-token`
+
 ### Content Model (10 core types)
 - **session** — unified type (keynote/talk/panel/workshop/lightning/break/social) with conditional fields via `hidden` callbacks on `sessionType`. NOT separate document types per format.
 - **scheduleSlot** — join document (when/where). Session = content (what/who), slot = logistics.

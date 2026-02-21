@@ -616,6 +616,15 @@ export type Conference = {
     _key: string;
   }>;
   scoringCriteria?: string;
+  registrationUrl?: string;
+  registrationLabel?: string;
+  socialLinks?: {
+    twitter?: string;
+    linkedin?: string;
+    youtube?: string;
+    instagram?: string;
+    mastodon?: string;
+  };
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: {

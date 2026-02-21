@@ -11,6 +11,7 @@ export const conference = defineType({
     {name: 'details', title: 'Details', default: true},
     {name: 'cfp', title: 'Call for Papers'},
     {name: 'venue', title: 'Venue & Logistics'},
+    {name: 'links', title: 'Links'},
     {name: 'branding', title: 'Branding'},
     {name: 'seo', title: 'SEO'},
   ],
@@ -166,6 +167,37 @@ export const conference = defineType({
       rows: 6,
       description:
         'Internal scoring criteria used by the AI screener (Sprint 3). Describe what makes a strong submission — topic relevance, speaker experience, audience fit, novelty. Not displayed publicly.',
+    }),
+    // Links
+    defineField({
+      name: 'registrationUrl',
+      title: 'Registration URL',
+      type: 'url',
+      group: 'links',
+      description:
+        'External registration link (e.g., Luma, Eventbrite). Displayed as the primary CTA in the site header.',
+    }),
+    defineField({
+      name: 'registrationLabel',
+      title: 'Registration Button Label',
+      type: 'string',
+      group: 'links',
+      description: 'Text for the registration CTA button. Defaults to "Register" if left empty.',
+    }),
+    defineField({
+      name: 'socialLinks',
+      title: 'Social Links',
+      type: 'object',
+      group: 'links',
+      description:
+        'Social media profile URLs for the conference. Displayed in the site footer. Content Agent: use these when directing attendees to follow official channels.',
+      fields: [
+        defineField({name: 'twitter', title: 'X / Twitter', type: 'url'}),
+        defineField({name: 'linkedin', title: 'LinkedIn', type: 'url'}),
+        defineField({name: 'youtube', title: 'YouTube', type: 'url'}),
+        defineField({name: 'instagram', title: 'Instagram', type: 'url'}),
+        defineField({name: 'mastodon', title: 'Mastodon', type: 'url'}),
+      ],
     }),
     ...seoFields('seo'),
   ],

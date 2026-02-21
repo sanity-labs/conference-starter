@@ -9,18 +9,17 @@ interface SubmissionEvent {
   status: string
 }
 
-const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <noreply@everything.nyc>'
+const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <onboarding@resend.dev>'
 
-export const handler = documentEventHandler<SubmissionEvent>(async ({event}) => {
+export const handler = documentEventHandler<SubmissionEvent>(async ({context, event}) => {
   const {data} = event
+  const dryRun = Boolean(context.local)
 
   // Only send emails for accepted or rejected status
   if (data.status !== 'accepted' && data.status !== 'rejected') {
-    return
-  }
-
-  if (!process.env.RESEND_API_KEY) {
-    console.error('RESEND_API_KEY not configured, skipping status email')
+    if (dryRun) {
+      console.log(`[dry-run] Status is "${data.status}" — no email would be sent`)
+    }
     return
   }
 
@@ -28,8 +27,6 @@ export const handler = documentEventHandler<SubmissionEvent>(async ({event}) => 
     console.error(`Submission ${data._id} has no submitter email, skipping`)
     return
   }
-
-  const resend = new Resend(process.env.RESEND_API_KEY)
 
   const isAccepted = data.status === 'accepted'
   const subject = isAccepted
@@ -39,6 +36,20 @@ export const handler = documentEventHandler<SubmissionEvent>(async ({event}) => 
   const html = isAccepted
     ? buildAcceptedHtml({submitterName: data.submitterName, sessionTitle: data.sessionTitle})
     : buildRejectedHtml({submitterName: data.submitterName, sessionTitle: data.sessionTitle})
+
+  if (dryRun) {
+    console.log(`[dry-run] Would send ${data.status} email to ${data.submitterEmail}`)
+    console.log(`[dry-run] Subject: ${subject}`)
+    console.log(`[dry-run] HTML length: ${html.length} chars`)
+    return
+  }
+
+  if (!process.env.RESEND_API_KEY) {
+    console.error('RESEND_API_KEY not configured, skipping status email')
+    return
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY)
 
   const {error} = await resend.emails.send({
     from: FROM_ADDRESS,

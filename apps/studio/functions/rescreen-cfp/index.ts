@@ -1,6 +1,12 @@
 import {documentEventHandler} from '@sanity/functions'
 import {createClient} from '@sanity/client'
 
+/**
+ * Re-screening function. Triggers when a submission status changes to 'screening'
+ * (via the "Re-screen" document action in Studio). Performs the same AI evaluation
+ * as screen-cfp but on update rather than create.
+ */
+
 interface SubmissionEvent {
   _id: string
   sessionTitle: string
@@ -9,7 +15,6 @@ interface SubmissionEvent {
   level: string
   topics: string[]
   submitterName: string
-  submitterEmail: string
   bio: string
   status: string
   conference: {_ref: string}
@@ -17,15 +22,25 @@ interface SubmissionEvent {
 
 export const handler = documentEventHandler<SubmissionEvent>(async ({context, event}) => {
   const {data} = event
+  const dryRun = Boolean(context.local)
   const client = createClient({
     ...context.clientOptions,
     apiVersion: 'vX',
   })
 
-  try {
-    // Set status to screening
-    await client.patch(data._id).set({status: 'screening'}).commit()
+  if (dryRun) {
+    console.log(`[dry-run] rescreen-cfp triggered for submission ${data._id}`)
+    console.log(`[dry-run] Would run AI re-evaluation, then set status to "scored"`)
+    console.log(`[dry-run] Submission: "${data.sessionTitle}" (${data.sessionType}) by ${data.submitterName}`)
 
+    const criteria = await client.fetch<string | null>(
+      `*[_type == "conference"][0].scoringCriteria`,
+    )
+    console.log(`[dry-run] Scoring criteria ${criteria ? `found (${criteria.length} chars)` : 'MISSING — would fail in production'}`)
+    return
+  }
+
+  try {
     // Fetch scoring criteria from conference document
     const criteria = await client.fetch<string | null>(
       `*[_type == "conference"][0].scoringCriteria`,
@@ -41,6 +56,11 @@ export const handler = documentEventHandler<SubmissionEvent>(async ({context, ev
       documentId: data._id,
       instruction: `Evaluate this CFP submission against the conference scoring criteria.
 
+Session title: $title
+Session type: $sessionType
+Abstract: $abstract
+Speaker bio: $bio
+
 Scoring criteria:
 $criteria
 
@@ -53,13 +73,19 @@ Rate the submission on a scale of 0 to 100 based on:
 The score field must be a number between 0 and 100.
 Write a brief 2-3 sentence evaluation summary explaining the score.`,
       instructionParams: {
+        title: {type: 'field', path: 'sessionTitle'},
+        sessionType: {type: 'field', path: 'sessionType'},
+        abstract: {type: 'field', path: 'abstract'},
+        bio: {type: 'field', path: 'bio'},
         criteria: {
           type: 'constant',
           value: criteria,
         },
       },
       target: {path: 'aiScreening', include: ['score', 'summary']},
-      conditionalPaths: {defaultReadOnly: false},
+      conditionalPaths: {
+        defaultReadOnly: false,
+      },
       noWrite: true,
     })
 
@@ -86,9 +112,9 @@ Write a brief 2-3 sentence evaluation summary explaining the score.`,
       })
       .commit()
 
-    console.log(`Submission ${data._id} scored: ${score}`)
+    console.log(`Submission ${data._id} re-scored: ${score}`)
   } catch (error) {
-    console.error(`Failed to screen submission ${data._id}:`, error)
+    console.error(`Failed to re-screen submission ${data._id}:`, error)
 
     // Revert status to submitted on failure
     try {
@@ -96,7 +122,7 @@ Write a brief 2-3 sentence evaluation summary explaining the score.`,
         .patch(data._id)
         .set({
           status: 'submitted',
-          reviewNotes: `AI screening failed: ${error instanceof Error ? error.message : 'Unknown error'}. Manual review required.`,
+          reviewNotes: `AI re-screening failed: ${error instanceof Error ? error.message : 'Unknown error'}. Manual review required.`,
         })
         .commit()
     } catch (revertError) {

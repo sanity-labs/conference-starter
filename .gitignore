@@ -21,6 +21,7 @@ Thumbs.db
 
 # Sanity
 schema.json
+.sanity/
 
 # Debug
 npm-debug.log*
@@ -28,3 +29,8 @@ pnpm-debug.log*
 
 # Export data (large binary)
 production-export-*/
+
+# Sanity Functions
+**/functions/**/.env*
+**/functions/**/.build/
+**/functions/**/node_modules/

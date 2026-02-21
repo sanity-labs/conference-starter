@@ -10,15 +10,20 @@
   },
   "dependencies": {
     "@repo/sanity-schema": "workspace:*",
+    "@sanity/blueprints": "^0.12.2",
+    "@sanity/client": "^7.15.0",
     "@sanity/color-input": "^6.0.0",
+    "@sanity/functions": "^1.2.0",
     "@sanity/icons": "^3.7.4",
     "@sanity/vision": "^5.11.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "resend": "^6.9.2",
     "sanity": "^5.11.0",
     "styled-components": "^6.1.15"
   },
   "devDependencies": {
+    "@types/node": "^25.3.0",
     "@types/react": "^19.0.0",
     "typescript": "^5.8.0"
   }

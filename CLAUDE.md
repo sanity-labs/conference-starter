@@ -25,12 +25,13 @@ This repo is currently in **pre-Sprint 0** — planning docs exist in `plans/`, 
 ## Planned Monorepo Structure
 
 ```
-apps/web/              # Next.js conference website
-apps/studio/           # Sanity Studio
-packages/sanity-schema/  # Content model + TypeScript types
-packages/sanity-queries/ # GROQ queries (colocated, not scattered in pages)
-packages/email/        # React Email templates + Resend integration
-functions/             # Sanity Functions (Blueprints)
+apps/web/                        # Next.js conference website
+apps/studio/                     # Sanity Studio
+apps/studio/functions/           # Sanity Functions (Blueprints)
+apps/studio/sanity.blueprint.ts  # Blueprint manifest
+packages/sanity-schema/          # Content model + TypeScript types
+packages/sanity-queries/         # GROQ queries (colocated, not scattered in pages)
+packages/email/                  # React Email templates + Resend integration
 ```
 
 ## Key Architecture Patterns
@@ -98,4 +99,4 @@ All specs live in `plans/`:
 - GROQ queries in `packages/sanity-queries`, never scattered in page components
 - Schema in `packages/sanity-schema`, consumed by web app and functions
 - Conventional commits (commitlint)
-- `pnpm` as package manager
+- **`pnpm` is the package manager** — always use `pnpm` (not npm/yarn) for install, add, run, exec. Use `pnpx` instead of `npx` for one-off commands (e.g., `pnpx sanity@latest ...`)

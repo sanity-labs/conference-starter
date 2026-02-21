@@ -1,8 +1,0 @@
-{
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "@sanity/client": "^7.15.0",
-    "@sanity/functions": "^1.2.0"
-  }
-}

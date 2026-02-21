@@ -10,11 +10,6 @@
     "predev": "tsx scripts/check-next-version.ts"
   },
   "devDependencies": {
-    "@sanity/blueprints": "^0.12.2",
-    "@sanity/client": "^7.15.0",
-    "@sanity/functions": "^1.2.0",
-    "@types/node": "^25.3.0",
-    "resend": "^6.9.2",
     "tsx": "^4.19.0",
     "turbo": "^2.5.0",
     "typescript": "^5.8.0"

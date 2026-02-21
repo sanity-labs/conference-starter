@@ -8,27 +8,35 @@ interface SubmissionEvent {
   submitterEmail: string
 }
 
-const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <noreply@everything.nyc>'
+const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <onboarding@resend.dev>'
 
-export const handler = documentEventHandler<SubmissionEvent>(async ({event}) => {
+export const handler = documentEventHandler<SubmissionEvent>(async ({context, event}) => {
   const {data} = event
-
-  if (!process.env.RESEND_API_KEY) {
-    console.error('RESEND_API_KEY not configured, skipping confirmation email')
-    return
-  }
+  const dryRun = Boolean(context.local)
 
   if (!data.submitterEmail) {
     console.error(`Submission ${data._id} has no submitter email, skipping`)
     return
   }
 
-  const resend = new Resend(process.env.RESEND_API_KEY)
-
   const html = buildConfirmationHtml({
     submitterName: data.submitterName,
     sessionTitle: data.sessionTitle,
   })
+
+  if (dryRun) {
+    console.log(`[dry-run] Would send confirmation email to ${data.submitterEmail}`)
+    console.log(`[dry-run] Subject: Submission received: ${data.sessionTitle}`)
+    console.log(`[dry-run] HTML length: ${html.length} chars`)
+    return
+  }
+
+  if (!process.env.RESEND_API_KEY) {
+    console.error('RESEND_API_KEY not configured, skipping confirmation email')
+    return
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY)
 
   const {error} = await resend.emails.send({
     from: FROM_ADDRESS,

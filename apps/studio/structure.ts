@@ -12,6 +12,7 @@ import {
   EnvelopeIcon,
   ComposeIcon,
   ActivityIcon,
+  RobotIcon,
 } from '@sanity/icons'
 import {EmailPreview} from './components/EmailPreview'
 
@@ -249,6 +250,23 @@ export const structure: StructureResolver = (S) =>
           S.documentTypeList('emailLog')
             .title('Email Logs')
             .defaultOrdering([{field: 'sentAt', direction: 'desc'}]),
+        ),
+
+      S.divider(),
+
+      // AI Prompts
+      S.listItem()
+        .title('AI Prompts')
+        .icon(RobotIcon)
+        .child(
+          S.list()
+            .title('AI Prompts')
+            .items([
+              S.listItem()
+                .title('CFP Screening')
+                .icon(RobotIcon)
+                .child(S.document().schemaType('prompt').documentId('prompt.cfpScreening')),
+            ]),
         ),
     ])
 

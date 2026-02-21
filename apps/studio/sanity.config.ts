@@ -42,5 +42,6 @@ export default defineConfig({
       }
       return prev
     },
+    newDocumentOptions: (prev) => prev.filter((item) => item.templateId !== 'prompt'),
   },
 })

@@ -6,6 +6,7 @@ import type {DynamicFetchOptions} from '@/sanity/live'
 import {client} from '@/sanity/client'
 import {PAGE_QUERY, PAGE_SLUGS_QUERY} from '@repo/sanity-queries'
 import {PageSections} from '@/components/sections'
+import {ogImageUrl} from '@/lib/metadata'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -18,9 +19,11 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const page = await fetchPageForMetadata(slug)
   if (!page) return {}
+  const image = ogImageUrl(page.ogImage)
   return {
-    title: `${page.seoTitle || page.title} — Everything NYC 2026`,
+    title: page.seoTitle || page.title,
     description: page.seoDescription || undefined,
+    ...(image && {openGraph: {images: [{url: image, width: 1200, height: 630}]}}),
   }
 }
 

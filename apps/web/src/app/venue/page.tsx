@@ -19,9 +19,9 @@ async function fetchVenueForMetadata() {
 
 export async function generateMetadata(): Promise<Metadata> {
   const venue = await fetchVenueForMetadata()
-  if (!venue) return {title: 'Venue — Everything NYC 2026'}
+  if (!venue) return {title: 'Venue'}
   return {
-    title: `${venue.name} — Everything NYC 2026`,
+    title: venue.name,
     description: venue.address ? `Join us at ${venue.name}, ${venue.address}` : `Venue for Everything NYC 2026`,
   }
 }

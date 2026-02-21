@@ -9,7 +9,7 @@ import {stegaClean} from '@sanity/client/stega'
 import {SanityImage} from '@/components/sanity-image'
 
 export const metadata: Metadata = {
-  title: 'Schedule — Everything NYC 2026',
+  title: 'Schedule',
   description: 'Full conference schedule for Everything NYC 2026.',
 }
 

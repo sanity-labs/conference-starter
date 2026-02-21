@@ -8,7 +8,7 @@ import {PortableText} from '@/components/portable-text'
 import {CfpForm} from './cfp-form'
 
 export const metadata: Metadata = {
-  title: 'Call for Papers — Everything NYC 2026',
+  title: 'Call for Papers',
   description: 'Submit your talk proposal for Everything NYC 2026.',
 }
 

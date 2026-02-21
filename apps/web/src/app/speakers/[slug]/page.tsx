@@ -11,8 +11,7 @@ import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
 import {JsonLd} from '@/components/json-ld'
 import type {Person} from 'schema-dts'
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://everything-nyc.sanity.dev'
+import {SITE_URL, ogImageUrl} from '@/lib/metadata'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -25,9 +24,14 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const speaker = await fetchSpeakerForMetadata(slug)
   if (!speaker) return {}
+  const image = ogImageUrl(speaker.ogImage) ?? ogImageUrl(speaker.photo)
   return {
-    title: `${speaker.seoTitle || speaker.name} — Everything NYC 2026`,
+    title: speaker.seoTitle || speaker.name,
     description: speaker.seoDescription || `${speaker.role} at ${speaker.company}`,
+    openGraph: {
+      type: 'profile',
+      ...(image && {images: [{url: image, width: 1200, height: 630}]}),
+    },
   }
 }
 

@@ -6,7 +6,7 @@ import type {DynamicFetchOptions} from '@/sanity/live'
 import {ANNOUNCEMENTS_QUERY} from '@repo/sanity-queries'
 
 export const metadata: Metadata = {
-  title: 'Announcements — Everything NYC 2026',
+  title: 'Announcements',
   description: 'Latest news and updates from Everything NYC 2026.',
 }
 

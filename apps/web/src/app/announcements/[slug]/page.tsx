@@ -8,6 +8,7 @@ import {client} from '@/sanity/client'
 import {ANNOUNCEMENT_DETAIL_QUERY, ANNOUNCEMENT_SLUGS_QUERY} from '@repo/sanity-queries'
 import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
+import {ogImageUrl} from '@/lib/metadata'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -20,9 +21,15 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const announcement = await fetchAnnouncementForMetadata(slug)
   if (!announcement) return {}
+  const image = ogImageUrl(announcement.ogImage) ?? ogImageUrl(announcement.coverImage)
   return {
-    title: `${announcement.seoTitle || announcement.title} — Everything NYC 2026`,
+    title: announcement.seoTitle || announcement.title,
     description: announcement.seoDescription || announcement.excerpt || undefined,
+    openGraph: {
+      type: 'article',
+      ...(announcement.publishedAt && {publishedTime: announcement.publishedAt}),
+      ...(image && {images: [{url: image, width: 1200, height: 630}]}),
+    },
   }
 }
 

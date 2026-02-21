@@ -8,7 +8,7 @@ import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
 
 export const metadata: Metadata = {
-  title: 'Sponsors — Everything NYC 2026',
+  title: 'Sponsors',
   description: 'The companies and communities making Everything NYC 2026 possible.',
 }
 

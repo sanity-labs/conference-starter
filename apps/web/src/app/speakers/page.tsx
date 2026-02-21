@@ -7,7 +7,7 @@ import {SPEAKERS_QUERY} from '@repo/sanity-queries'
 import {SanityImage} from '@/components/sanity-image'
 
 export const metadata: Metadata = {
-  title: 'Speakers — Everything NYC 2026',
+  title: 'Speakers',
   description: 'Meet the speakers at Everything NYC 2026.',
 }
 

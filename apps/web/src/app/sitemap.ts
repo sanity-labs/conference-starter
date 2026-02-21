@@ -6,8 +6,7 @@ import {
   PAGE_SLUGS_QUERY,
   ANNOUNCEMENT_SLUGS_QUERY,
 } from '@repo/sanity-queries'
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://everything-nyc.sanity.dev'
+import {SITE_URL} from '@/lib/metadata'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [speakers, sessions, pages, announcements] = await Promise.all([

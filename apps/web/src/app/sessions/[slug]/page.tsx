@@ -10,6 +10,7 @@ import type {SESSION_DETAIL_QUERY_RESULT} from '@repo/sanity-queries'
 import {stegaClean} from '@sanity/client/stega'
 import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
+import {ogImageUrl} from '@/lib/metadata'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -22,9 +23,14 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const session = await fetchSessionForMetadata(slug)
   if (!session) return {}
+  const image = ogImageUrl(session.ogImage)
   return {
-    title: `${session.seoTitle || session.title} — Everything NYC 2026`,
+    title: session.seoTitle || session.title,
     description: session.seoDescription || undefined,
+    openGraph: {
+      type: 'article',
+      ...(image && {images: [{url: image, width: 1200, height: 630}]}),
+    },
   }
 }
 

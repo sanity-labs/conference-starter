@@ -1,5 +1,6 @@
 import {Suspense} from 'react'
 import Link from 'next/link'
+import type {Metadata} from 'next'
 import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
 import {CONFERENCE_QUERY, SPEAKERS_QUERY} from '@repo/sanity-queries'
@@ -10,8 +11,31 @@ import type {
 import {SanityImage} from '@/components/sanity-image'
 import {JsonLd} from '@/components/json-ld'
 import type {Event} from 'schema-dts'
+import {SITE_URL, ogImageUrl} from '@/lib/metadata'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://everything-nyc.sanity.dev'
+async function fetchConferenceForMetadata() {
+  'use cache'
+  const {data} = await sanityFetch({
+    query: CONFERENCE_QUERY,
+    perspective: 'published',
+    stega: false,
+  })
+  return data
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const conference = await fetchConferenceForMetadata()
+  if (!conference) return {}
+  const image = ogImageUrl(conference.socialCard)
+  return {
+    title: conference.name ?? undefined,
+    description: conference.description ?? undefined,
+    openGraph: {
+      type: 'website',
+      ...(image && {images: [{url: image, width: 1200, height: 630}]}),
+    },
+  }
+}
 
 // Layer 1: Sync page with Suspense
 export default function HomePage() {

@@ -1,4 +1,4 @@
-import type {StructureResolver} from 'sanity/structure'
+import type {DefaultDocumentNodeResolver, StructureResolver} from 'sanity/structure'
 import {
   CalendarIcon,
   UserIcon,
@@ -10,7 +10,9 @@ import {
   DocumentIcon,
   BellIcon,
   EnvelopeIcon,
+  ComposeIcon,
 } from '@sanity/icons'
+import {EmailPreview} from './components/EmailPreview'
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -212,4 +214,39 @@ export const structure: StructureResolver = (S) =>
             .defaultOrdering([{field: 'publishedAt', direction: 'desc'}]),
         ),
 
+      // Email Templates
+      S.listItem()
+        .title('Email Templates')
+        .icon(ComposeIcon)
+        .child(
+          S.list()
+            .title('Email Templates')
+            .items([
+              S.listItem()
+                .title('All Templates')
+                .icon(ComposeIcon)
+                .child(S.documentTypeList('emailTemplate').title('All Templates')),
+              S.divider(),
+              ...['active', 'draft', 'archived'].map((status) =>
+                S.listItem()
+                  .title(status.charAt(0).toUpperCase() + status.slice(1))
+                  .child(
+                    S.documentList()
+                      .title(`${status.charAt(0).toUpperCase() + status.slice(1)} Templates`)
+                      .filter('_type == "emailTemplate" && status == $status')
+                      .params({status}),
+                  ),
+              ),
+            ]),
+        ),
     ])
+
+export const defaultDocumentNode: DefaultDocumentNodeResolver = (S, {schemaType}) => {
+  if (schemaType === 'emailTemplate') {
+    return S.document().views([
+      S.view.form(),
+      S.view.component(EmailPreview).title('Email Preview'),
+    ])
+  }
+  return S.document()
+}

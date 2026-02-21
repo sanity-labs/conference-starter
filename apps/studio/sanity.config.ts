@@ -4,7 +4,7 @@ import {visionTool} from '@sanity/vision'
 import {colorInput} from '@sanity/color-input'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from '@repo/sanity-schema'
-import {structure} from './structure'
+import {structure, defaultDocumentNode} from './structure'
 import {resolve} from './resolve'
 
 export default defineConfig({
@@ -15,7 +15,7 @@ export default defineConfig({
   dataset: process.env.SANITY_STUDIO_DATASET!,
 
   plugins: [
-    structureTool({structure}),
+    structureTool({structure, defaultDocumentNode}),
     visionTool(),
     colorInput(),
     presentationTool({

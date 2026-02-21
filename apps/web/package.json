@@ -12,6 +12,8 @@
   "dependencies": {
     "@portabletext/react": "^6.0.2",
     "@portabletext/types": "^4.0.1",
+    "@react-email/render": "^2.0.4",
+    "@repo/email": "workspace:*",
     "@repo/sanity-queries": "workspace:*",
     "@repo/sanity-schema": "workspace:*",
     "@sanity/client": "^7.3.0",

@@ -1,4 +1,5 @@
 import {Card, Text, Badge, Flex, Stack} from '@sanity/ui'
+import {useDraggable} from '@dnd-kit/core'
 import type {SessionData} from '../types'
 
 interface SessionCardProps {
@@ -18,17 +19,27 @@ const TYPE_TONES: Record<string, 'primary' | 'positive' | 'caution' | 'critical'
 export function SessionCard({session, isSelected, onClick}: SessionCardProps) {
   const trackColor = session.track?.color?.hex
 
+  const {attributes, listeners, setNodeRef, isDragging} = useDraggable({
+    id: `session-${session._id}`,
+    data: {type: 'session' as const, session},
+  })
+
   return (
     <Card
+      ref={setNodeRef}
       padding={3}
       radius={2}
       shadow={isSelected ? 2 : 1}
       tone={isSelected ? 'primary' : undefined}
       style={{
-        cursor: onClick ? 'pointer' : 'default',
+        cursor: onClick ? 'grab' : 'default',
         borderLeft: trackColor ? `3px solid ${trackColor}` : undefined,
+        opacity: isDragging ? 0.4 : 1,
+        touchAction: 'none',
       }}
       onClick={onClick ? () => onClick(session) : undefined}
+      {...listeners}
+      {...attributes}
     >
       <Stack space={2}>
         <Text size={1} weight="semibold">

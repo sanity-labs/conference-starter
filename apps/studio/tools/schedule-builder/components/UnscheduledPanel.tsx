@@ -1,7 +1,7 @@
-import {useState, startTransition, useMemo} from 'react'
+import {useState, startTransition, useMemo, useEffect} from 'react'
 import {useQuery} from '@sanity/sdk-react'
-import {Stack, TextInput, Select, Text, Card, Flex, Heading, Badge} from '@sanity/ui'
-import {SearchIcon} from '@sanity/icons'
+import {Stack, TextInput, Select, Text, Card, Flex, Heading, Badge, Button} from '@sanity/ui'
+import {SearchIcon, ChevronLeftIcon, ChevronRightIcon} from '@sanity/icons'
 import {UNSCHEDULED_QUERY} from '../queries'
 import type {SessionData} from '../types'
 import {SessionCard} from './SessionCard'
@@ -17,6 +17,14 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession}: Unschedul
   const [searchText, setSearchText] = useState('')
   const [filterTrack, setFilterTrack] = useState('')
   const [filterType, setFilterType] = useState('')
+  const [collapsed, setCollapsed] = useState(false)
+
+  // Auto-collapse when all sessions are scheduled
+  useEffect(() => {
+    if (sessions && sessions.length === 0) {
+      setCollapsed(true)
+    }
+  }, [sessions])
 
   // Extract unique tracks and types for filter dropdowns
   const tracks = useMemo(() => {
@@ -68,6 +76,52 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession}: Unschedul
     }
   }
 
+  const sessionCount = sessions?.length ?? 0
+
+  // Collapsed state: thin strip with count + expand button
+  if (collapsed) {
+    return (
+      <Card
+        borderRight
+        style={{
+          width: 44,
+          minWidth: 44,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Flex direction="column" align="center" gap={2} paddingY={3}>
+          <Button
+            icon={ChevronRightIcon}
+            mode="bleed"
+            fontSize={1}
+            padding={2}
+            onClick={() => setCollapsed(false)}
+            title="Expand sidebar"
+          />
+          {sessionCount > 0 && (
+            <Badge tone="primary" fontSize={0}>
+              {sessionCount}
+            </Badge>
+          )}
+          <Text
+            size={0}
+            muted
+            style={{
+              writingMode: 'vertical-rl',
+              textOrientation: 'mixed',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {sessionCount} unscheduled
+          </Text>
+        </Flex>
+      </Card>
+    )
+  }
+
   return (
     <Card
       borderRight
@@ -82,10 +136,20 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession}: Unschedul
       <Card padding={3} borderBottom>
         <Stack space={3}>
           <Flex align="center" gap={2}>
-            <Heading size={1}>Unscheduled</Heading>
+            <Heading size={1} style={{flex: 1}}>
+              Unscheduled
+            </Heading>
             <Badge tone="default" fontSize={0}>
               {filtered.length}
             </Badge>
+            <Button
+              icon={ChevronLeftIcon}
+              mode="bleed"
+              fontSize={1}
+              padding={2}
+              onClick={() => setCollapsed(true)}
+              title="Collapse sidebar"
+            />
           </Flex>
           <TextInput
             icon={SearchIcon}

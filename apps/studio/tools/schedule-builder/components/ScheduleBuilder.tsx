@@ -9,14 +9,30 @@ import {
   deleteDocument,
 } from '@sanity/sdk-react'
 import {useWorkspace} from 'sanity'
-import {Flex, Spinner, Text, Card, useToast} from '@sanity/ui'
+import {Flex, Spinner, Text, Card, Button, useToast} from '@sanity/ui'
+import {CloseIcon} from '@sanity/icons'
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import type {DragStartEvent, DragEndEvent, Active} from '@dnd-kit/core'
 import {CONFERENCE_QUERY, SLOTS_QUERY, ROOMS_QUERY} from '../queries'
 import type {ConferenceData, SlotData, RoomData, SessionData} from '../types'
-import {getConferenceDays, getDayBounds, generateTimeIntervals} from '../utils/timeGrid'
+import {
+  getConferenceDays,
+  getDayBounds,
+  generateTimeIntervals,
+  computeTimeRange,
+} from '../utils/timeGrid'
 import {ConferenceHeader} from './ConferenceHeader'
 import {ScheduleGrid} from './ScheduleGrid'
 import {UnscheduledPanel} from './UnscheduledPanel'
 import {AssignmentDialog} from './AssignmentDialog'
+import {DragOverlayContent} from './DragOverlayContent'
 import type {AssignTarget} from './AssignmentDialog'
 
 function ScheduleContent() {
@@ -59,6 +75,14 @@ function ScheduleWithConference({
   const [selectedSession, setSelectedSession] = useState<SessionData | null>(null)
   const [editingSlot, setEditingSlot] = useState<SlotData | null>(null)
   const [assignTarget, setAssignTarget] = useState<AssignTarget | null>(null)
+  const [activeDrag, setActiveDrag] = useState<Active | null>(null)
+
+  // Sensors: pointer with 5px distance activation (so clicks still work), + keyboard
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {distance: 5},
+  })
+  const keyboardSensor = useSensor(KeyboardSensor)
+  const sensors = useSensors(pointerSensor, keyboardSensor)
 
   const handleSelectDay = (day: string) => {
     setIsPending(true)
@@ -96,76 +120,150 @@ function ScheduleWithConference({
     setSelectedSession(null)
   }, [])
 
+  const handleCancelSelection = useCallback(() => {
+    setSelectedSession(null)
+  }, [])
+
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    setActiveDrag(event.active)
+  }, [])
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      setActiveDrag(null)
+
+      const {active, over} = event
+      if (!over?.data?.current) return
+
+      const overData = over.data.current as {roomId: string; time: string}
+      if (!overData.roomId || !overData.time) return
+
+      const activeData = active.data.current as
+        | {type: 'session'; session: SessionData}
+        | {type: 'slot'; slot: SlotData}
+
+      if (activeData.type === 'session') {
+        // Dragged from sidebar: select session + set target → opens dialog
+        setSelectedSession(activeData.session)
+        setAssignTarget({roomId: overData.roomId, time: overData.time})
+      } else if (activeData.type === 'slot') {
+        // Dragged existing slot: edit it → opens dialog
+        setEditingSlot(activeData.slot)
+        setAssignTarget({roomId: overData.roomId, time: overData.time})
+      }
+    },
+    [],
+  )
+
   const {dayStart, dayEnd} = useMemo(() => getDayBounds(selectedDay), [selectedDay])
-  const intervals = useMemo(() => generateTimeIntervals(selectedDay), [selectedDay])
 
   const showDialog = editingSlot || (assignTarget && selectedSession)
 
+  // Determine the session to show in the drag overlay
+  const dragSession = useMemo(() => {
+    if (!activeDrag?.data?.current) return null
+    const data = activeDrag.data.current as
+      | {type: 'session'; session: SessionData}
+      | {type: 'slot'; slot: SlotData}
+    if (data.type === 'session') return data.session
+    if (data.type === 'slot') return data.slot.session
+    return null
+  }, [activeDrag])
+
   return (
-    <Flex direction="column" style={{height: '100%'}}>
-      <ConferenceHeader
-        conferenceName={conference.name}
-        days={days}
-        selectedDay={selectedDay}
-        onSelectDay={handleSelectDay}
-        isPending={isPending}
-      />
-      <Flex
-        flex={1}
-        style={{
-          overflow: 'hidden',
-          opacity: isPending ? 0.6 : 1,
-          transition: 'opacity 150ms',
-        }}
-      >
-        <Suspense
-          fallback={
-            <Card padding={4} style={{width: 300, minWidth: 300}}>
-              <Flex align="center" gap={3}>
-                <Spinner muted />
-                <Text muted>Loading sessions...</Text>
-              </Flex>
-            </Card>
-          }
-        >
-          <UnscheduledPanel
-            selectedSessionId={selectedSession?._id ?? null}
-            onSelectSession={handleSelectSession}
-          />
-        </Suspense>
-        <Suspense
-          fallback={
-            <Flex padding={4} align="center" gap={3} flex={1}>
-              <Spinner muted />
-              <Text muted>Loading schedule...</Text>
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <Flex direction="column" style={{height: '100%'}}>
+        <ConferenceHeader
+          conferenceName={conference.name}
+          days={days}
+          selectedDay={selectedDay}
+          onSelectDay={handleSelectDay}
+          isPending={isPending}
+        />
+        {/* Selection banner: shown when a session is selected for placement */}
+        {selectedSession && !activeDrag && (
+          <Card padding={2} paddingX={3} tone="primary" borderBottom>
+            <Flex align="center" gap={3}>
+              <Text size={1}>
+                Click a cell to place: <strong>{selectedSession.title}</strong>
+              </Text>
+              <Button
+                mode="bleed"
+                tone="primary"
+                icon={CloseIcon}
+                fontSize={1}
+                padding={1}
+                text="Cancel"
+                onClick={handleCancelSelection}
+              />
             </Flex>
-          }
+          </Card>
+        )}
+        <Flex
+          flex={1}
+          style={{
+            overflow: 'hidden',
+            minHeight: 0,
+            opacity: isPending ? 0.6 : 1,
+            transition: 'opacity 150ms',
+          }}
         >
-          <GridWithActions
-            conferenceId={conference._id}
-            dayStart={dayStart}
-            dayEnd={dayEnd}
-            intervals={intervals}
-            selectedSession={selectedSession}
-            editingSlot={editingSlot}
-            assignTarget={assignTarget}
-            showDialog={!!showDialog}
-            onSlotClick={handleSlotClick}
-            onCellClick={handleCellClick}
-            onCloseDialog={handleCloseDialog}
-            onAssigned={handleAssigned}
-          />
-        </Suspense>
+          <Suspense
+            fallback={
+              <Card padding={4} style={{width: 300, minWidth: 300}}>
+                <Flex align="center" gap={3}>
+                  <Spinner muted />
+                  <Text muted>Loading sessions...</Text>
+                </Flex>
+              </Card>
+            }
+          >
+            <UnscheduledPanel
+              selectedSessionId={selectedSession?._id ?? null}
+              onSelectSession={handleSelectSession}
+            />
+          </Suspense>
+          <Suspense
+            fallback={
+              <Flex padding={4} align="center" gap={3} flex={1}>
+                <Spinner muted />
+                <Text muted>Loading schedule...</Text>
+              </Flex>
+            }
+          >
+            <GridWithActions
+              conferenceId={conference._id}
+              selectedDay={selectedDay}
+              dayStart={dayStart}
+              dayEnd={dayEnd}
+              selectedSession={selectedSession}
+              editingSlot={editingSlot}
+              assignTarget={assignTarget}
+              showDialog={!!showDialog}
+              onSlotClick={handleSlotClick}
+              onCellClick={handleCellClick}
+              onCloseDialog={handleCloseDialog}
+              onAssigned={handleAssigned}
+            />
+          </Suspense>
+        </Flex>
       </Flex>
-    </Flex>
+      <DragOverlay dropAnimation={null}>
+        {dragSession ? <DragOverlayContent session={dragSession} /> : null}
+      </DragOverlay>
+    </DndContext>
   )
 }
 
 function GridWithActions({
   conferenceId,
+  selectedDay,
   dayStart,
   dayEnd,
-  intervals,
   selectedSession,
   editingSlot,
   assignTarget,
@@ -176,9 +274,9 @@ function GridWithActions({
   onAssigned,
 }: {
   conferenceId: string
+  selectedDay: string
   dayStart: string
   dayEnd: string
-  intervals: ReturnType<typeof generateTimeIntervals>
   selectedSession: SessionData | null
   editingSlot: SlotData | null
   assignTarget: AssignTarget | null
@@ -195,6 +293,13 @@ function GridWithActions({
   const {data: rooms} = useQuery<RoomData[]>({query: ROOMS_QUERY})
   const apply = useApplyDocumentActions()
   const toast = useToast()
+
+  // Auto-fit time range based on actual slot data
+  const {startHour, endHour} = useMemo(() => computeTimeRange(slots ?? []), [slots])
+  const intervals = useMemo(
+    () => generateTimeIntervals(selectedDay, startHour, endHour),
+    [selectedDay, startHour, endHour],
+  )
 
   const handleAssign = useCallback(
     async (data: {
@@ -304,6 +409,7 @@ function GridWithActions({
         intervals={intervals}
         onSlotClick={onSlotClick}
         onCellClick={selectedSession ? onCellClick : undefined}
+        hasSelectedSession={!!selectedSession}
       />
       {showDialog && (
         <AssignmentDialog

@@ -1,16 +1,17 @@
 import type {TimeInterval} from '../types'
+import type {SlotData} from '../types'
 
 const TIMEZONE = 'America/New_York'
 const INTERVAL_MINUTES = 15
 
 /**
  * Generate 15-minute time intervals for a given day.
- * Default range: 8:00 AM to 8:00 PM (covers typical conference hours).
+ * Default range: 8:00 AM to 6:00 PM (covers typical conference hours).
  */
 export function generateTimeIntervals(
   dateStr: string,
   startHour = 8,
-  endHour = 20,
+  endHour = 18,
 ): TimeInterval[] {
   const intervals: TimeInterval[] = []
   let row = 1
@@ -34,6 +35,55 @@ export function generateTimeIntervals(
   }
 
   return intervals
+}
+
+/**
+ * Compute the optimal start/end hours for the grid based on actual slot data.
+ * Adds 1-hour padding on each side, clamped to 7AM–10PM.
+ * Falls back to 8AM–6PM when no slots exist.
+ */
+export function computeTimeRange(slots: SlotData[]): {startHour: number; endHour: number} {
+  if (slots.length === 0) return {startHour: 8, endHour: 18}
+
+  let minHour = 23
+  let maxHour = 0
+
+  for (const slot of slots) {
+    if (!slot.startTime || !slot.endTime) continue
+
+    const startDate = new Date(slot.startTime)
+    const endDate = new Date(slot.endTime)
+
+    // Convert to NYC timezone hours
+    const startStr = startDate.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      hour12: false,
+      timeZone: TIMEZONE,
+    })
+    const endStr = endDate.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: TIMEZONE,
+    })
+
+    const sHour = parseInt(startStr, 10)
+    // For end time, round up if there are minutes past the hour
+    const [eHour, eMin] = endStr.split(':').map(Number)
+    const effectiveEndHour = eMin > 0 ? eHour + 1 : eHour
+
+    if (sHour < minHour) minHour = sHour
+    if (effectiveEndHour > maxHour) maxHour = effectiveEndHour
+  }
+
+  // If we couldn't parse any valid slots, fallback
+  if (minHour > maxHour) return {startHour: 8, endHour: 18}
+
+  // Add 1-hour padding, clamp to 7AM–10PM
+  const startHour = Math.max(7, minHour - 1)
+  const endHour = Math.min(22, maxHour + 1)
+
+  return {startHour, endHour}
 }
 
 /**

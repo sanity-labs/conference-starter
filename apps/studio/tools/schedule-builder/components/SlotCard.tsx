@@ -1,4 +1,5 @@
 import {Card, Text, Badge, Flex, Stack} from '@sanity/ui'
+import {useDraggable} from '@dnd-kit/core'
 import type {SlotData} from '../types'
 import {ConflictBadge} from './ConflictBadge'
 
@@ -25,22 +26,32 @@ export function SlotCard({slot, conflictCount = 0, onClick}: SlotCardProps) {
   const trackColor = session.track?.color?.hex
   const tone = conflictCount > 0 ? 'critical' : undefined
 
+  const {attributes, listeners, setNodeRef, isDragging} = useDraggable({
+    id: `slot-${slot._id}`,
+    data: {type: 'slot' as const, slot},
+  })
+
   return (
     <Card
+      ref={setNodeRef}
       padding={2}
       radius={2}
       tone={tone}
       shadow={1}
       style={{
-        cursor: onClick ? 'pointer' : 'default',
+        cursor: onClick ? 'grab' : 'default',
         borderLeft: trackColor ? `3px solid ${trackColor}` : undefined,
         overflow: 'hidden',
         height: '100%',
+        opacity: isDragging ? 0.4 : 1,
+        touchAction: 'none',
       }}
       onClick={onClick ? () => onClick(slot) : undefined}
+      {...listeners}
+      {...attributes}
     >
       <Stack space={1}>
-        <Text size={1} weight="semibold" textOverflow="ellipsis">
+        <Text size={1} weight="semibold" textOverflow="ellipsis" title={session.title}>
           {session.title}
         </Text>
         <Flex gap={1} wrap="wrap">
@@ -53,6 +64,11 @@ export function SlotCard({slot, conflictCount = 0, onClick}: SlotCardProps) {
             >
               {session.sessionType}
             </Badge>
+          )}
+          {session.duration && (
+            <Text size={0} muted>
+              {session.duration}m
+            </Text>
           )}
           <ConflictBadge conflictCount={conflictCount} />
         </Flex>

@@ -26,6 +26,10 @@ export function TimeAxis({intervals}: TimeAxisProps) {
               alignItems: 'start',
               justifyContent: 'flex-end',
               minHeight: 20,
+              position: 'sticky',
+              left: 0,
+              zIndex: 1,
+              background: 'var(--card-bg-color)',
             }}
           >
             {isHourOrHalf && (

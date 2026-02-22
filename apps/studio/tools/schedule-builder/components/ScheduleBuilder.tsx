@@ -1,6 +1,7 @@
 import {Suspense, useState, startTransition, useMemo, useCallback} from 'react'
 import {
   SanityApp,
+  SDKStudioContext,
   useQuery,
   useApplyDocumentActions,
   createDocumentHandle,
@@ -8,6 +9,8 @@ import {
   publishDocument,
   deleteDocument,
 } from '@sanity/sdk-react'
+import type {StudioWorkspaceHandle} from '@sanity/sdk-react'
+import {useWorkspace} from 'sanity'
 import {Flex, Spinner, Text, Card, useToast} from '@sanity/ui'
 import {CONFERENCE_QUERY, SLOTS_QUERY, ROOMS_QUERY} from '../queries'
 import type {ConferenceData, SlotData, RoomData, SessionData} from '../types'
@@ -17,6 +20,21 @@ import {ScheduleGrid} from './ScheduleGrid'
 import {UnscheduledPanel} from './UnscheduledPanel'
 import {AssignmentDialog} from './AssignmentDialog'
 import type {AssignTarget} from './AssignmentDialog'
+
+/**
+ * Bridge: sanity@5.11 doesn't provide SDKStudioContext yet.
+ * This wrapper passes the Studio workspace to the SDK so SanityApp
+ * picks up projectId, dataset, and auth automatically.
+ * Remove once Studio ships native SDKStudioContext support.
+ */
+function SDKBridge({children}: {children: React.ReactNode}) {
+  const workspace = useWorkspace()
+  return (
+    <SDKStudioContext.Provider value={workspace as unknown as StudioWorkspaceHandle}>
+      {children}
+    </SDKStudioContext.Provider>
+  )
+}
 
 function ScheduleContent() {
   const {data: conference} = useQuery<ConferenceData>({query: CONFERENCE_QUERY})
@@ -326,23 +344,25 @@ function GridWithActions({
 
 export function ScheduleBuilder() {
   return (
-    <SanityApp
-      fallback={
-        <Flex padding={4} align="center" justify="center" style={{height: '100%'}}>
-          <Spinner muted />
-        </Flex>
-      }
-    >
-      <Suspense
+    <SDKBridge>
+      <SanityApp
         fallback={
-          <Flex padding={4} align="center" gap={3}>
+          <Flex padding={4} align="center" justify="center" style={{height: '100%'}}>
             <Spinner muted />
-            <Text muted>Loading conference...</Text>
           </Flex>
         }
       >
-        <ScheduleContent />
-      </Suspense>
-    </SanityApp>
+        <Suspense
+          fallback={
+            <Flex padding={4} align="center" gap={3}>
+              <Spinner muted />
+              <Text muted>Loading conference...</Text>
+            </Flex>
+          }
+        >
+          <ScheduleContent />
+        </Suspense>
+      </SanityApp>
+    </SDKBridge>
   )
 }

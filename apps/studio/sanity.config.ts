@@ -9,6 +9,7 @@ import {resolve} from './resolve'
 import {acceptSubmission} from './actions/acceptSubmission'
 import {rejectSubmission} from './actions/rejectSubmission'
 import {rescreenSubmission} from './actions/rescreenSubmission'
+import {scheduleBuilder} from './tools/schedule-builder'
 
 export default defineConfig({
   name: 'default',
@@ -29,6 +30,7 @@ export default defineConfig({
         },
       },
     }),
+    scheduleBuilder(),
   ],
 
   schema: {

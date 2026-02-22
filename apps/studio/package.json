@@ -15,6 +15,8 @@
     "@sanity/color-input": "^6.0.0",
     "@sanity/functions": "^1.2.0",
     "@sanity/icons": "^3.7.4",
+    "@sanity/sdk-react": "^2.8.0",
+    "@sanity/ui": "^3.1.11",
     "@sanity/vision": "^5.11.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

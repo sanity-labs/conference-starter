@@ -83,14 +83,8 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession}: Unschedul
     return (
       <Card
         borderRight
-        style={{
-          width: 44,
-          minWidth: 44,
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
+        height="fill"
+        style={{width: 44, minWidth: 44}}
       >
         <Flex direction="column" align="center" gap={2} paddingY={3}>
           <Button
@@ -125,87 +119,83 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession}: Unschedul
   return (
     <Card
       borderRight
-      style={{
-        width: 280,
-        minWidth: 200,
-        maxWidth: 320,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
+      height="fill"
+      style={{width: 280, minWidth: 200, maxWidth: 320}}
     >
-      <Card padding={3} borderBottom>
-        <Stack space={3}>
-          <Flex align="center" gap={2}>
-            <Heading size={1} style={{flex: 1}}>
-              Unscheduled
-            </Heading>
-            <Badge tone="default" fontSize={0}>
-              {filtered.length}
-            </Badge>
-            <Button
-              icon={ChevronLeftIcon}
-              mode="bleed"
+      <Flex direction="column" height="fill">
+        <Card padding={3} borderBottom>
+          <Stack space={3}>
+            <Flex align="center" gap={2}>
+              <Heading size={1} style={{flex: 1}}>
+                Unscheduled
+              </Heading>
+              <Badge tone="default" fontSize={0}>
+                {filtered.length}
+              </Badge>
+              <Button
+                icon={ChevronLeftIcon}
+                mode="bleed"
+                fontSize={1}
+                padding={2}
+                onClick={() => setCollapsed(true)}
+                title="Collapse sidebar"
+              />
+            </Flex>
+            <TextInput
+              icon={SearchIcon}
+              placeholder="Search sessions..."
+              value={searchText}
+              onChange={(e) => handleSearch(e.currentTarget.value)}
               fontSize={1}
-              padding={2}
-              onClick={() => setCollapsed(true)}
-              title="Collapse sidebar"
             />
-          </Flex>
-          <TextInput
-            icon={SearchIcon}
-            placeholder="Search sessions..."
-            value={searchText}
-            onChange={(e) => handleSearch(e.currentTarget.value)}
-            fontSize={1}
-          />
-          <Flex gap={2}>
-            <Select
-              fontSize={1}
-              value={filterTrack}
-              onChange={(e) => handleTrackFilter(e.currentTarget.value)}
-            >
-              <option value="">All tracks</option>
-              {tracks.map(([id, name]) => (
-                <option key={id} value={id}>
-                  {name}
-                </option>
-              ))}
-            </Select>
-            <Select
-              fontSize={1}
-              value={filterType}
-              onChange={(e) => handleTypeFilter(e.currentTarget.value)}
-            >
-              <option value="">All types</option>
-              {types.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </Select>
-          </Flex>
+            <Flex gap={2}>
+              <Select
+                fontSize={1}
+                value={filterTrack}
+                onChange={(e) => handleTrackFilter(e.currentTarget.value)}
+              >
+                <option value="">All tracks</option>
+                {tracks.map(([id, name]) => (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                fontSize={1}
+                value={filterType}
+                onChange={(e) => handleTypeFilter(e.currentTarget.value)}
+              >
+                <option value="">All types</option>
+                {types.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </Select>
+            </Flex>
+          </Stack>
+        </Card>
+        <Stack space={2} padding={2} overflow="auto" flex={1}>
+          {filtered.length === 0 && (
+            <Card padding={3}>
+              <Text size={1} muted align="center">
+                {sessions && sessions.length === 0
+                  ? 'All sessions are scheduled!'
+                  : 'No matching sessions.'}
+              </Text>
+            </Card>
+          )}
+          {filtered.map((session) => (
+            <SessionCard
+              key={session._id}
+              session={session}
+              isSelected={selectedSessionId === session._id}
+              onClick={handleClick}
+            />
+          ))}
         </Stack>
-      </Card>
-      <Stack space={2} padding={2} style={{overflow: 'auto', flex: 1}}>
-        {filtered.length === 0 && (
-          <Card padding={3}>
-            <Text size={1} muted align="center">
-              {sessions && sessions.length === 0
-                ? 'All sessions are scheduled!'
-                : 'No matching sessions.'}
-            </Text>
-          </Card>
-        )}
-        {filtered.map((session) => (
-          <SessionCard
-            key={session._id}
-            session={session}
-            isSelected={selectedSessionId === session._id}
-            onClick={handleClick}
-          />
-        ))}
-      </Stack>
+      </Flex>
     </Card>
   )
 }

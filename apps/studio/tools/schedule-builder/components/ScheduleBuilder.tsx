@@ -192,7 +192,7 @@ function ScheduleWithConference({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <Flex direction="column" style={{height: '100%'}}>
+      <Flex direction="column" height="fill">
         <ConferenceHeader
           conferenceName={conference.name}
           days={days}
@@ -221,8 +221,8 @@ function ScheduleWithConference({
         )}
         <Flex
           flex={1}
+          overflow="hidden"
           style={{
-            overflow: 'hidden',
             minHeight: 0,
             opacity: isPending ? 0.6 : 1,
             transition: 'opacity 150ms',
@@ -520,7 +520,7 @@ export function ScheduleBuilder() {
     <SanityApp
       config={config}
       fallback={
-        <Flex padding={4} align="center" justify="center" style={{height: '100%'}}>
+        <Flex padding={4} align="center" justify="center" height="fill">
           <Spinner muted />
         </Flex>
       }

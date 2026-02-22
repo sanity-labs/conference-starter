@@ -46,11 +46,11 @@ export function SlotCard({slot, conflictCount = 0, onClick, rowSpan = 4}: SlotCa
       radius={2}
       tone={tone}
       shadow={1}
+      overflow="hidden"
+      height="fill"
       style={{
         cursor: onClick ? 'grab' : 'default',
         borderLeft: trackColor ? `3px solid ${trackColor}` : undefined,
-        overflow: 'hidden',
-        height: '100%',
         opacity: isDragging ? 0.4 : 1,
         touchAction: 'none',
       }}
@@ -59,7 +59,7 @@ export function SlotCard({slot, conflictCount = 0, onClick, rowSpan = 4}: SlotCa
       {...attributes}
     >
       {isCompact ? (
-        <Flex gap={1} align="center" style={{height: '100%'}}>
+        <Flex gap={1} align="center" height="fill">
           <Text size={0} weight="semibold" textOverflow="ellipsis" style={{flex: 1}} title={session.title}>
             {session.title}
           </Text>

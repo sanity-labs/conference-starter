@@ -1,4 +1,4 @@
-import {Suspense, useState, startTransition, useMemo, useCallback} from 'react'
+import {Suspense, useState, startTransition, useMemo, useCallback, useRef} from 'react'
 import {
   SanityApp,
   useQuery,
@@ -34,6 +34,15 @@ import {UnscheduledPanel} from './UnscheduledPanel'
 import {AssignmentDialog} from './AssignmentDialog'
 import {DragOverlayContent} from './DragOverlayContent'
 import type {AssignTarget} from './AssignmentDialog'
+
+/** Callback exposed by GridWithActions for direct slot moves (no dialog) */
+export type DirectMoveFn = (
+  slotId: string,
+  roomId: string,
+  time: string,
+  duration: number,
+  isPlenary: boolean,
+) => Promise<void>
 
 function ScheduleContent() {
   const {data: conference} = useQuery<ConferenceData>({query: CONFERENCE_QUERY})
@@ -76,6 +85,9 @@ function ScheduleWithConference({
   const [editingSlot, setEditingSlot] = useState<SlotData | null>(null)
   const [assignTarget, setAssignTarget] = useState<AssignTarget | null>(null)
   const [activeDrag, setActiveDrag] = useState<Active | null>(null)
+
+  // Ref for direct slot moves — GridWithActions sets this so the drag handler can call it
+  const directMoveRef = useRef<DirectMoveFn | null>(null)
 
   // Sensors: pointer with 5px distance activation (so clicks still work), + keyboard
   const pointerSensor = useSensor(PointerSensor, {
@@ -147,9 +159,13 @@ function ScheduleWithConference({
         setSelectedSession(activeData.session)
         setAssignTarget({roomId: overData.roomId, time: overData.time})
       } else if (activeData.type === 'slot') {
-        // Dragged existing slot: edit it → opens dialog
-        setEditingSlot(activeData.slot)
-        setAssignTarget({roomId: overData.roomId, time: overData.time})
+        // Dragged existing slot: move directly without dialog
+        const slot = activeData.slot
+        const duration = slot.session?.duration ?? 30
+        const isPlenary = slot.isPlenary ?? false
+        if (directMoveRef.current) {
+          directMoveRef.current(slot._id, overData.roomId, overData.time, duration, isPlenary)
+        }
       }
     },
     [],
@@ -214,7 +230,7 @@ function ScheduleWithConference({
         >
           <Suspense
             fallback={
-              <Card padding={4} style={{width: 300, minWidth: 300}}>
+              <Card padding={4} style={{width: 280, minWidth: 220, maxWidth: 320, flexShrink: 0}}>
                 <Flex align="center" gap={3}>
                   <Spinner muted />
                   <Text muted>Loading sessions...</Text>
@@ -244,6 +260,7 @@ function ScheduleWithConference({
               editingSlot={editingSlot}
               assignTarget={assignTarget}
               showDialog={!!showDialog}
+              directMoveRef={directMoveRef}
               onSlotClick={handleSlotClick}
               onCellClick={handleCellClick}
               onCloseDialog={handleCloseDialog}
@@ -268,6 +285,7 @@ function GridWithActions({
   editingSlot,
   assignTarget,
   showDialog,
+  directMoveRef,
   onSlotClick,
   onCellClick,
   onCloseDialog,
@@ -281,6 +299,7 @@ function GridWithActions({
   editingSlot: SlotData | null
   assignTarget: AssignTarget | null
   showDialog: boolean
+  directMoveRef: React.MutableRefObject<DirectMoveFn | null>
   onSlotClick: (slot: SlotData) => void
   onCellClick: (roomId: string, time: string) => void
   onCloseDialog: () => void
@@ -372,6 +391,49 @@ function GridWithActions({
     },
     [apply, conferenceId, editingSlot, toast, onAssigned],
   )
+
+  // Direct move: used by DnD drag-end for existing slots (no dialog)
+  const handleDirectMove = useCallback(
+    async (slotId: string, roomId: string, time: string, duration: number, isPlenary: boolean) => {
+      const startTime = time
+      const endTime = new Date(new Date(time).getTime() + duration * 60 * 1000).toISOString()
+
+      // Find the slot to get the session reference
+      const slot = (slots ?? []).find((s) => s._id === slotId)
+      const sessionId = slot?.session?._id
+      if (!sessionId) return
+
+      const handle = createDocumentHandle({
+        documentId: slotId,
+        documentType: 'scheduleSlot',
+      })
+
+      try {
+        await apply([deleteDocument(handle)])
+        const newHandle = createDocumentHandle({
+          documentId: slotId,
+          documentType: 'scheduleSlot',
+        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- SDK generic types don't know our schema fields
+        const initialValue: any = {
+          session: {_type: 'reference', _ref: sessionId},
+          conference: {_type: 'reference', _ref: conferenceId},
+          room: {_type: 'reference', _ref: roomId},
+          startTime,
+          endTime,
+          isPlenary,
+        }
+        await apply([createDocument(newHandle, initialValue), publishDocument(newHandle)])
+        toast.push({status: 'success', title: 'Slot moved'})
+      } catch (err) {
+        toast.push({status: 'error', title: 'Failed to move slot'})
+      }
+    },
+    [apply, conferenceId, slots, toast],
+  )
+
+  // Expose direct move to parent's drag handler via ref
+  directMoveRef.current = handleDirectMove
 
   const handleRemove = useCallback(
     async (slotId: string) => {

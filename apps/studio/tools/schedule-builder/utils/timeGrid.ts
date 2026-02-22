@@ -79,8 +79,8 @@ export function computeTimeRange(slots: SlotData[]): {startHour: number; endHour
   // If we couldn't parse any valid slots, fallback
   if (minHour > maxHour) return {startHour: 8, endHour: 18}
 
-  // Add 1-hour padding, clamp to 7AM–10PM
-  const startHour = Math.max(7, minHour - 1)
+  // Tight fit: start at earliest hour, add 30-min padding at end only
+  const startHour = Math.max(7, minHour)
   const endHour = Math.min(22, maxHour + 1)
 
   return {startHour, endHour}

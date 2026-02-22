@@ -35,7 +35,7 @@ export function DroppableCell({
       style={{
         gridRow,
         gridColumn,
-        minHeight: 20,
+        minHeight: 24,
         cursor: isClickable ? 'pointer' : 'default',
         borderLeft:
           roomIdx > 0

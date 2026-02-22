@@ -1,4 +1,4 @@
-import {Card, Text, Badge, Flex} from '@sanity/ui'
+import {Card, Text, Badge, Flex, Stack} from '@sanity/ui'
 import type {SessionData} from '../types'
 
 interface DragOverlayContentProps {
@@ -29,26 +29,28 @@ export function DragOverlayContent({session}: DragOverlayContentProps) {
         cursor: 'grabbing',
       }}
     >
-      <Text size={1} weight="semibold" textOverflow="ellipsis">
-        {session.title}
-      </Text>
-      <Flex gap={1} wrap="wrap" style={{marginTop: 4}}>
-        {session.sessionType && (
-          <Badge
-            tone={TYPE_TONES[session.sessionType] ?? 'default'}
-            fontSize={0}
-            paddingX={1}
-            paddingY={0}
-          >
-            {session.sessionType}
-          </Badge>
-        )}
-        {session.duration && (
-          <Text size={0} muted>
-            {session.duration}m
-          </Text>
-        )}
-      </Flex>
+      <Stack space={1}>
+        <Text size={1} weight="semibold" textOverflow="ellipsis">
+          {session.title}
+        </Text>
+        <Flex gap={1} wrap="wrap">
+          {session.sessionType && (
+            <Badge
+              tone={TYPE_TONES[session.sessionType] ?? 'default'}
+              fontSize={0}
+              paddingX={1}
+              paddingY={0}
+            >
+              {session.sessionType}
+            </Badge>
+          )}
+          {session.duration && (
+            <Text size={0} muted>
+              {session.duration}m
+            </Text>
+          )}
+        </Flex>
+      </Stack>
     </Card>
   )
 }

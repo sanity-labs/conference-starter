@@ -64,11 +64,12 @@ export function ScheduleGrid({
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: `80px repeat(${rooms.length}, minmax(140px, 1fr))`,
-        gridTemplateRows: `auto repeat(${totalRows}, 20px)`,
+        gridTemplateColumns: `64px repeat(${rooms.length}, minmax(120px, 1fr))`,
+        gridTemplateRows: `auto repeat(${totalRows}, 24px)`,
         overflow: 'auto',
         flex: 1,
         minHeight: 0,
+        minWidth: 0,
       }}
     >
       {/* Header row: empty corner + room names */}
@@ -152,10 +153,14 @@ export function ScheduleGrid({
               gridColumn,
               gridRow,
               zIndex: 1,
-              padding: 1,
+              padding: '0 2px 2px 2px',
+              borderLeft:
+                !isPlenary && col > 2
+                  ? '1px solid var(--card-hairline-soft-color, rgba(0,0,0,0.04))'
+                  : undefined,
             }}
           >
-            <SlotCard slot={slot} conflictCount={conflictCount} onClick={onSlotClick} />
+            <SlotCard slot={slot} conflictCount={conflictCount} onClick={onSlotClick} rowSpan={span} />
           </div>
         )
       })}

@@ -21,11 +21,11 @@ export function TimeAxis({intervals}: TimeAxisProps) {
             style={{
               gridRow: interval.row + 1, // +1 for header row
               gridColumn: 1,
-              paddingRight: 8,
+              paddingRight: 6,
               display: 'flex',
               alignItems: 'start',
               justifyContent: 'flex-end',
-              minHeight: 20,
+              minHeight: 24,
               position: 'sticky',
               left: 0,
               zIndex: 1,

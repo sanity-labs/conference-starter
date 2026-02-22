@@ -126,8 +126,10 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession}: Unschedul
     <Card
       borderRight
       style={{
-        width: 300,
-        minWidth: 300,
+        width: 280,
+        minWidth: 220,
+        maxWidth: 320,
+        flexShrink: 0,
         height: '100%',
         display: 'flex',
         flexDirection: 'column',

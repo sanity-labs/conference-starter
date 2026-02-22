@@ -64,8 +64,9 @@ export function ScheduleGrid({
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: `64px repeat(${rooms.length}, minmax(120px, 1fr))`,
+        gridTemplateColumns: `56px repeat(${rooms.length}, minmax(100px, 1fr))`,
         gridTemplateRows: `auto repeat(${totalRows}, 24px)`,
+        alignContent: 'start',
         overflow: 'auto',
         flex: 1,
         minHeight: 0,
@@ -98,7 +99,7 @@ export function ScheduleGrid({
           }}
           tone="default"
         >
-          <Text size={1} weight="semibold" align="center">
+          <Text size={1} weight="semibold" align="center" textOverflow="ellipsis">
             {room.name}
             {room.capacity ? ` \u00b7 ${room.capacity}` : ''}
           </Text>

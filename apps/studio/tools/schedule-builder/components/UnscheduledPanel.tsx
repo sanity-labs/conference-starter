@@ -127,9 +127,8 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession}: Unschedul
       borderRight
       style={{
         width: 280,
-        minWidth: 220,
+        minWidth: 200,
         maxWidth: 320,
-        flexShrink: 0,
         height: '100%',
         display: 'flex',
         flexDirection: 'column',

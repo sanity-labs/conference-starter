@@ -230,7 +230,7 @@ function ScheduleWithConference({
         >
           <Suspense
             fallback={
-              <Card padding={4} style={{width: 280, minWidth: 220, maxWidth: 320, flexShrink: 0}}>
+              <Card padding={4} style={{width: 280, minWidth: 200, maxWidth: 320}}>
                 <Flex align="center" gap={3}>
                   <Spinner muted />
                   <Text muted>Loading sessions...</Text>

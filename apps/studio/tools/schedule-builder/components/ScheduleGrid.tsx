@@ -96,7 +96,8 @@ export function ScheduleGrid({
 
         const startRow = getRowForTime(slot.startTime, intervals) + 1 // +1 for header
         const span = getRowSpan(slot.startTime, slot.endTime)
-        const hasConflict = conflicts.has(slot._id)
+        const conflictIds = conflicts.get(slot._id)
+        const conflictCount = conflictIds?.length ?? 0
 
         // Plenary: span all room columns
         const isPlenary = slot.isPlenary
@@ -113,7 +114,7 @@ export function ScheduleGrid({
               padding: 1,
             }}
           >
-            <SlotCard slot={slot} hasConflict={hasConflict} onClick={onSlotClick} />
+            <SlotCard slot={slot} conflictCount={conflictCount} onClick={onSlotClick} />
           </div>
         )
       })}

@@ -1,9 +1,10 @@
 import {Card, Text, Badge, Flex, Stack} from '@sanity/ui'
 import type {SlotData} from '../types'
+import {ConflictBadge} from './ConflictBadge'
 
 interface SlotCardProps {
   slot: SlotData
-  hasConflict?: boolean
+  conflictCount?: number
   onClick?: (slot: SlotData) => void
 }
 
@@ -17,12 +18,12 @@ const TYPE_TONES: Record<string, 'primary' | 'positive' | 'caution' | 'critical'
   social: 'positive',
 }
 
-export function SlotCard({slot, hasConflict, onClick}: SlotCardProps) {
+export function SlotCard({slot, conflictCount = 0, onClick}: SlotCardProps) {
   const session = slot.session
   if (!session) return null
 
   const trackColor = session.track?.color?.hex
-  const tone = hasConflict ? 'critical' : undefined
+  const tone = conflictCount > 0 ? 'critical' : undefined
 
   return (
     <Card
@@ -53,11 +54,7 @@ export function SlotCard({slot, hasConflict, onClick}: SlotCardProps) {
               {session.sessionType}
             </Badge>
           )}
-          {hasConflict && (
-            <Badge tone="critical" fontSize={0} paddingX={1} paddingY={0}>
-              conflict
-            </Badge>
-          )}
+          <ConflictBadge conflictCount={conflictCount} />
         </Flex>
         {session.speakers && session.speakers.length > 0 && (
           <Text size={0} muted textOverflow="ellipsis">

@@ -1,11 +1,12 @@
-import {Suspense, useState, startTransition, useMemo} from 'react'
+import {Suspense, useState, startTransition, useMemo, useCallback} from 'react'
 import {SanityApp, useQuery} from '@sanity/sdk-react'
 import {Flex, Spinner, Text, Card} from '@sanity/ui'
 import {CONFERENCE_QUERY, SLOTS_QUERY, ROOMS_QUERY} from '../queries'
-import type {ConferenceData, SlotData, RoomData} from '../types'
+import type {ConferenceData, SlotData, RoomData, SessionData} from '../types'
 import {getConferenceDays, getDayBounds, generateTimeIntervals} from '../utils/timeGrid'
 import {ConferenceHeader} from './ConferenceHeader'
 import {ScheduleGrid} from './ScheduleGrid'
+import {UnscheduledPanel} from './UnscheduledPanel'
 
 function ScheduleContent() {
   const {data: conference} = useQuery<ConferenceData>({query: CONFERENCE_QUERY})
@@ -27,7 +28,9 @@ function ScheduleContent() {
   }
 
   return (
-    <ScheduleWithConference conference={conference as ConferenceData & {startDate: string; endDate: string}} />
+    <ScheduleWithConference
+      conference={conference as ConferenceData & {startDate: string; endDate: string}}
+    />
   )
 }
 
@@ -42,6 +45,9 @@ function ScheduleWithConference({
   )
   const [selectedDay, setSelectedDay] = useState(days[0])
   const [isPending, setIsPending] = useState(false)
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null)
+  const [editingSlot, setEditingSlot] = useState<SlotData | null>(null)
+  const [assignTarget, setAssignTarget] = useState<{roomId: string; time: string} | null>(null)
 
   const handleSelectDay = (day: string) => {
     setIsPending(true)
@@ -50,6 +56,23 @@ function ScheduleWithConference({
       setIsPending(false)
     })
   }
+
+  const handleSelectSession = useCallback((session: SessionData | null) => {
+    setSelectedSessionId(session?._id ?? null)
+  }, [])
+
+  const handleSlotClick = useCallback((slot: SlotData) => {
+    setEditingSlot(slot)
+  }, [])
+
+  const handleCellClick = useCallback(
+    (roomId: string, time: string) => {
+      if (selectedSessionId) {
+        setAssignTarget({roomId, time})
+      }
+    },
+    [selectedSessionId],
+  )
 
   const {dayStart, dayEnd} = useMemo(() => getDayBounds(selectedDay), [selectedDay])
   const intervals = useMemo(() => generateTimeIntervals(selectedDay), [selectedDay])
@@ -63,7 +86,29 @@ function ScheduleWithConference({
         onSelectDay={handleSelectDay}
         isPending={isPending}
       />
-      <Flex flex={1} style={{overflow: 'hidden', opacity: isPending ? 0.6 : 1, transition: 'opacity 150ms'}}>
+      <Flex
+        flex={1}
+        style={{
+          overflow: 'hidden',
+          opacity: isPending ? 0.6 : 1,
+          transition: 'opacity 150ms',
+        }}
+      >
+        <Suspense
+          fallback={
+            <Card padding={4} style={{width: 300, minWidth: 300}}>
+              <Flex align="center" gap={3}>
+                <Spinner muted />
+                <Text muted>Loading sessions...</Text>
+              </Flex>
+            </Card>
+          }
+        >
+          <UnscheduledPanel
+            selectedSessionId={selectedSessionId}
+            onSelectSession={handleSelectSession}
+          />
+        </Suspense>
         <Suspense
           fallback={
             <Flex padding={4} align="center" gap={3} flex={1}>
@@ -77,6 +122,9 @@ function ScheduleWithConference({
             dayStart={dayStart}
             dayEnd={dayEnd}
             intervals={intervals}
+            selectedSessionId={selectedSessionId}
+            onSlotClick={handleSlotClick}
+            onCellClick={handleCellClick}
           />
         </Suspense>
       </Flex>
@@ -89,11 +137,17 @@ function GridLoader({
   dayStart,
   dayEnd,
   intervals,
+  selectedSessionId,
+  onSlotClick,
+  onCellClick,
 }: {
   conferenceId: string
   dayStart: string
   dayEnd: string
   intervals: ReturnType<typeof generateTimeIntervals>
+  selectedSessionId: string | null
+  onSlotClick: (slot: SlotData) => void
+  onCellClick: (roomId: string, time: string) => void
 }) {
   const {data: slots} = useQuery<SlotData[]>({
     query: SLOTS_QUERY,
@@ -114,6 +168,8 @@ function GridLoader({
       slots={slots ?? []}
       rooms={rooms}
       intervals={intervals}
+      onSlotClick={onSlotClick}
+      onCellClick={selectedSessionId ? onCellClick : undefined}
     />
   )
 }

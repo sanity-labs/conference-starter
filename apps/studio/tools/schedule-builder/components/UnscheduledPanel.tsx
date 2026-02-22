@@ -1,0 +1,146 @@
+import {useState, startTransition, useMemo} from 'react'
+import {useQuery} from '@sanity/sdk-react'
+import {Stack, TextInput, Select, Text, Card, Flex, Heading, Badge} from '@sanity/ui'
+import {SearchIcon} from '@sanity/icons'
+import {UNSCHEDULED_QUERY} from '../queries'
+import type {SessionData} from '../types'
+import {SessionCard} from './SessionCard'
+
+interface UnscheduledPanelProps {
+  selectedSessionId: string | null
+  onSelectSession: (session: SessionData | null) => void
+}
+
+export function UnscheduledPanel({selectedSessionId, onSelectSession}: UnscheduledPanelProps) {
+  const {data: sessions} = useQuery<SessionData[]>({query: UNSCHEDULED_QUERY})
+
+  const [searchText, setSearchText] = useState('')
+  const [filterTrack, setFilterTrack] = useState('')
+  const [filterType, setFilterType] = useState('')
+
+  // Extract unique tracks and types for filter dropdowns
+  const tracks = useMemo(() => {
+    if (!sessions) return []
+    const trackMap = new Map<string, string>()
+    for (const s of sessions) {
+      if (s.track) trackMap.set(s.track._id, s.track.name)
+    }
+    return Array.from(trackMap.entries()).sort((a, b) => a[1].localeCompare(b[1]))
+  }, [sessions])
+
+  const types = useMemo(() => {
+    if (!sessions) return []
+    const typeSet = new Set<string>()
+    for (const s of sessions) {
+      if (s.sessionType) typeSet.add(s.sessionType)
+    }
+    return Array.from(typeSet).sort()
+  }, [sessions])
+
+  // Filter sessions
+  const filtered = useMemo(() => {
+    if (!sessions) return []
+    return sessions.filter((s) => {
+      if (searchText && !s.title.toLowerCase().includes(searchText.toLowerCase())) return false
+      if (filterTrack && s.track?._id !== filterTrack) return false
+      if (filterType && s.sessionType !== filterType) return false
+      return true
+    })
+  }, [sessions, searchText, filterTrack, filterType])
+
+  const handleSearch = (value: string) => {
+    startTransition(() => setSearchText(value))
+  }
+
+  const handleTrackFilter = (value: string) => {
+    startTransition(() => setFilterTrack(value))
+  }
+
+  const handleTypeFilter = (value: string) => {
+    startTransition(() => setFilterType(value))
+  }
+
+  const handleClick = (session: SessionData) => {
+    if (selectedSessionId === session._id) {
+      onSelectSession(null)
+    } else {
+      onSelectSession(session)
+    }
+  }
+
+  return (
+    <Card
+      borderRight
+      style={{
+        width: 300,
+        minWidth: 300,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <Card padding={3} borderBottom>
+        <Stack space={3}>
+          <Flex align="center" gap={2}>
+            <Heading size={1}>Unscheduled</Heading>
+            <Badge tone="default" fontSize={0}>
+              {filtered.length}
+            </Badge>
+          </Flex>
+          <TextInput
+            icon={SearchIcon}
+            placeholder="Search sessions..."
+            value={searchText}
+            onChange={(e) => handleSearch(e.currentTarget.value)}
+            fontSize={1}
+          />
+          <Flex gap={2}>
+            <Select
+              fontSize={1}
+              value={filterTrack}
+              onChange={(e) => handleTrackFilter(e.currentTarget.value)}
+            >
+              <option value="">All tracks</option>
+              {tracks.map(([id, name]) => (
+                <option key={id} value={id}>
+                  {name}
+                </option>
+              ))}
+            </Select>
+            <Select
+              fontSize={1}
+              value={filterType}
+              onChange={(e) => handleTypeFilter(e.currentTarget.value)}
+            >
+              <option value="">All types</option>
+              {types.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </Select>
+          </Flex>
+        </Stack>
+      </Card>
+      <Stack space={2} padding={2} style={{overflow: 'auto', flex: 1}}>
+        {filtered.length === 0 && (
+          <Card padding={3}>
+            <Text size={1} muted align="center">
+              {sessions && sessions.length === 0
+                ? 'All sessions are scheduled!'
+                : 'No matching sessions.'}
+            </Text>
+          </Card>
+        )}
+        {filtered.map((session) => (
+          <SessionCard
+            key={session._id}
+            session={session}
+            isSelected={selectedSessionId === session._id}
+            onClick={handleClick}
+          />
+        ))}
+      </Stack>
+    </Card>
+  )
+}

@@ -9,9 +9,10 @@ import {SessionCard} from './SessionCard'
 interface UnscheduledPanelProps {
   selectedSessionId: string | null
   onSelectSession: (session: SessionData | null) => void
+  hiddenSessionIds?: Set<string>
 }
 
-export function UnscheduledPanel({selectedSessionId, onSelectSession}: UnscheduledPanelProps) {
+export function UnscheduledPanel({selectedSessionId, onSelectSession, hiddenSessionIds}: UnscheduledPanelProps) {
   const {data: sessions} = useQuery<SessionData[]>({query: UNSCHEDULED_QUERY})
 
   const [searchText, setSearchText] = useState('')
@@ -49,12 +50,13 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession}: Unschedul
   const filtered = useMemo(() => {
     if (!sessions) return []
     return sessions.filter((s) => {
+      if (hiddenSessionIds?.has(s._id)) return false
       if (searchText && !s.title.toLowerCase().includes(searchText.toLowerCase())) return false
       if (filterTrack && s.track?._id !== filterTrack) return false
       if (filterType && s.sessionType !== filterType) return false
       return true
     })
-  }, [sessions, searchText, filterTrack, filterType])
+  }, [sessions, searchText, filterTrack, filterType, hiddenSessionIds])
 
   const handleSearch = (value: string) => {
     startTransition(() => setSearchText(value))
@@ -76,7 +78,7 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession}: Unschedul
     }
   }
 
-  const sessionCount = sessions?.length ?? 0
+  const sessionCount = filtered.length
 
   // Collapsed state: thin strip with count + expand button
   if (collapsed) {

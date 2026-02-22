@@ -1,4 +1,4 @@
-import {Suspense, useState, startTransition, useMemo, useCallback, useRef} from 'react'
+import {Suspense, useState, startTransition, useMemo, useCallback, useRef, useEffect} from 'react'
 import {
   SanityApp,
   useQuery,
@@ -85,6 +85,20 @@ function ScheduleWithConference({
   const [editingSlot, setEditingSlot] = useState<SlotData | null>(null)
   const [assignTarget, setAssignTarget] = useState<AssignTarget | null>(null)
   const [activeDrag, setActiveDrag] = useState<Active | null>(null)
+
+  // Optimistic: hide sessions from sidebar immediately after assignment
+  const [hiddenSessionIds, setHiddenSessionIds] = useState<Set<string>>(new Set())
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleOptimisticHideSession = useCallback((sessionId: string) => {
+    setHiddenSessionIds((prev) => new Set(prev).add(sessionId))
+    // Clear previous timer and set a new one — subscription usually fires within 500ms,
+    // 2s is a generous buffer
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+    hideTimerRef.current = setTimeout(() => {
+      setHiddenSessionIds(new Set())
+    }, 2000)
+  }, [])
 
   // Ref for direct slot moves — GridWithActions sets this so the drag handler can call it
   const directMoveRef = useRef<DirectMoveFn | null>(null)
@@ -241,6 +255,7 @@ function ScheduleWithConference({
             <UnscheduledPanel
               selectedSessionId={selectedSession?._id ?? null}
               onSelectSession={handleSelectSession}
+              hiddenSessionIds={hiddenSessionIds}
             />
           </Suspense>
           <Suspense
@@ -265,6 +280,7 @@ function ScheduleWithConference({
               onCellClick={handleCellClick}
               onCloseDialog={handleCloseDialog}
               onAssigned={handleAssigned}
+              onOptimisticHideSession={handleOptimisticHideSession}
             />
           </Suspense>
         </Flex>
@@ -290,6 +306,7 @@ function GridWithActions({
   onCellClick,
   onCloseDialog,
   onAssigned,
+  onOptimisticHideSession,
 }: {
   conferenceId: string
   selectedDay: string
@@ -304,6 +321,7 @@ function GridWithActions({
   onCellClick: (roomId: string, time: string) => void
   onCloseDialog: () => void
   onAssigned: () => void
+  onOptimisticHideSession: (sessionId: string) => void
 }) {
   const {data: slots} = useQuery<SlotData[]>({
     query: SLOTS_QUERY,
@@ -313,8 +331,22 @@ function GridWithActions({
   const apply = useApplyDocumentActions()
   const toast = useToast()
 
-  // Auto-fit time range based on actual slot data
-  const {startHour, endHour} = useMemo(() => computeTimeRange(slots ?? []), [slots])
+  // Optimistic override: full replacement array that pre-empts query data
+  const [slotsOverride, setSlotsOverride] = useState<SlotData[] | null>(null)
+
+  // When query data changes (subscription fires), drop the override
+  const slotsRef = useRef(slots)
+  useEffect(() => {
+    if (slotsRef.current !== slots) {
+      slotsRef.current = slots
+      setSlotsOverride(null)
+    }
+  }, [slots])
+
+  const effectiveSlots = slotsOverride ?? (slots ?? [])
+
+  // Auto-fit time range based on effective slot data
+  const {startHour, endHour} = useMemo(() => computeTimeRange(effectiveSlots), [effectiveSlots])
   const intervals = useMemo(
     () => generateTimeIntervals(selectedDay, startHour, endHour),
     [selectedDay, startHour, endHour],
@@ -328,10 +360,24 @@ function GridWithActions({
       endTime: string
       isPlenary: boolean
     }) => {
+      const slotId = crypto.randomUUID()
       const handle = createDocumentHandle({
-        documentId: crypto.randomUUID(),
+        documentId: slotId,
         documentType: 'scheduleSlot',
       })
+
+      // Build optimistic slot and apply immediately
+      const room = (rooms ?? []).find((r) => r._id === data.roomId) ?? null
+      const optimisticSlot: SlotData = {
+        _id: slotId,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        isPlenary: data.isPlenary,
+        room,
+        session: selectedSession,
+      }
+      setSlotsOverride([...effectiveSlots, optimisticSlot])
+      onOptimisticHideSession(data.sessionId)
 
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any -- SDK generic types don't know our schema fields
@@ -347,10 +393,11 @@ function GridWithActions({
         toast.push({status: 'success', title: 'Session assigned'})
         onAssigned()
       } catch (err) {
+        setSlotsOverride(null)
         toast.push({status: 'error', title: 'Failed to assign session'})
       }
     },
-    [apply, conferenceId, toast, onAssigned],
+    [apply, conferenceId, rooms, selectedSession, effectiveSlots, toast, onAssigned, onOptimisticHideSession],
   )
 
   const handleUpdate = useCallback(
@@ -365,6 +412,16 @@ function GridWithActions({
         documentId: data.slotId,
         documentType: 'scheduleSlot',
       })
+
+      // Optimistic: update slot in-place
+      const room = (rooms ?? []).find((r) => r._id === data.roomId) ?? null
+      setSlotsOverride(
+        effectiveSlots.map((s) =>
+          s._id === data.slotId
+            ? {...s, startTime: data.startTime, endTime: data.endTime, isPlenary: data.isPlenary, room}
+            : s,
+        ),
+      )
 
       try {
         // Delete and recreate to update all fields atomically
@@ -386,10 +443,11 @@ function GridWithActions({
         toast.push({status: 'success', title: 'Slot updated'})
         onAssigned()
       } catch (err) {
+        setSlotsOverride(null)
         toast.push({status: 'error', title: 'Failed to update slot'})
       }
     },
-    [apply, conferenceId, editingSlot, toast, onAssigned],
+    [apply, conferenceId, rooms, editingSlot, effectiveSlots, toast, onAssigned],
   )
 
   // Direct move: used by DnD drag-end for existing slots (no dialog)
@@ -399,9 +457,17 @@ function GridWithActions({
       const endTime = new Date(new Date(time).getTime() + duration * 60 * 1000).toISOString()
 
       // Find the slot to get the session reference
-      const slot = (slots ?? []).find((s) => s._id === slotId)
+      const slot = effectiveSlots.find((s) => s._id === slotId)
       const sessionId = slot?.session?._id
       if (!sessionId) return
+
+      // Optimistic: move slot to new position
+      const room = (rooms ?? []).find((r) => r._id === roomId) ?? null
+      setSlotsOverride(
+        effectiveSlots.map((s) =>
+          s._id === slotId ? {...s, startTime, endTime, isPlenary, room} : s,
+        ),
+      )
 
       const handle = createDocumentHandle({
         documentId: slotId,
@@ -426,10 +492,11 @@ function GridWithActions({
         await apply([createDocument(newHandle, initialValue), publishDocument(newHandle)])
         toast.push({status: 'success', title: 'Slot moved'})
       } catch (err) {
+        setSlotsOverride(null)
         toast.push({status: 'error', title: 'Failed to move slot'})
       }
     },
-    [apply, conferenceId, slots, toast],
+    [apply, conferenceId, rooms, effectiveSlots, toast],
   )
 
   // Expose direct move to parent's drag handler via ref
@@ -437,6 +504,9 @@ function GridWithActions({
 
   const handleRemove = useCallback(
     async (slotId: string) => {
+      // Optimistic: remove slot from array
+      setSlotsOverride(effectiveSlots.filter((s) => s._id !== slotId))
+
       const handle = createDocumentHandle({
         documentId: slotId,
         documentType: 'scheduleSlot',
@@ -447,10 +517,11 @@ function GridWithActions({
         toast.push({status: 'success', title: 'Slot removed'})
         onAssigned()
       } catch (err) {
+        setSlotsOverride(null)
         toast.push({status: 'error', title: 'Failed to remove slot'})
       }
     },
-    [apply, toast, onAssigned],
+    [apply, effectiveSlots, toast, onAssigned],
   )
 
   if (!rooms || rooms.length === 0) {
@@ -466,7 +537,7 @@ function GridWithActions({
   return (
     <>
       <ScheduleGrid
-        slots={slots ?? []}
+        slots={effectiveSlots}
         rooms={rooms}
         intervals={intervals}
         onSlotClick={onSlotClick}
@@ -481,7 +552,7 @@ function GridWithActions({
           target={assignTarget}
           rooms={rooms}
           intervals={intervals}
-          allSlots={slots ?? []}
+          allSlots={effectiveSlots}
           conferenceId={conferenceId}
           onAssign={handleAssign}
           onUpdate={handleUpdate}

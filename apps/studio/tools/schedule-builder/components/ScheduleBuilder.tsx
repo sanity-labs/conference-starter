@@ -1,7 +1,6 @@
 import {Suspense, useState, startTransition, useMemo, useCallback} from 'react'
 import {
   SanityApp,
-  SDKStudioContext,
   useQuery,
   useApplyDocumentActions,
   createDocumentHandle,
@@ -327,35 +326,47 @@ function GridWithActions({
 }
 
 /**
- * Bridge: sanity@5.11 doesn't provide SDKStudioContext natively yet.
- * Wrapping SanityApp with SDKStudioContext.Provider and passing
- * the workspace from useWorkspace() lets the SDK auto-derive
- * projectId, dataset, and auth. No config prop needed.
+ * Bridge: sanity@5.11 doesn't provide SDKStudioContext natively yet (tracked
+ * in Studio PR #12157). Using SDKStudioContext.Provider + useWorkspace()
+ * fails because workspace.auth.token is an RxJS Observable that emits null
+ * under cookie auth — the SDK subscribes and sets LOGGED_OUT.
+ *
+ * Workaround: pass explicit config with `studio: {}` (empty). This tells the
+ * SDK "we're inside a Studio" WITHOUT providing a TokenSource, so it falls
+ * back to cookie auth via withCredentials — which works because Studio's
+ * cookies are already set.
+ *
  * Remove once Studio ships native SDKStudioContext support.
  */
 export function ScheduleBuilder() {
   const workspace = useWorkspace()
+  const config = useMemo(
+    () => ({
+      projectId: workspace.projectId,
+      dataset: workspace.dataset,
+      studio: {},
+    }),
+    [workspace.projectId, workspace.dataset],
+  )
   return (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- workspace type compatible at runtime
-    <SDKStudioContext.Provider value={workspace as any}>
-      <SanityApp
+    <SanityApp
+      config={config}
+      fallback={
+        <Flex padding={4} align="center" justify="center" style={{height: '100%'}}>
+          <Spinner muted />
+        </Flex>
+      }
+    >
+      <Suspense
         fallback={
-          <Flex padding={4} align="center" justify="center" style={{height: '100%'}}>
+          <Flex padding={4} align="center" gap={3}>
             <Spinner muted />
+            <Text muted>Loading conference...</Text>
           </Flex>
         }
       >
-        <Suspense
-          fallback={
-            <Flex padding={4} align="center" gap={3}>
-              <Spinner muted />
-              <Text muted>Loading conference...</Text>
-            </Flex>
-          }
-        >
-          <ScheduleContent />
-        </Suspense>
-      </SanityApp>
-    </SDKStudioContext.Provider>
+        <ScheduleContent />
+      </Suspense>
+    </SanityApp>
   )
 }

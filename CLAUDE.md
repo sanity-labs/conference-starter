@@ -101,6 +101,20 @@ All specs live in `plans/`:
 5. Content Releases + archive (year-based routing, dependency resolver)
 6. Luma integration (Sanity → Luma sync, webhook handler, attendee records)
 
+## Browser Debugging
+
+For non-Next.js apps (Sanity Studio, standalone apps), use the `agent-browser` CLI for visual debugging:
+
+```bash
+agent-browser --headed open http://localhost:3333       # Open Studio in visible browser
+agent-browser screenshot                                 # Take screenshot of current page
+agent-browser snapshot                                   # Get accessibility tree (for finding elements)
+agent-browser click @e2                                  # Click element by ref from snapshot
+agent-browser eval "document.querySelector('...')"       # Run JS in page
+```
+
+The `--headed` flag opens a visible browser window (not headless), useful when authentication is required. The `next-devtools` MCP handles Next.js apps — use `agent-browser` for everything else.
+
 ## Conventions
 
 - TypeScript everywhere

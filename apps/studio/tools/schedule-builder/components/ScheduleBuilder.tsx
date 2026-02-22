@@ -9,7 +9,6 @@ import {
   publishDocument,
   deleteDocument,
 } from '@sanity/sdk-react'
-import type {StudioWorkspaceHandle} from '@sanity/sdk-react'
 import {useWorkspace} from 'sanity'
 import {Flex, Spinner, Text, Card, useToast} from '@sanity/ui'
 import {CONFERENCE_QUERY, SLOTS_QUERY, ROOMS_QUERY} from '../queries'
@@ -20,21 +19,6 @@ import {ScheduleGrid} from './ScheduleGrid'
 import {UnscheduledPanel} from './UnscheduledPanel'
 import {AssignmentDialog} from './AssignmentDialog'
 import type {AssignTarget} from './AssignmentDialog'
-
-/**
- * Bridge: sanity@5.11 doesn't provide SDKStudioContext yet.
- * This wrapper passes the Studio workspace to the SDK so SanityApp
- * picks up projectId, dataset, and auth automatically.
- * Remove once Studio ships native SDKStudioContext support.
- */
-function SDKBridge({children}: {children: React.ReactNode}) {
-  const workspace = useWorkspace()
-  return (
-    <SDKStudioContext.Provider value={workspace as unknown as StudioWorkspaceHandle}>
-      {children}
-    </SDKStudioContext.Provider>
-  )
-}
 
 function ScheduleContent() {
   const {data: conference} = useQuery<ConferenceData>({query: CONFERENCE_QUERY})
@@ -342,9 +326,18 @@ function GridWithActions({
   )
 }
 
+/**
+ * Bridge: sanity@5.11 doesn't provide SDKStudioContext natively yet.
+ * Wrapping SanityApp with SDKStudioContext.Provider and passing
+ * the workspace from useWorkspace() lets the SDK auto-derive
+ * projectId, dataset, and auth. No config prop needed.
+ * Remove once Studio ships native SDKStudioContext support.
+ */
 export function ScheduleBuilder() {
+  const workspace = useWorkspace()
   return (
-    <SDKBridge>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- workspace type compatible at runtime
+    <SDKStudioContext.Provider value={workspace as any}>
       <SanityApp
         fallback={
           <Flex padding={4} align="center" justify="center" style={{height: '100%'}}>
@@ -363,6 +356,6 @@ export function ScheduleBuilder() {
           <ScheduleContent />
         </Suspense>
       </SanityApp>
-    </SDKBridge>
+    </SDKStudioContext.Provider>
   )
 }

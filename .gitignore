@@ -5,6 +5,7 @@ node_modules/
 .next/
 dist/
 .turbo/
+*.tsbuildinfo
 
 # Environment
 .env
@@ -29,6 +30,7 @@ pnpm-debug.log*
 
 # Export data (large binary)
 production-export-*/
+*.tar.gz
 
 # Sanity Functions
 **/functions/**/.env*

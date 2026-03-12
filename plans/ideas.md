@@ -1,0 +1,11 @@
+- make a remotion promo to show all of the conference features
+- make sure that meta tags are sourced from Sanity (add best practices for AEO and SEO?)
+- make the best structure in the studio
+- make sure we send confirmation emails to cfps 
+- markdown routes for everything
+- remove all "Sprint" references from the app
+- convert submission into session document and author (document action?)
+- probably need to set time zone or something, or maybe its derived from the conference location?
+  - What about end users looking at the conference website?
+- We should have proper map plugin and use coordinates
+- feed back improvements to the agent toolkit based on performance of a sprint

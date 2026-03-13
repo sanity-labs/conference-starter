@@ -1,13 +1,4 @@
-import {createClient} from '@sanity/client'
-import {config} from '../config.js'
-
-const client = createClient({
-  projectId: config.sanityProjectId,
-  dataset: config.sanityDataset,
-  apiVersion: '2025-11-01',
-  useCdn: false,
-  token: config.sanityToken,
-})
+import {sanityClient} from '../sanity-client.js'
 
 let allowedIds: Set<string> | null = null
 let lastFetched = 0
@@ -18,7 +9,7 @@ async function getOrganizerTelegramIds(): Promise<Set<string>> {
     return allowedIds
   }
 
-  const result = await client.fetch<Array<{telegramId: string | null}>>(
+  const result = await sanityClient.fetch<Array<{telegramId: string | null}>>(
     `*[_type == "conference"][0].organizers[]->{ telegramId }`,
   )
 

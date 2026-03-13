@@ -1,13 +1,4 @@
-import {createClient} from '@sanity/client'
-import {config} from '../config.js'
-
-const client = createClient({
-  projectId: config.sanityProjectId,
-  dataset: config.sanityDataset,
-  apiVersion: '2025-11-01',
-  useCdn: false,
-  token: config.sanityToken,
-})
+import {sanityClient} from '../sanity-client.js'
 
 const cache = new Map<string, {instruction: string; fetchedAt: number}>()
 
@@ -17,7 +8,7 @@ export async function fetchSystemPrompt(promptId: string): Promise<string> {
     return cached.instruction
   }
 
-  const doc = await client.fetch<{instruction: string | null}>(
+  const doc = await sanityClient.fetch<{instruction: string | null}>(
     `*[_id == $id][0]{ instruction }`,
     {id: promptId},
   )

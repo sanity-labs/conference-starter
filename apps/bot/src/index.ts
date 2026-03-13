@@ -5,14 +5,14 @@ import {config} from './config.js'
 import {handleMessage} from './handler.js'
 import {isAllowedOrganizer} from './security/allowlist.js'
 
-const bot = new Chat({
+const telegram = createTelegramAdapter({
+  botToken: config.telegramBotToken,
+  mode: 'auto',
+})
+
+export const bot = new Chat({
   userName: 'everything-nyc-bot',
-  adapters: {
-    telegram: createTelegramAdapter({
-      botToken: config.telegramBotToken,
-      mode: 'polling',
-    }),
-  },
+  adapters: {telegram},
   state: createMemoryState(),
 })
 
@@ -33,6 +33,7 @@ bot.onSubscribedMessage(async (thread, message) => {
   await handleMessage(thread, message)
 })
 
-bot.initialize().then(() => {
-  console.log('Everything NYC bot connected — waiting for messages…')
-})
+// In polling mode (local dev), initialize starts the poll loop.
+// In webhook mode (production), the Chat instance initializes lazily on first webhook.
+void bot.initialize()
+console.log(`Telegram adapter mode: ${telegram.runtimeMode}`)

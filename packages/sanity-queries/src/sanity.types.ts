@@ -160,6 +160,20 @@ export type Cta = {
   style?: "primary" | "secondary" | "ghost";
 };
 
+export type ChatState = {
+  _id: string;
+  _type: "chat.state";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  kind?: "subscription" | "lock" | "cache" | "list";
+  threadId?: string;
+  lockToken?: string;
+  expiresAt?: number;
+  value?: string;
+  items?: Array<string>;
+};
+
 export type AgentConversation = {
   _id: string;
   _type: "agent.conversation";
@@ -880,7 +894,7 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = PageReference | SessionReference | PersonReference | NavItem | FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerGrid | SanityImageAssetReference | RichText | Hero | Cta | AgentConversation | Prompt | SubmissionReference | EmailLog | EmailTemplate | Slug | ConferenceReference | Submission | Announcement | SanityImageCrop | SanityImageHotspot | Page | Sponsor | RoomReference | ScheduleSlot | VenueReference | Room | TrackReference | Session | Track | Color | Person | Conference | Venue | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes = PageReference | SessionReference | PersonReference | NavItem | FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerGrid | SanityImageAssetReference | RichText | Hero | Cta | ChatState | AgentConversation | Prompt | SubmissionReference | EmailLog | EmailTemplate | Slug | ConferenceReference | Submission | Announcement | SanityImageCrop | SanityImageHotspot | Page | Sponsor | RoomReference | ScheduleSlot | VenueReference | Room | TrackReference | Session | Track | Color | Person | Conference | Venue | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 
 export declare const internalGroqTypeReferenceTo: unique symbol;
 

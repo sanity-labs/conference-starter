@@ -18,6 +18,8 @@ export const bot = new Chat({
   adapters: {telegram},
   state: createSanityState(sanityClient),
   onLockConflict: 'force',
+  streamingUpdateIntervalMs: 1000,
+  fallbackStreamingPlaceholderText: null,
 })
 
 bot.onNewMention(async (thread, message) => {

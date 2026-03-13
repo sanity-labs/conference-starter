@@ -1,13 +1,14 @@
-import {generateText} from 'ai'
+import {streamText} from 'ai'
 import {getContentAgentModel} from './ai/content-agent.js'
 import {fetchSystemPrompt} from './ai/prompts.js'
 import {saveConversation} from './conversation/save.js'
 import {loadConversationHistory} from './conversation/history.js'
+import {cleanMarkdownStream, stripMarkdown} from './format-telegram.js'
 
 const MAX_HISTORY_MESSAGES = 20
 
 export async function handleMessage(
-  thread: {id: string; post: (text: string) => Promise<unknown>},
+  thread: {id: string; post: (text: string | AsyncIterable<string>) => Promise<unknown>},
   message: {text: string},
 ) {
   const model = getContentAgentModel(thread.id)
@@ -22,20 +23,23 @@ export async function handleMessage(
     {role: 'user' as const, content: message.text},
   ]
 
-  const result = await generateText({
+  const result = streamText({
     model,
     system: systemPrompt,
     messages,
   })
 
-  // Post complete response to Telegram
-  await thread.post(result.text)
+  // Stream response progressively to Telegram, stripping markdown for plain-text display
+  await thread.post(cleanMarkdownStream(result.textStream))
+
+  // Wait for stream to complete and get final text for persistence
+  const finalText = stripMarkdown(await result.text)
 
   // Persist full conversation to Content Lake
   const allMessages = [
     ...history,
     {role: 'user', content: message.text},
-    {role: 'assistant', content: result.text},
+    {role: 'assistant', content: finalText},
   ]
 
   saveConversation({chatId, messages: allMessages}).catch(console.error)

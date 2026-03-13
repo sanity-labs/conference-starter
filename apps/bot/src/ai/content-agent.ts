@@ -14,7 +14,7 @@ export function getContentAgentModel(threadId: string): LanguageModelV3 {
       capabilities: {read: true, write: true},
       filter: {
         read: '_type in ["session", "person", "track", "venue", "room", "scheduleSlot", "submission", "conference", "announcement", "sponsor", "prompt"]',
-        write: '_type in ["submission", "session", "person", "announcement", "scheduleSlot"]',
+        write: '_type in ["session", "person", "track", "venue", "room", "scheduleSlot", "submission", "conference", "announcement", "sponsor"]',
       },
     },
   })

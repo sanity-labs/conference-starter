@@ -57,7 +57,7 @@ export const navItem = defineType({
       name: 'page',
       title: 'Page',
       type: 'reference',
-      to: [{type: 'page'}, {type: 'session'}, {type: 'speaker'}],
+      to: [{type: 'page'}, {type: 'session'}, {type: 'person'}],
       hidden: ({parent}) => (parent as Record<string, unknown>)?.linkType !== 'page',
       validation: (rule) =>
         rule.custom((value, context) => {

@@ -1,5 +1,5 @@
 import {conference} from './documents/conference'
-import {speaker} from './documents/speaker'
+import {person} from './documents/person'
 import {session} from './documents/session'
 import {track} from './documents/track'
 import {venue} from './documents/venue'
@@ -12,6 +12,7 @@ import {submission} from './documents/submission'
 import {emailTemplate} from './documents/emailTemplate'
 import {emailLog} from './documents/emailLog'
 import {prompt} from './documents/prompt'
+import {agentConversation} from './documents/agentConversation'
 
 import {cta} from './objects/cta'
 import {hero} from './objects/hero'
@@ -26,7 +27,7 @@ import {navItem} from './objects/navItem'
 export const schemaTypes = [
   // Documents
   conference,
-  speaker,
+  person,
   session,
   track,
   venue,
@@ -39,6 +40,7 @@ export const schemaTypes = [
   emailTemplate,
   emailLog,
   prompt,
+  agentConversation,
   // Objects
   cta,
   hero,

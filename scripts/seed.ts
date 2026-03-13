@@ -175,27 +175,27 @@ async function seed() {
     transaction.createOrReplace({...r, _type: 'room'})
   }
 
-  // 5. Speakers — fetch existing persons from dataset or from export
+  // 5. People — fetch existing persons from dataset or from export
   console.log('Fetching existing person documents...')
   const existingPersons = await client.fetch<PersonDoc[]>(
     `*[_type == "person"]{ _id, name, company, title, image, bio }`,
   )
 
   const persons = existingPersons.length > 0 ? existingPersons : readPersonsFromExport()
-  console.log(`Found ${persons.length} person documents to transform into speakers`)
+  console.log(`Found ${persons.length} person documents to transform into people`)
 
   const speakerIds: string[] = []
   for (const person of persons) {
     // Skip the generic "Workshop participants" entry
     if (person.name === 'Workshop participants') continue
 
-    const speakerId = `speaker-${person._id}`
+    const speakerId = `person-${person._id}`
     speakerIds.push(speakerId)
 
-    // Map person fields to speaker schema
+    // Map person fields to person schema
     const speakerDoc: Record<string, unknown> = {
       _id: speakerId,
-      _type: 'speaker',
+      _type: 'person',
       name: person.name,
       slug: {
         _type: 'slug',

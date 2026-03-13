@@ -17,7 +17,7 @@ export const speakerGrid = defineType({
       name: 'speakers',
       title: 'Speakers',
       type: 'array',
-      of: [defineArrayMember({type: 'reference', to: [{type: 'speaker'}]})],
+      of: [defineArrayMember({type: 'reference', to: [{type: 'person'}]})],
       description:
         'Select specific speakers to feature. Leave empty to show all speakers. Order here determines display order.',
     }),

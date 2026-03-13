@@ -13,6 +13,7 @@ import {
   ComposeIcon,
   ActivityIcon,
   RobotIcon,
+  CommentIcon,
 } from '@sanity/icons'
 import {EmailPreview} from './components/EmailPreview'
 
@@ -28,32 +29,32 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
-      // Speakers with status filtering
+      // People (speakers, organizers) with status filtering
       S.listItem()
-        .title('Speakers')
+        .title('People')
         .icon(UserIcon)
         .child(
           S.list()
-            .title('Speakers')
+            .title('People')
             .items([
               S.listItem()
-                .title('All Speakers')
+                .title('All People')
                 .icon(UserIcon)
-                .child(S.documentTypeList('speaker').title('All Speakers')),
+                .child(S.documentTypeList('person').title('All People')),
               S.divider(),
               S.listItem()
                 .title('Travel: Booked')
                 .child(
                   S.documentList()
                     .title('Travel Booked')
-                    .filter('_type == "speaker" && travelStatus == "booked"'),
+                    .filter('_type == "person" && travelStatus == "booked"'),
                 ),
               S.listItem()
                 .title('Travel: In Progress')
                 .child(
                   S.documentList()
                     .title('Travel In Progress')
-                    .filter('_type == "speaker" && travelStatus == "in-progress"'),
+                    .filter('_type == "person" && travelStatus == "in-progress"'),
                 ),
               S.listItem()
                 .title('Travel: Not Started')
@@ -61,15 +62,15 @@ export const structure: StructureResolver = (S) =>
                   S.documentList()
                     .title('Travel Not Started')
                     .filter(
-                      '_type == "speaker" && (travelStatus == "not-started" || !defined(travelStatus))',
+                      '_type == "person" && (travelStatus == "not-started" || !defined(travelStatus))',
                     ),
                 ),
               S.listItem()
                 .title('Local (No Travel)')
                 .child(
                   S.documentList()
-                    .title('Local Speakers')
-                    .filter('_type == "speaker" && travelStatus == "local"'),
+                    .title('Local People')
+                    .filter('_type == "person" && travelStatus == "local"'),
                 ),
             ]),
         ),
@@ -266,7 +267,21 @@ export const structure: StructureResolver = (S) =>
                 .title('CFP Screening')
                 .icon(RobotIcon)
                 .child(S.document().schemaType('prompt').documentId('prompt.cfpScreening')),
+              S.listItem()
+                .title('Telegram Ops Bot')
+                .icon(RobotIcon)
+                .child(S.document().schemaType('prompt').documentId('prompt.botOps')),
             ]),
+        ),
+
+      // Conversations (bot)
+      S.listItem()
+        .title('Conversations')
+        .icon(CommentIcon)
+        .child(
+          S.documentTypeList('agent.conversation')
+            .title('Conversations')
+            .defaultOrdering([{field: '_createdAt', direction: 'desc'}]),
         ),
     ])
 

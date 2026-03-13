@@ -1,7 +1,7 @@
 import {defineQuery} from 'groq'
 
 export const SPEAKERS_QUERY = defineQuery(
-  `*[_type == "speaker"] | order(name asc) {
+  `*[_type == "person"] | order(name asc) {
     _id,
     name,
     "slug": slug.current,
@@ -13,7 +13,7 @@ export const SPEAKERS_QUERY = defineQuery(
 )
 
 export const SPEAKER_DETAIL_QUERY = defineQuery(
-  `*[_type == "speaker" && slug.current == $slug][0] {
+  `*[_type == "person" && slug.current == $slug][0] {
     _id,
     name,
     "slug": slug.current,
@@ -45,5 +45,5 @@ export const SPEAKER_DETAIL_QUERY = defineQuery(
 )
 
 export const SPEAKER_SLUGS_QUERY = defineQuery(
-  `*[_type == "speaker" && defined(slug.current)]{ "slug": slug.current }`,
+  `*[_type == "person" && defined(slug.current)]{ "slug": slug.current }`,
 )

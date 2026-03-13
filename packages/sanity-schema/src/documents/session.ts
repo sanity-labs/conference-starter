@@ -125,7 +125,7 @@ export const session = defineType({
       name: 'speakers',
       title: 'Speakers',
       type: 'array',
-      of: [defineArrayMember({type: 'reference', to: [{type: 'speaker'}]})],
+      of: [defineArrayMember({type: 'reference', to: [{type: 'person'}]})],
       group: 'speakers',
       description:
         'The speaker(s) presenting this session. For panels, add all panelists here (minimum 2) and set the moderator separately. For workshops, these are the instructors. Order determines display order. Content Agent: list speakers by name when describing sessions.',
@@ -145,7 +145,7 @@ export const session = defineType({
       name: 'moderator',
       title: 'Moderator',
       type: 'reference',
-      to: [{type: 'speaker'}],
+      to: [{type: 'person'}],
       group: 'speakers',
       description:
         'The panel moderator — required for panels. Should be someone different from the panelists listed in Speakers. Only visible for panel sessions.',

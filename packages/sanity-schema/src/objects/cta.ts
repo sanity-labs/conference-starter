@@ -25,7 +25,7 @@ export const cta = defineType({
       name: 'internalLink',
       title: 'Internal Page',
       type: 'reference',
-      to: [{type: 'page'}, {type: 'session'}, {type: 'speaker'}],
+      to: [{type: 'page'}, {type: 'session'}, {type: 'person'}],
       hidden: ({parent}) => (parent as Record<string, unknown>)?.linkType !== 'internal',
     }),
     defineField({

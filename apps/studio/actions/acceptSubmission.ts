@@ -42,9 +42,9 @@ export const acceptSubmission: DocumentActionComponent = (props) => {
         }
         const duration = durationMap[sessionType] || 30
 
-        // Create speaker document
+        // Create person document
         const speaker = await client.create({
-          _type: 'speaker',
+          _type: 'person',
           name: submitterName,
           slug: {_type: 'slug', current: slugify(submitterName)},
           role: company ? `Speaker at ${company}` : 'Speaker',

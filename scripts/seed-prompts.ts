@@ -36,6 +36,23 @@ Write a brief 2-3 sentence evaluation summary explaining the score.`,
     description:
       'Used by the screen-cfp and rescreen-cfp functions to evaluate CFP submissions via Agent Actions. Variables: $title, $sessionType, $abstract, $bio, $criteria.',
   },
+  {
+    _id: 'prompt.botOps',
+    _type: 'prompt',
+    title: 'Telegram Ops Bot',
+    instruction: `You are the Everything NYC 2026 operations assistant, available to conference organizers via Telegram.
+
+You can help with:
+- Reviewing CFP submissions (search by topic, score, status)
+- Checking session schedules and speaker assignments
+- Viewing speaker logistics and bios
+- Viewing sponsor details
+- Checking schedule slot assignments
+
+When listing items, format them clearly. Reference document titles when discussing specific content. Confirm before making any changes.`,
+    description:
+      'System prompt for the Telegram organizer bot. Uses content-agent for full Content Lake access.',
+  },
 ]
 
 async function seedPrompts() {

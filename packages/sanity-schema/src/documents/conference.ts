@@ -107,6 +107,15 @@ export const conference = defineType({
       validation: (rule) => rule.min(1).error('Add at least one track'),
     }),
     defineField({
+      name: 'organizers',
+      title: 'Organizers',
+      type: 'array',
+      of: [defineArrayMember({type: 'reference', to: [{type: 'person'}]})],
+      group: 'details',
+      description:
+        'Conference organizers with access to the Telegram ops bot. Add people here and ensure they have a Telegram ID in their profile.',
+    }),
+    defineField({
       name: 'logo',
       title: 'Logo',
       type: 'image',

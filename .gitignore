@@ -39,3 +39,4 @@ production-export-*/
 
 # Vercel
 .vercel
+.env*.local

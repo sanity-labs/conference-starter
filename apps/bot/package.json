@@ -5,21 +5,22 @@
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",
     "build": "tsc",
-    "start": "node --env-file=.env dist/index.js"
+    "start": "node --env-file=.env dist/src/index.js"
   },
   "dependencies": {
     "@ai-sdk/provider": "^3.0.8",
-    "@chat-adapter/state-memory": "^4.20.0",
-    "@chat-adapter/telegram": "^4.20.0",
-    "@sanity/client": "^7.15.0",
-    "ai": "^6.0.0",
-    "chat": "^4.20.0",
-    "content-agent": "^0.4.0",
-    "zod": "^3.23.8"
+    "@chat-adapter/state-memory": "^4.20.1",
+    "@chat-adapter/telegram": "^4.20.1",
+    "@sanity/client": "^7.17.0",
+    "@vercel/functions": "^3.4.3",
+    "ai": "^6.0.116",
+    "chat": "^4.20.1",
+    "content-agent": "^0.4.5",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
-    "tsx": "^4.19.0",
-    "typescript": "^5.8.0"
+    "@types/node": "^22.19.15",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }

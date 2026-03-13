@@ -1,4 +1,4 @@
-import {z} from 'zod'
+import { z } from "zod";
 
 const envSchema = z.object({
   TELEGRAM_BOT_TOKEN: z.string().min(1),
@@ -8,16 +8,13 @@ const envSchema = z.object({
   // Project-level token (Editor role) from sanity.io/manage → Project → API → Tokens
   // Used for Content Agent API, GROQ queries, and mutations
   SANITY_API_TOKEN: z.string().min(1),
-})
+});
 
 const parsed = envSchema.safeParse(process.env)
 
 if (!parsed.success) {
-  console.error('Missing environment variables:')
-  for (const issue of parsed.error.issues) {
-    console.error(`  ${issue.path.join('.')}: ${issue.message}`)
-  }
-  process.exit(1)
+  const missing = parsed.error.issues.map((i) => `  ${i.path.join('.')}: ${i.message}`).join('\n')
+  throw new Error(`Missing environment variables:\n${missing}`)
 }
 
 export const config = {

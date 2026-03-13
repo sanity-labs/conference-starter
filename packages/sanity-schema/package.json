@@ -10,11 +10,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "sanity": "^5.11.0",
-    "@sanity/icons": "^3.6.0",
-    "@sanity/color-input": "^6.0.0"
+    "@sanity/color-input": "^6.0.4",
+    "@sanity/icons": "^3.7.4",
+    "sanity": "^5.15.0"
   },
   "devDependencies": {
-    "typescript": "^5.8.0"
+    "typescript": "^5.9.3"
   }
 }

@@ -23,9 +23,6 @@ importers:
       '@ai-sdk/provider':
         specifier: ^3.0.8
         version: 3.0.8
-      '@chat-adapter/state-memory':
-        specifier: ^4.20.1
-        version: 4.20.1
       '@chat-adapter/telegram':
         specifier: ^4.20.1
         version: 4.20.1
@@ -202,8 +199,8 @@ importers:
         version: 6.9.3(@react-email/render@2.0.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
     devDependencies:
       '@react-email/preview-server':
-        specifier: 5.2.8
-        version: 5.2.8(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 5.2.9
+        version: 5.2.9(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@types/node':
         specifier: ^25.5.0
         version: 25.5.0
@@ -928,9 +925,6 @@ packages:
 
   '@chat-adapter/shared@4.20.1':
     resolution: {integrity: sha512-UawGmT7O+3vxvaU9f+lc0PVQKU+TvE0PUxa0zL43qH1rqGkosngtT3cOOhW6JOx+rxt3jox2a99xr8hnJPkshA==}
-
-  '@chat-adapter/state-memory@4.20.1':
-    resolution: {integrity: sha512-JtITUuz4xYwXMOSH8dCYjuxgIgtkecVH5RUVR46PT9Nh8QT4l6WRMNZvdrWkJOn9jOZToXiNS/ae0OFJHJtN+g==}
 
   '@chat-adapter/telegram@4.20.1':
     resolution: {integrity: sha512-0GCMv2XDYrCN0etnCrvHE76ihCfNbV00PslBOQRHqIyqJKRy5jmm9qg+XmfdXm6yuWA7c9RB8gD6m9QPhIvi3Q==}
@@ -2363,8 +2357,8 @@ packages:
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
 
-  '@react-email/preview-server@5.2.8':
-    resolution: {integrity: sha512-drQ0C7vi7P0uE7Ox1Cyiujsx0oqp2RbIscOdSBR5qvzw3EKjlGbW2pWjQ000cjxTq3Si7lqlRKhOIF8MzOnqHw==}
+  '@react-email/preview-server@5.2.9':
+    resolution: {integrity: sha512-RlY4xmtBNR83iXY8ItxlWoG1k2TF3oOs0QjWWdcQ/azFsjlQqii1gHWbvNC4xlvcvdfwJRH51CvoRUG/SxAXVw==}
 
   '@react-email/preview@0.0.14':
     resolution: {integrity: sha512-aYK8q0IPkBXyMsbpMXgxazwHxYJxTrXrV95GFuu2HbEiIToMwSyUgb8HDFYwPqqfV03/jbwqlsXmFxsOd+VNaw==}
@@ -7225,12 +7219,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@chat-adapter/state-memory@4.20.1':
-    dependencies:
-      chat: 4.20.1
-    transitivePeerDependencies:
-      - supports-color
-
   '@chat-adapter/telegram@4.20.1':
     dependencies:
       '@chat-adapter/shared': 4.20.1
@@ -8414,7 +8402,7 @@ snapshots:
       marked: 15.0.12
       react: 19.2.4
 
-  '@react-email/preview-server@5.2.8(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-email/preview-server@5.2.9(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       esbuild: 0.25.10
       next: 16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)

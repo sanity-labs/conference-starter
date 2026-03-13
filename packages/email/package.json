@@ -13,20 +13,20 @@
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@react-email/preview-server": "5.2.8",
-    "@types/node": "^25.3.0",
+    "@react-email/preview-server": "5.2.9",
+    "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "react-email": "^5.2.8",
-    "typescript": "^5.8.0"
+    "react-email": "^5.2.9",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@portabletext/react": "^6.0.2",
-    "@portabletext/types": "^4.0.1",
-    "@react-email/components": "^1.0.8",
+    "@portabletext/react": "^6.0.3",
+    "@portabletext/types": "^4.0.2",
+    "@react-email/components": "^1.0.9",
     "@react-email/render": "^2.0.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "resend": "^6.9.2"
+    "resend": "^6.9.3"
   }
 }

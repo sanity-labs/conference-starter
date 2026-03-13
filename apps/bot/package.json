@@ -1,0 +1,25 @@
+{
+  "name": "@repo/bot",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@ai-sdk/provider": "^3.0.8",
+    "@chat-adapter/state-memory": "^4.20.0",
+    "@chat-adapter/telegram": "^4.20.0",
+    "@sanity/client": "^7.15.0",
+    "ai": "^6.0.0",
+    "chat": "^4.20.0",
+    "content-agent": "^0.4.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  }
+}

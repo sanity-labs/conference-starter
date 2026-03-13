@@ -1,0 +1,21 @@
+import {createContentAgent} from 'content-agent'
+import type {LanguageModelV3} from '@ai-sdk/provider'
+import {config} from '../config.js'
+
+const contentAgent = createContentAgent({
+  organizationId: config.sanityOrgId,
+  token: config.sanityToken,
+})
+
+export function getContentAgentModel(threadId: string): LanguageModelV3 {
+  return contentAgent.agent(threadId, {
+    application: {key: `${config.sanityProjectId}.${config.sanityDataset}`},
+    config: {
+      capabilities: {read: true, write: true},
+      filter: {
+        read: '_type in ["session", "person", "track", "venue", "room", "scheduleSlot", "submission", "conference", "announcement", "sponsor", "prompt"]',
+        write: '_type in ["submission", "session", "person", "announcement", "scheduleSlot"]',
+      },
+    },
+  })
+}

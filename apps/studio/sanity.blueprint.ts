@@ -45,5 +45,16 @@ export default defineBlueprint({
       },
       timeout: 60,
     }),
+    defineDocumentFunction({
+      name: 'classify-conversation',
+      event: {
+        on: ['create', 'update'],
+        filter:
+          '_type == "agent.conversation" && (delta::changedAny(messages) || delta::operation() == "create") && defined(messages)',
+        projection: '{_id, messages, summary}',
+        resource: {type: 'dataset', id: 'yjorde43.production'},
+      },
+      timeout: 60,
+    }),
   ],
 })

@@ -3,7 +3,8 @@
   "tasks": {
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["TELEGRAM_BOT_TOKEN", "SANITY_ORG_ID", "SANITY_API_TOKEN", "SANITY_API_READ_TOKEN", "SANITY_API_WRITE_TOKEN"]
     },
     "build": {
       "dependsOn": ["^build"],

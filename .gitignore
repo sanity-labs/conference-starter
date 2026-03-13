@@ -36,3 +36,6 @@ production-export-*/
 **/functions/**/.env*
 **/functions/**/.build/
 **/functions/**/node_modules/
+
+# Vercel
+.vercel

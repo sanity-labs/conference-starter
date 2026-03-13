@@ -12,7 +12,7 @@ export async function handleMessage(
 ) {
   const model = getContentAgentModel(thread.id)
   const systemPrompt = await fetchSystemPrompt('prompt.botOps')
-  const chatId = `agent.conversation.bot-telegram-${thread.id}`
+  const chatId = `agent.conversation.bot-telegram-${thread.id.replace(/[^a-zA-Z0-9._-]/g, '-')}`
 
   // Load prior messages for multi-turn context
   const history = await loadConversationHistory(chatId, MAX_HISTORY_MESSAGES)

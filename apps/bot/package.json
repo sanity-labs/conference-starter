@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@ai-sdk/provider": "^3.0.8",
-    "@chat-adapter/state-memory": "^4.20.1",
     "@chat-adapter/telegram": "^4.20.1",
     "@sanity/client": "^7.17.0",
     "@vercel/functions": "^3.4.3",

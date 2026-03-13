@@ -1,5 +1,18 @@
 import {bot} from './bot.js'
+import {runPreflight} from './preflight.js'
 
-// In polling mode (local dev), initialize starts the poll loop.
-// In webhook mode (production), the Chat instance initializes lazily on first webhook.
-void bot.initialize()
+const isServerless = !!process.env.VERCEL
+
+async function start() {
+  // Preflight checks only in polling mode (local dev) — not serverless
+  if (!isServerless) {
+    await runPreflight()
+  }
+
+  await bot.initialize()
+}
+
+start().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})

@@ -13,6 +13,7 @@ import {emailTemplate} from './documents/emailTemplate'
 import {emailLog} from './documents/emailLog'
 import {prompt} from './documents/prompt'
 import {agentConversation} from './documents/agentConversation'
+import {chatState} from './documents/chatState'
 
 import {cta} from './objects/cta'
 import {hero} from './objects/hero'
@@ -41,6 +42,7 @@ export const schemaTypes = [
   emailLog,
   prompt,
   agentConversation,
+  chatState,
   // Objects
   cta,
   hero,

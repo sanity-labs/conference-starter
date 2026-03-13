@@ -5,6 +5,8 @@ const envSchema = z.object({
   SANITY_PROJECT_ID: z.string().min(1),
   SANITY_DATASET: z.string().min(1),
   SANITY_ORG_ID: z.string().min(1),
+  // Application key from contentAgent.applications() — identifies the Studio workspace
+  SANITY_APP_KEY: z.string().min(1),
   // Project-level token (Editor role) from sanity.io/manage → Project → API → Tokens
   // Used for Content Agent API, GROQ queries, and mutations
   SANITY_API_TOKEN: z.string().min(1),
@@ -22,5 +24,6 @@ export const config = {
   sanityProjectId: parsed.data.SANITY_PROJECT_ID,
   sanityDataset: parsed.data.SANITY_DATASET,
   sanityOrgId: parsed.data.SANITY_ORG_ID,
+  sanityAppKey: parsed.data.SANITY_APP_KEY,
   sanityToken: parsed.data.SANITY_API_TOKEN,
 }

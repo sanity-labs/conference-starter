@@ -1,19 +1,23 @@
 import {Chat} from 'chat'
 import {createTelegramAdapter} from '@chat-adapter/telegram'
-import {createMemoryState} from '@chat-adapter/state-memory'
 import {config} from './config.js'
 import {handleMessage} from './handler.js'
 import {isAllowedOrganizer} from './security/allowlist.js'
+import {sanityClient} from './sanity-client.js'
+import {createSanityState} from './state/index.js'
+
+const isServerless = !!process.env.VERCEL
 
 const telegram = createTelegramAdapter({
   botToken: config.telegramBotToken,
-  mode: 'auto',
+  mode: isServerless ? 'webhook' : 'polling',
 })
 
 export const bot = new Chat({
   userName: 'everything-nyc-bot',
   adapters: {telegram},
-  state: createMemoryState(),
+  state: createSanityState(sanityClient),
+  onLockConflict: 'force',
 })
 
 bot.onNewMention(async (thread, message) => {

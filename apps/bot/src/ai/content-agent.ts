@@ -9,7 +9,7 @@ const contentAgent = createContentAgent({
 
 export function getContentAgentModel(threadId: string): LanguageModelV3 {
   return contentAgent.agent(threadId, {
-    application: {key: `${config.sanityProjectId}.${config.sanityDataset}`},
+    application: {key: config.sanityAppKey},
     config: {
       capabilities: {read: true, write: true},
       filter: {

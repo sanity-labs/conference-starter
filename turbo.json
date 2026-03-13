@@ -8,7 +8,8 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": ["TELEGRAM_BOT_TOKEN", "SANITY_PROJECT_ID", "SANITY_DATASET", "SANITY_ORG_ID", "SANITY_APP_KEY", "SANITY_API_TOKEN"]
     },
     "type-check": {
       "dependsOn": ["^build"]

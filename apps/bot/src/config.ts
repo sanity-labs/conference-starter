@@ -5,9 +5,9 @@ const envSchema = z.object({
   SANITY_PROJECT_ID: z.string().min(1),
   SANITY_DATASET: z.string().min(1),
   SANITY_ORG_ID: z.string().min(1),
+  // Project-level token (Editor role) from sanity.io/manage → Project → API → Tokens
+  // Used for Content Agent API, GROQ queries, and mutations
   SANITY_API_TOKEN: z.string().min(1),
-  SANITY_API_READ_TOKEN: z.string().min(1),
-  SANITY_API_WRITE_TOKEN: z.string().min(1),
 })
 
 const parsed = envSchema.safeParse(process.env)
@@ -26,6 +26,4 @@ export const config = {
   sanityDataset: parsed.data.SANITY_DATASET,
   sanityOrgId: parsed.data.SANITY_ORG_ID,
   sanityToken: parsed.data.SANITY_API_TOKEN,
-  sanityReadToken: parsed.data.SANITY_API_READ_TOKEN,
-  sanityWriteToken: parsed.data.SANITY_API_WRITE_TOKEN,
 }

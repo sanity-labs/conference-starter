@@ -8,22 +8,31 @@ import {isAllowedOrganizer} from './security/allowlist.js'
 const bot = new Chat({
   userName: 'everything-nyc-bot',
   adapters: {
-    telegram: createTelegramAdapter({botToken: config.telegramBotToken}),
+    telegram: createTelegramAdapter({
+      botToken: config.telegramBotToken,
+      mode: 'polling',
+    }),
   },
   state: createMemoryState(),
 })
 
 bot.onNewMention(async (thread, message) => {
+  console.log(`[mention] from=${message.author.userId} text="${message.text}"`)
   if (!(await isAllowedOrganizer(message.author.userId))) {
+    console.log(`[mention] denied — not in organizer allowlist`)
     await thread.post('This bot is restricted to conference organizers.')
     return
   }
+  console.log(`[mention] authorized — subscribing to thread ${thread.id}`)
   await thread.subscribe()
   await handleMessage(thread, message)
 })
 
 bot.onSubscribedMessage(async (thread, message) => {
+  console.log(`[message] thread=${thread.id} text="${message.text}"`)
   await handleMessage(thread, message)
 })
 
-console.log('Everything NYC bot started')
+bot.initialize().then(() => {
+  console.log('Everything NYC bot connected — waiting for messages…')
+})

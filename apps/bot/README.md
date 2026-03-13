@@ -49,9 +49,10 @@ TELEGRAM_BOT_TOKEN=       # From @BotFather
 SANITY_PROJECT_ID=yjorde43
 SANITY_DATASET=production
 SANITY_ORG_ID=            # Sanity organization ID (for Content Agent)
-SANITY_API_TOKEN=         # General API token
-SANITY_API_READ_TOKEN=    # Read-only token
-SANITY_API_WRITE_TOKEN=   # Write token for mutations
+
+# Project-level token (Editor role) from sanity.io/manage → Project → API → Tokens
+# Used for Content Agent API, GROQ queries, and mutations
+SANITY_API_TOKEN=
 ```
 
 Copy from the example:

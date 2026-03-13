@@ -6,7 +6,7 @@ const writeClient = createClient({
   dataset: config.sanityDataset,
   apiVersion: '2026-01-01',
   useCdn: false,
-  token: config.sanityWriteToken,
+  token: config.sanityToken,
 })
 
 export async function saveConversation(input: {

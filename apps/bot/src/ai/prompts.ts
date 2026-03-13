@@ -6,7 +6,7 @@ const client = createClient({
   dataset: config.sanityDataset,
   apiVersion: '2025-11-01',
   useCdn: false,
-  token: config.sanityReadToken,
+  token: config.sanityToken,
 })
 
 const cache = new Map<string, {instruction: string; fetchedAt: number}>()

@@ -5,6 +5,7 @@ export const faqSection = defineType({
   name: 'faqSection',
   title: 'FAQ Section',
   type: 'object',
+  description: 'A section displaying frequently asked questions, optionally filtered by category.',
   icon: HelpCircleIcon,
   fields: [
     defineField({

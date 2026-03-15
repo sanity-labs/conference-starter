@@ -12,7 +12,7 @@ export const handler = documentEventHandler<ConversationEvent>(async ({context, 
   const dryRun = Boolean(context.local)
   const client = createClient({
     ...context.clientOptions,
-    apiVersion: '2026-01-01',
+    apiVersion: '2026-03-15',
   })
 
   if (!data.messages || data.messages.length === 0) {

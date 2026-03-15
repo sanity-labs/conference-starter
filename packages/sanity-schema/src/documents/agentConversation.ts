@@ -5,6 +5,7 @@ export const agentConversation = defineType({
   name: 'agent.conversation',
   title: 'Conversation',
   type: 'document',
+  description: 'A recorded conversation between a user and the AI bot.',
   icon: CommentIcon,
   readOnly: true,
   fields: [

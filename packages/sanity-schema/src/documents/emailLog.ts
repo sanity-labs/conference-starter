@@ -5,6 +5,7 @@ export const emailLog = defineType({
   name: 'emailLog',
   title: 'Email Log',
   type: 'document',
+  description: 'A delivery log entry tracking an email sent via Resend.',
   icon: ActivityIcon,
   readOnly: true,
   fields: [

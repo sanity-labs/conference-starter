@@ -4,7 +4,7 @@ import {config} from './config.js'
 export const sanityClient = createClient({
   projectId: config.sanityProjectId,
   dataset: config.sanityDataset,
-  apiVersion: '2026-01-01',
+  apiVersion: '2026-03-15',
   useCdn: false,
   token: config.sanityToken,
 })

@@ -9,7 +9,7 @@ Built for [Everything NYC 2026](https://everything.nyc), a Sanity conference.
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                   Sanity Content Lake                    │
-│         16 document types · GROQ · TypeGen              │
+│         17 document types · GROQ · TypeGen              │
 └────┬──────────┬──────────┬──────────┬──────────┬────────┘
      │          │          │          │          │
   Studio    Next.js    Functions   Bot      Emails
@@ -107,7 +107,7 @@ pnpm type-check
 
 ## Content Model
 
-16 document types organized around conference operations:
+17 document types organized around conference operations:
 
 | Type | Purpose |
 |------|---------|
@@ -125,6 +125,7 @@ pnpm type-check
 | `emailTemplate` | Email designs with Portable Text body |
 | `emailLog` | Email delivery audit trail |
 | `prompt` | Editable AI instructions (live-edited, no publish workflow) |
+| `chat.state` | Chat SDK state (subscriptions, locks, cache) |
 | `agent.conversation` | Telegram bot conversation persistence |
 
 The schema lives in `packages/sanity-schema/` and is consumed by all apps.
@@ -190,7 +191,7 @@ All queries live in `packages/sanity-queries/` — never scattered in page compo
 
 | Package | Description |
 |---------|-------------|
-| [`@repo/sanity-schema`](packages/sanity-schema/) | Content model — 16 document types, 8 object types |
+| [`@repo/sanity-schema`](packages/sanity-schema/) | Content model — 17 document types, 9 object types |
 | [`@repo/sanity-queries`](packages/sanity-queries/) | GROQ queries + TypeGen-generated types |
 | [`@repo/email`](packages/email/) | React Email templates + Resend integration |
 

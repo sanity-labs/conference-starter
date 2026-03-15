@@ -5,6 +5,7 @@ export const prompt = defineType({
   name: 'prompt',
   title: 'AI Prompt',
   type: 'document',
+  description: 'An editable AI instruction prompt used by Sanity Functions and the ops bot.',
   icon: RobotIcon,
   liveEdit: true,
   fields: [

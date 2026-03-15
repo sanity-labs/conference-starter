@@ -5,6 +5,7 @@ export const venue = defineType({
   name: 'venue',
   title: 'Venue',
   type: 'document',
+  description: 'The physical location hosting the conference.',
   icon: PinIcon,
   groups: [
     {name: 'info', title: 'Information', default: true},

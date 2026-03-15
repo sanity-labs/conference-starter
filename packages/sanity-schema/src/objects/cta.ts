@@ -4,6 +4,7 @@ export const cta = defineType({
   name: 'cta',
   title: 'Call to Action',
   type: 'object',
+  description: 'A single call-to-action button with label and URL.',
   fields: [
     defineField({
       name: 'label',

@@ -6,6 +6,8 @@ export const session = defineType({
   name: 'session',
   title: 'Session',
   type: 'document',
+  description:
+    'A conference session: talk, keynote, panel, workshop, lightning talk, break, or social event.',
   icon: PresentationIcon,
   groups: [
     {name: 'content', title: 'Content', default: true},

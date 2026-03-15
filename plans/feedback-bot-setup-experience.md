@@ -154,12 +154,7 @@ Getting the bot from "code exists" to "responds to messages" took significantly 
 
 **What happened**: The Chat SDK uses `createMemoryState()` for in-memory thread locks. In polling mode (single process), this works fine. In Vercel serverless, each invocation gets fresh memory. When two webhook calls arrive close together, the second invocation can't see the first's lock and gets `LockError: Could not acquire lock on thread`.
 
-**Current status**: **Unresolved.** The bot receives webhook updates and processes the first one, but concurrent/rapid messages cause lock failures.
-
-**Possible fixes**:
-1. Use a persistent state adapter (Redis, Vercel KV, or a custom Sanity-backed adapter)
-2. Check if the Chat SDK has a "no-lock" or "stateless" mode for serverless
-3. Accept the limitation and handle lock errors gracefully (retry or queue)
+**Status**: **Resolved.** Replaced `createMemoryState()` with a custom Sanity-backed `StateAdapter` (`apps/bot/src/state/sanity-state-adapter.ts`). Uses `ifRevisionId` for optimistic concurrency on distributed locks, with `onLockConflict: 'force'` as a safety net. All Chat SDK state (subscriptions, locks, cache, lists) is persisted as `chat.state` documents in the Content Lake.
 
 ### 7f: Vercel team transfer changes domain scope
 
@@ -175,7 +170,7 @@ Getting the bot from "code exists" to "responds to messages" took significantly 
 
 **Status**: Non-blocking — the env vars ARE available at runtime (they're only unavailable during the `turbo build` step, which just runs `tsc` and doesn't need them). But it's noisy and could confuse future maintainers.
 
-**Fix (TODO)**: Add these vars to `turbo.json` under the bot's build task `env` config, or configure Turborepo to pass them through.
+**Status**: **Resolved.** Added all env vars (bot, web, email, Studio) to `turbo.json` under both `dev` and `build` tasks.
 
 ---
 

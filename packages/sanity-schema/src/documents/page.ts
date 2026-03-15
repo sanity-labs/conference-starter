@@ -6,6 +6,7 @@ export const page = defineType({
   name: 'page',
   title: 'Page',
   type: 'document',
+  description: 'A flexible page built from modular content sections.',
   icon: DocumentIcon,
   groups: [
     {name: 'content', title: 'Content', default: true},

@@ -10,7 +10,7 @@ interface SubmissionEvent {
   submitterEmail: string
 }
 
-const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <onboarding@resend.dev>'
+const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <noreply@everything.nyc>'
 
 export const handler = documentEventHandler<SubmissionEvent>(async ({context, event}) => {
   const {data} = event

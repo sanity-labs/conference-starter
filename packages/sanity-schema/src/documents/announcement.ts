@@ -6,6 +6,7 @@ export const announcement = defineType({
   name: 'announcement',
   title: 'Announcement',
   type: 'document',
+  description: 'A news post or announcement about the conference.',
   icon: BellIcon,
   groups: [
     {name: 'content', title: 'Content', default: true},

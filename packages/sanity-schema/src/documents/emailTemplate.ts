@@ -13,6 +13,7 @@ export const emailTemplate = defineType({
   name: 'emailTemplate',
   title: 'Email Template',
   type: 'document',
+  description: 'An email template with Portable Text body and variable interpolation.',
   icon: EnvelopeIcon,
   fields: [
     defineField({

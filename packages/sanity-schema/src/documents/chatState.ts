@@ -15,6 +15,7 @@ export const chatState = defineType({
   name: 'chat.state',
   title: 'Chat State',
   type: 'document',
+  description: 'Internal state document for the Chat SDK (subscriptions, locks, cache).',
   readOnly: true,
   fields: [
     defineField({

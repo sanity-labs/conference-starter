@@ -5,6 +5,7 @@ export const track = defineType({
   name: 'track',
   title: 'Track',
   type: 'document',
+  description: 'A thematic track that groups related sessions on the schedule.',
   icon: TagIcon,
   fields: [
     defineField({

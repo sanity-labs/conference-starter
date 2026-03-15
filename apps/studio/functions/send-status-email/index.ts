@@ -11,7 +11,7 @@ interface SubmissionEvent {
   status: string
 }
 
-const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <onboarding@resend.dev>'
+const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <noreply@everything.nyc>'
 
 const triggerMap: Record<string, string> = {
   accepted: 'on-submission-accepted',

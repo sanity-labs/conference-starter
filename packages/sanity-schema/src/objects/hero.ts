@@ -5,6 +5,7 @@ export const hero = defineType({
   name: 'hero',
   title: 'Hero Section',
   type: 'object',
+  description: 'A hero section with headline, tagline, and optional background image.',
   icon: ImageIcon,
   fields: [
     defineField({

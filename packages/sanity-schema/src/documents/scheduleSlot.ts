@@ -5,6 +5,7 @@ export const scheduleSlot = defineType({
   name: 'scheduleSlot',
   title: 'Schedule Slot',
   type: 'document',
+  description: 'A time slot linking a session to a specific room, date, and time.',
   icon: ClockIcon,
   fields: [
     defineField({
@@ -20,7 +21,7 @@ export const scheduleSlot = defineType({
           .error('Assign a session to this slot')
           .custom(async (value, context) => {
             if (!value?._ref) return true
-            const client = context.getClient({apiVersion: '2025-11-01'})
+            const client = context.getClient({apiVersion: '2026-03-15'})
             const id = context.document?._id?.replace(/^drafts\./, '')
             const existing = await client.fetch(
               `count(*[_type == "scheduleSlot" && session._ref == $ref && _id != $id && !(_id in path("drafts.**"))])`,
@@ -89,7 +90,7 @@ export const scheduleSlot = defineType({
       const endTime = slot?.endTime as string | undefined
       if (!roomRef || !startTime || !endTime) return true
 
-      const client = context.getClient({apiVersion: '2025-11-01'})
+      const client = context.getClient({apiVersion: '2026-03-15'})
       const id = (slot?._id as string | undefined)?.replace(/^drafts\./, '')
 
       const conflicts = await client.fetch(

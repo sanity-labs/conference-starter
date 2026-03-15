@@ -5,6 +5,7 @@ export const room = defineType({
   name: 'room',
   title: 'Room',
   type: 'document',
+  description: 'A room within the venue where sessions take place.',
   icon: ComponentIcon,
   fields: [
     defineField({

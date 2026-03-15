@@ -56,7 +56,7 @@ if (!token) {
 const client = createClient({
   projectId,
   dataset,
-  apiVersion: '2025-11-01',
+  apiVersion: '2026-03-15',
   token,
   useCdn: false,
   perspective: 'raw', // include both published and draft documents

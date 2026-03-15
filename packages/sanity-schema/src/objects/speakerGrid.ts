@@ -5,6 +5,7 @@ export const speakerGrid = defineType({
   name: 'speakerGrid',
   title: 'Speaker Grid',
   type: 'object',
+  description: 'A grid of speaker cards showing featured or all confirmed speakers.',
   icon: UsersIcon,
   fields: [
     defineField({

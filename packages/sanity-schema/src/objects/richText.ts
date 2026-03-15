@@ -5,6 +5,7 @@ export const richText = defineType({
   name: 'richText',
   title: 'Rich Text Section',
   type: 'object',
+  description: 'A freeform rich text section with optional heading.',
   icon: TextIcon,
   fields: [
     defineField({

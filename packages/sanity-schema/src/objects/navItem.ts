@@ -13,6 +13,7 @@ const ROUTE_OPTIONS = [
 export const navItem = defineType({
   name: 'navItem',
   title: 'Navigation Item',
+  description: 'A navigation link with label and route or external URL.',
   type: 'object',
   icon: LinkIcon,
   fields: [

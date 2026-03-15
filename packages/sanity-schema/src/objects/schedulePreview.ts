@@ -5,6 +5,7 @@ export const schedulePreview = defineType({
   name: 'schedulePreview',
   title: 'Schedule Preview',
   type: 'object',
+  description: 'A preview of the conference schedule showing upcoming sessions.',
   icon: ClockIcon,
   fields: [
     defineField({

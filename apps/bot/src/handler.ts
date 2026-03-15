@@ -4,6 +4,7 @@ import {fetchSystemPrompt} from './ai/prompts.js'
 import {saveConversation} from './conversation/save.js'
 import {loadConversationHistory} from './conversation/history.js'
 import {cleanMarkdownStream, stripMarkdown} from './format-telegram.js'
+import {sanitizeDocumentId} from './utils/sanitize.js'
 
 const MAX_HISTORY_MESSAGES = 20
 
@@ -13,7 +14,7 @@ export async function handleOpsMessage(
 ) {
   const model = getContentAgentModel(thread.id)
   const systemPrompt = await fetchSystemPrompt('prompt.botOps')
-  const chatId = `agent.conversation.bot-telegram-${thread.id.replace(/[^a-zA-Z0-9._-]/g, '-')}`
+  const chatId = `agent.conversation.bot-telegram-${sanitizeDocumentId(thread.id)}`
 
   // Load prior messages for multi-turn context
   const history = await loadConversationHistory(chatId, MAX_HISTORY_MESSAGES)

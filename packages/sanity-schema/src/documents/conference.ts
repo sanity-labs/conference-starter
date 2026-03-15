@@ -6,6 +6,7 @@ export const conference = defineType({
   name: 'conference',
   title: 'Conference',
   type: 'document',
+  description: 'The main conference event with dates, venue, CFP settings, and branding.',
   icon: CalendarIcon,
   groups: [
     {name: 'details', title: 'Details', default: true},

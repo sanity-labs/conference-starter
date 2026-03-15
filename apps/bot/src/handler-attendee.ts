@@ -4,6 +4,7 @@ import {fetchSystemPrompt} from './ai/prompts.js'
 import {saveConversation} from './conversation/save.js'
 import {loadConversationHistory} from './conversation/history.js'
 import {cleanMarkdownStream, stripMarkdown} from './format-telegram.js'
+import {sanitizeDocumentId} from './utils/sanitize.js'
 
 const MAX_HISTORY_MESSAGES = 10
 
@@ -13,7 +14,7 @@ export async function handleAttendeeMessage(
 ) {
   const model = getAttendeeAgentModel(thread.id)
   const systemPrompt = await fetchSystemPrompt('prompt.botAttendee')
-  const chatId = `agent.conversation.attendee-telegram-${thread.id.replace(/[^a-zA-Z0-9._-]/g, '-')}`
+  const chatId = `agent.conversation.attendee-telegram-${sanitizeDocumentId(thread.id)}`
 
   const history = await loadConversationHistory(chatId, MAX_HISTORY_MESSAGES)
 

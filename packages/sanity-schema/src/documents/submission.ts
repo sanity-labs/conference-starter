@@ -5,6 +5,7 @@ export const submission = defineType({
   name: 'submission',
   title: 'CFP Submission',
   type: 'document',
+  description: 'A Call for Papers submission from a prospective speaker.',
   icon: EnvelopeIcon,
   groups: [
     {name: 'proposal', title: 'Proposal', default: true},

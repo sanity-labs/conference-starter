@@ -17,10 +17,7 @@ import type {StateAdapter, Lock} from 'chat'
 const MAX_RETRIES = 3
 const RETRY_DELAYS = [50, 100, 200]
 
-/** Sanity document IDs only allow [a-zA-Z0-9._-]. Replace everything else with `-`. */
-function sanitize(raw: string): string {
-  return raw.replace(/[^a-zA-Z0-9._-]/g, '-')
-}
+import {sanitizeDocumentId as sanitize} from '../utils/sanitize.js'
 
 function subId(threadId: string): string {
   return `chat.state.sub.${sanitize(threadId)}`
@@ -47,8 +44,11 @@ function sleep(ms: number): Promise<void> {
 }
 
 function isConflictError(err: unknown): boolean {
+  if (err && typeof err === 'object' && 'statusCode' in err) {
+    return (err as {statusCode: number}).statusCode === 409
+  }
   if (err instanceof Error) {
-    return err.message.includes('conflict') || err.message.includes('409')
+    return err.message.includes('Document was modified by another client')
   }
   return false
 }

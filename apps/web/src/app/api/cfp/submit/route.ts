@@ -5,7 +5,7 @@ import {z} from 'zod'
 const writeClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  apiVersion: '2025-11-01',
+  apiVersion: '2026-03-15',
   useCdn: false,
   token: process.env.SANITY_API_WRITE_TOKEN,
 })

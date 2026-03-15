@@ -6,7 +6,7 @@ import {CloseCircleIcon} from '@sanity/icons'
 export const rejectSubmission: DocumentActionComponent = (props) => {
   const {id, type, published, draft} = props
   const [isRunning, setIsRunning] = useState(false)
-  const client = useClient({apiVersion: '2025-11-01'})
+  const client = useClient({apiVersion: '2026-03-15'})
   const doc = (draft || published) as Record<string, unknown> | null
 
   if (type !== 'submission') return null

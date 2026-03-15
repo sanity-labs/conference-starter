@@ -6,7 +6,7 @@
 
 import {getCliClient} from 'sanity/cli'
 
-const client = getCliClient({apiVersion: '2025-11-01'})
+const client = getCliClient({apiVersion: '2026-03-15'})
 
 // ─── Prompt documents ────────────────────────────────────────────────────
 

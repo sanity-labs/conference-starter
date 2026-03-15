@@ -5,6 +5,7 @@ export const ctaBlock = defineType({
   name: 'ctaBlock',
   title: 'Call to Action Block',
   type: 'object',
+  description: 'A prominent call-to-action block with heading, text, and action buttons.',
   icon: LaunchIcon,
   fields: [
     defineField({

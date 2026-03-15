@@ -5,6 +5,7 @@ export const sponsorBar = defineType({
   name: 'sponsorBar',
   title: 'Sponsor Bar',
   type: 'object',
+  description: 'A horizontal bar showcasing sponsor logos, optionally filtered by tier.',
   icon: StarIcon,
   fields: [
     defineField({

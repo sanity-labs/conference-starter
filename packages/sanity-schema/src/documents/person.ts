@@ -6,6 +6,8 @@ export const person = defineType({
   name: 'person',
   title: 'Person',
   type: 'document',
+  description:
+    'A person involved in the conference — speaker, organizer, or panelist. Identity is separate from role.',
   icon: UserIcon,
   groups: [
     {name: 'profile', title: 'Profile', default: true},

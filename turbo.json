@@ -4,12 +4,38 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["TELEGRAM_BOT_TOKEN", "SANITY_ORG_ID", "SANITY_API_TOKEN"]
+      "env": [
+        "TELEGRAM_BOT_TOKEN",
+        "SANITY_ORG_ID",
+        "SANITY_API_TOKEN",
+        "NEXT_PUBLIC_SANITY_PROJECT_ID",
+        "NEXT_PUBLIC_SANITY_DATASET",
+        "SANITY_API_READ_TOKEN",
+        "SANITY_API_WRITE_TOKEN",
+        "RESEND_API_KEY"
+      ]
     },
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "env": ["TELEGRAM_BOT_TOKEN", "SANITY_PROJECT_ID", "SANITY_DATASET", "SANITY_ORG_ID", "SANITY_APP_KEY", "SANITY_API_TOKEN"]
+      "env": [
+        "TELEGRAM_BOT_TOKEN",
+        "SANITY_PROJECT_ID",
+        "SANITY_DATASET",
+        "SANITY_ORG_ID",
+        "SANITY_APP_KEY",
+        "SANITY_API_TOKEN",
+        "NEXT_PUBLIC_SANITY_PROJECT_ID",
+        "NEXT_PUBLIC_SANITY_DATASET",
+        "NEXT_PUBLIC_SITE_URL",
+        "NEXT_PUBLIC_BASE_URL",
+        "SANITY_API_READ_TOKEN",
+        "SANITY_API_WRITE_TOKEN",
+        "RESEND_API_KEY",
+        "RESEND_FROM_ADDRESS",
+        "SANITY_STUDIO_PREVIEW_URL",
+        "SVIX_WEBHOOK_SECRET"
+      ]
     },
     "type-check": {
       "dependsOn": ["^build"]

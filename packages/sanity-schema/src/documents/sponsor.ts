@@ -5,6 +5,7 @@ export const sponsor = defineType({
   name: 'sponsor',
   title: 'Sponsor',
   type: 'document',
+  description: 'A company sponsoring the conference at a given tier.',
   icon: StarIcon,
   fields: [
     defineField({

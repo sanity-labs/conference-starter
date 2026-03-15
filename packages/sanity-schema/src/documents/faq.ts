@@ -5,6 +5,7 @@ export const faq = defineType({
   name: 'faq',
   title: 'FAQ',
   type: 'document',
+  description: 'A frequently asked question with answer and category.',
   icon: HelpCircleIcon,
   fields: [
     defineField({

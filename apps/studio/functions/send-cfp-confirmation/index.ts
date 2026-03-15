@@ -38,7 +38,7 @@ export const handler = documentEventHandler<SubmissionEvent>(async ({context, ev
     conferenceName: 'Everything NYC 2026',
   }
 
-  const bodyHtml = renderEmailBody(template.body as never[], variables)
+  const bodyHtml = renderEmailBody(template.body, variables)
   const subject = interpolateSubject(template.subject, variables)
   const html = wrapInLayout(bodyHtml, subject)
 

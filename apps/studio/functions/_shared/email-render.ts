@@ -5,14 +5,15 @@
  */
 
 import {toHTML, escapeHTML} from '@portabletext/to-html'
-import type {PortableTextBlock} from '@portabletext/types'
 import {emailLayoutHtml} from './email-layout'
 
+type PortableTextBody = Parameters<typeof toHTML>[0]
+
 export function renderEmailBody(
-  body: PortableTextBlock[],
+  body: unknown[],
   variables: Record<string, string>,
 ): string {
-  return toHTML(body, {
+  return toHTML(body as PortableTextBody, {
     components: {
       types: {
         pteInterpolationVariable: ({value}: {value: {variableKey: string}}) =>

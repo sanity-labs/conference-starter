@@ -5,7 +5,6 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./templates/*": "./src/templates/*.tsx",
     "./send": "./src/send.ts"
   },
   "scripts": {

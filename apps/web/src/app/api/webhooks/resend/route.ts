@@ -1,5 +1,6 @@
 import {NextResponse} from 'next/server'
 import {createClient} from 'next-sanity'
+import {Webhook} from 'svix'
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
@@ -24,14 +25,27 @@ export async function POST(request: Request) {
   try {
     const body = await request.text()
 
-    // Verify webhook signature if secret is configured
-    const signature = request.headers.get('svix-signature')
-    if (process.env.RESEND_WEBHOOK_SECRET && !signature) {
-      return NextResponse.json({error: 'Missing signature'}, {status: 401})
-    }
+    // Verify webhook signature when secret is configured
+    if (process.env.RESEND_WEBHOOK_SECRET) {
+      const svixId = request.headers.get('svix-id')
+      const svixTimestamp = request.headers.get('svix-timestamp')
+      const svixSignature = request.headers.get('svix-signature')
 
-    // TODO: Add full svix signature verification when @svix/webhooks is added
-    // For now, we verify the webhook secret is present as a basic check
+      if (!svixId || !svixTimestamp || !svixSignature) {
+        return NextResponse.json({error: 'Missing webhook signature headers'}, {status: 401})
+      }
+
+      const wh = new Webhook(process.env.RESEND_WEBHOOK_SECRET)
+      try {
+        wh.verify(body, {
+          'svix-id': svixId,
+          'svix-timestamp': svixTimestamp,
+          'svix-signature': svixSignature,
+        })
+      } catch {
+        return NextResponse.json({error: 'Invalid webhook signature'}, {status: 401})
+      }
+    }
 
     const event = JSON.parse(body) as ResendWebhookEvent
 

@@ -1,5 +1,5 @@
-import {PortableText as PortableTextReact} from '@portabletext/react'
-import type {PortableTextBlock, PortableTextComponents} from '@portabletext/types'
+import {PortableText as PortableTextReact, type PortableTextComponents} from '@portabletext/react'
+import type {PortableTextBlock} from '@portabletext/types'
 import {Heading, Text, Link} from '@react-email/components'
 
 /**

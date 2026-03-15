@@ -158,7 +158,7 @@ export const submission = defineType({
       type: 'object',
       group: 'screening',
       description:
-        'AI-generated evaluation from the CFP screening Function. Populated automatically by Agent Actions in Sprint 3.',
+        'AI-generated evaluation from the CFP screening Function. Populated automatically by Agent Actions.',
       readOnly: () => true,
       fields: [
         defineField({

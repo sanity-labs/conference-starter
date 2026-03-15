@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Everything NYC 2026 — a conference operations platform built on Sanity as a reference architecture. Not just a CMS-backed website, but a **content operating system** for events: the Content Lake drives the website, emails, registration (Luma), AI concierge, and automation.
 
-This repo is currently in **pre-Sprint 0** — planning docs exist in `plans/`, no application code yet.
+Sprints 0–4 are complete. The platform has a working Studio, content model, website, email pipeline, CFP screening, and Telegram bot. Planning docs in `plans/` describe the original architecture.
 
 ## Planned Tech Stack
 

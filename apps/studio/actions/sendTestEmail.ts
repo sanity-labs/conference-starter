@@ -3,6 +3,8 @@ import {useCurrentUser} from 'sanity'
 import type {DocumentActionComponent} from 'sanity'
 import {EnvelopeIcon} from '@sanity/icons'
 
+const PREVIEW_API_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
+
 const sampleVariables: Record<string, string> = {
   submitterName: 'Alex Johnson',
   sessionTitle: 'Building AI-Powered Content Platforms',
@@ -31,7 +33,7 @@ export const sendTestEmail: DocumentActionComponent = (props) => {
       setIsSending(true)
 
       try {
-        const res = await fetch('/api/send-test-email', {
+        const res = await fetch(`${PREVIEW_API_URL}/api/send-test-email`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({

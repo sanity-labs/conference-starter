@@ -1,5 +1,7 @@
-import {useEffect, useRef, useState} from 'react'
+import {useCallback, useEffect, useRef, useState} from 'react'
 import type {SanityDocument} from 'sanity'
+
+const PREVIEW_API_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
 
 const sampleVariables: Record<string, string> = {
   submitterName: 'Alex Johnson',
@@ -23,6 +25,22 @@ export function EmailPreview({document: {displayed}}: EmailPreviewProps) {
   const [error, setError] = useState<string>('')
   const [loading, setLoading] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+
+  // Write HTML directly into iframe document to avoid remounting
+  const writeToIframe = useCallback((content: string) => {
+    const iframe = iframeRef.current
+    if (!iframe) return
+    const doc = iframe.contentDocument
+    if (!doc) return
+    doc.open()
+    doc.write(content)
+    doc.close()
+  }, [])
+
+  useEffect(() => {
+    if (html) writeToIframe(html)
+  }, [html, writeToIframe])
 
   useEffect(() => {
     if (timerRef.current) {
@@ -39,7 +57,7 @@ export function EmailPreview({document: {displayed}}: EmailPreviewProps) {
       setError('')
 
       try {
-        const res = await fetch('/api/email-preview', {
+        const res = await fetch(`${PREVIEW_API_URL}/api/email-preview`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -70,6 +88,8 @@ export function EmailPreview({document: {displayed}}: EmailPreviewProps) {
     }
   }, [displayed?.subject, displayed?.body, displayed?.name])
 
+  const hasContent = Boolean(html)
+
   return (
     <div style={{padding: '16px', height: '100%', display: 'flex', flexDirection: 'column'}}>
       {typeof displayed?.subject === 'string' && displayed.subject && (
@@ -77,6 +97,7 @@ export function EmailPreview({document: {displayed}}: EmailPreviewProps) {
           style={{
             padding: '12px 16px',
             backgroundColor: '#f4f4f5',
+            color: '#27272a',
             borderRadius: '6px',
             marginBottom: '16px',
             fontSize: '14px',
@@ -86,19 +107,13 @@ export function EmailPreview({document: {displayed}}: EmailPreviewProps) {
         </div>
       )}
 
-      {loading && (
-        <div style={{padding: '16px', color: '#71717a', fontSize: '14px'}}>
-          Rendering preview...
-        </div>
-      )}
-
       {error && (
         <div style={{padding: '16px', color: '#dc2626', fontSize: '14px'}}>{error}</div>
       )}
 
-      {html && (
+      {hasContent && (
         <iframe
-          srcDoc={html}
+          ref={iframeRef}
           style={{
             flex: 1,
             border: '1px solid #e4e4e7',
@@ -106,12 +121,14 @@ export function EmailPreview({document: {displayed}}: EmailPreviewProps) {
             width: '100%',
             minHeight: '600px',
             backgroundColor: '#ffffff',
+            opacity: loading ? 0.6 : 1,
+            transition: 'opacity 150ms ease',
           }}
           title="Email Preview"
         />
       )}
 
-      {!html && !loading && !error && (
+      {!hasContent && !loading && !error && (
         <div style={{padding: '16px', color: '#71717a', fontSize: '14px'}}>
           Add content to the email body to see a preview.
         </div>

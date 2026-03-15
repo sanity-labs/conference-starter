@@ -3,12 +3,25 @@ import {render} from '@react-email/render'
 import {EmailLayout, PortableTextEmail, resend} from '@repo/email'
 import {createElement} from 'react'
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+}
+
+export function OPTIONS() {
+  return new Response(null, {status: 204, headers: CORS_HEADERS})
+}
+
 export async function POST(request: Request) {
   try {
     const {to, subject, body, variables} = await request.json()
 
     if (!to || !subject || !body) {
-      return NextResponse.json({error: 'Missing required fields: to, subject, body'}, {status: 400})
+      return NextResponse.json(
+        {error: 'Missing required fields: to, subject, body'},
+        {status: 400, headers: CORS_HEADERS},
+      )
     }
 
     const interpolationValues = (variables ?? {}) as Record<string, string>
@@ -43,12 +56,12 @@ export async function POST(request: Request) {
     })
 
     if (error) {
-      return NextResponse.json({error: error.message}, {status: 500})
+      return NextResponse.json({error: error.message}, {status: 500, headers: CORS_HEADERS})
     }
 
-    return NextResponse.json({success: true, id: data?.id})
+    return NextResponse.json({success: true, id: data?.id}, {headers: CORS_HEADERS})
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to send test email'
-    return NextResponse.json({error: message}, {status: 500})
+    return NextResponse.json({error: message}, {status: 500, headers: CORS_HEADERS})
   }
 }

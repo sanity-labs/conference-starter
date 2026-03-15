@@ -8,7 +8,6 @@
     "./send": "./src/send.ts"
   },
   "scripts": {
-    "dev": "email dev -p 3001 --dir emails",
     "generate-layout": "tsx scripts/generate-layout.ts",
     "type-check": "tsc --noEmit"
   },
@@ -21,13 +20,16 @@
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
   "dependencies": {
     "@portabletext/react": "^6.0.3",
+    "@portabletext/to-html": "^5.0.2",
     "@portabletext/types": "^4.0.2",
     "@react-email/components": "^1.0.9",
     "@react-email/render": "^2.0.4",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
     "resend": "^6.9.3"
   }
 }

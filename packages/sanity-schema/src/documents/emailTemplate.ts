@@ -1,5 +1,13 @@
-import {defineArrayMember, defineField, defineType} from 'sanity'
+import {defineField, defineType} from 'sanity'
 import {EnvelopeIcon} from '@sanity/icons'
+import {interpolationVariables} from 'sanity-plugin-pte-interpolation'
+
+export const emailVariables = [
+  {id: 'submitterName', name: 'Submitter Name', description: "CFP submitter's full name"},
+  {id: 'sessionTitle', name: 'Session Title', description: 'Talk or session title'},
+  {id: 'speakerName', name: 'Speaker Name', description: "Accepted speaker's name"},
+  {id: 'conferenceName', name: 'Conference Name', description: 'e.g. Everything NYC 2026'},
+]
 
 export const emailTemplate = defineType({
   name: 'emailTemplate',
@@ -34,9 +42,9 @@ export const emailTemplate = defineType({
       name: 'body',
       title: 'Email Body',
       type: 'array',
-      of: [defineArrayMember({type: 'block'})],
+      of: [interpolationVariables(emailVariables)],
       description:
-        'The email content in rich text. Use the "Email Preview" tab to see how it renders. Template variables ({{speakerName}}, etc.) appear as-is in preview.',
+        'The email content in rich text. Use the variable picker to insert dynamic values like names and titles. Preview tab shows resolved samples.',
       validation: (rule) => rule.required().error('Email body is required'),
     }),
     defineField({

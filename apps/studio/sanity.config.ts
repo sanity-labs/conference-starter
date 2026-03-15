@@ -9,6 +9,7 @@ import {resolve} from './resolve'
 import {acceptSubmission} from './actions/acceptSubmission'
 import {rejectSubmission} from './actions/rejectSubmission'
 import {rescreenSubmission} from './actions/rescreenSubmission'
+import {sendTestEmail} from './actions/sendTestEmail'
 import {scheduleBuilder} from './tools/schedule-builder'
 
 export default defineConfig({
@@ -41,6 +42,9 @@ export default defineConfig({
     actions: (prev, context) => {
       if (context.schemaType === 'submission') {
         return [...prev, acceptSubmission, rejectSubmission, rescreenSubmission]
+      }
+      if (context.schemaType === 'emailTemplate') {
+        return [...prev, sendTestEmail]
       }
       return prev
     },

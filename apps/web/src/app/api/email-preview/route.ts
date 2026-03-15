@@ -5,16 +5,28 @@ import {createElement} from 'react'
 
 export async function POST(request: Request) {
   try {
-    const {subject, body} = await request.json()
+    const {subject, body, variables} = await request.json()
 
     if (!body || !Array.isArray(body) || body.length === 0) {
       return NextResponse.json({error: 'Email body is required'}, {status: 400})
     }
 
-    const children = createElement(PortableTextEmail, {value: body})
+    const interpolationValues = variables as Record<string, string> | undefined
+
+    const children = createElement(PortableTextEmail, {
+      value: body,
+      interpolationValues,
+    })
+
+    const previewSubject = interpolationValues
+      ? (subject || 'Email Preview').replace(
+          /\{\{(\w+)\}\}/g,
+          (_: string, key: string) => interpolationValues[key] ?? `{{${key}}}`,
+        )
+      : subject || 'Email Preview'
 
     const element = createElement(EmailLayout, {
-      preview: subject || 'Email Preview',
+      preview: previewSubject,
       conferenceName: 'Everything NYC 2026',
       children,
     })

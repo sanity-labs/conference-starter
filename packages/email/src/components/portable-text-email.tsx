@@ -1,5 +1,5 @@
 import {PortableText as PortableTextReact} from '@portabletext/react'
-import type {PortableTextBlock} from '@portabletext/types'
+import type {PortableTextBlock, PortableTextComponents} from '@portabletext/types'
 import {Heading, Text, Link} from '@react-email/components'
 
 /**
@@ -10,12 +10,31 @@ import {Heading, Text, Link} from '@react-email/components'
 
 type PortableTextEmailValue = PortableTextBlock[] | Array<Record<string, unknown>>
 
-export function PortableTextEmail({value}: {value: PortableTextEmailValue | null | undefined}) {
-  if (!value || value.length === 0) return null
-  return <PortableTextReact value={value as PortableTextBlock[]} components={emailComponents} />
+interface PortableTextEmailProps {
+  value: PortableTextEmailValue | null | undefined
+  interpolationValues?: Record<string, string>
 }
 
-const emailComponents = {
+export function PortableTextEmail({value, interpolationValues}: PortableTextEmailProps) {
+  if (!value || value.length === 0) return null
+
+  const components: PortableTextComponents = interpolationValues
+    ? {
+        ...emailComponents,
+        types: {
+          ...emailComponents.types,
+          pteInterpolationVariable: ({value: v}: {value: {variableKey: string}}) => {
+            const resolved = interpolationValues[v.variableKey]
+            return <>{resolved ?? `{${v.variableKey}}`}</>
+          },
+        },
+      }
+    : emailComponents
+
+  return <PortableTextReact value={value as PortableTextBlock[]} components={components} />
+}
+
+const emailComponents: PortableTextComponents = {
   block: {
     normal: ({children}: {children?: React.ReactNode}) => <Text style={textStyle}>{children}</Text>,
     h1: ({children}: {children?: React.ReactNode}) => (

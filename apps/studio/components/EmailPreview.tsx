@@ -1,6 +1,17 @@
 import {useEffect, useRef, useState} from 'react'
 import type {SanityDocument} from 'sanity'
 
+const sampleVariables: Record<string, string> = {
+  submitterName: 'Alex Johnson',
+  sessionTitle: 'Building AI-Powered Content Platforms',
+  speakerName: 'Alex Johnson',
+  conferenceName: 'Everything NYC 2026',
+}
+
+function interpolateSubject(subject: string): string {
+  return subject.replace(/\{\{(\w+)\}\}/g, (_, key) => sampleVariables[key] ?? `{{${key}}}`)
+}
+
 interface EmailPreviewProps {
   document: {
     displayed: SanityDocument
@@ -35,6 +46,7 @@ export function EmailPreview({document: {displayed}}: EmailPreviewProps) {
             subject: displayed.subject,
             body: displayed.body,
             name: displayed.name,
+            variables: sampleVariables,
           }),
         })
 
@@ -70,7 +82,7 @@ export function EmailPreview({document: {displayed}}: EmailPreviewProps) {
             fontSize: '14px',
           }}
         >
-          <strong>Subject:</strong> {String(displayed.subject)}
+          <strong>Subject:</strong> {interpolateSubject(String(displayed.subject))}
         </div>
       )}
 

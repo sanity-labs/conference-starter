@@ -3,7 +3,11 @@
  * Creates 4 emailTemplate documents with Portable Text body containing
  * pteInterpolationVariable inline objects for dynamic values.
  *
- * Usage (from apps/studio/): npx sanity exec ../../scripts/seed-email-templates.ts --with-user-token
+ * Usage (from apps/studio/):
+ *   cp ../../scripts/seed-email-templates.ts . && npx sanity exec ./seed-email-templates.ts --with-user-token && rm seed-email-templates.ts
+ *
+ * Note: getCliClient only receives the token when the script path is within the studio directory.
+ * The ../../ relative path breaks --with-user-token injection.
  */
 
 import {getCliClient} from 'sanity/cli'

@@ -21,29 +21,29 @@ async function checkSanityToken(): Promise<CheckResult> {
   }
 }
 
-async function checkBotOpsPrompt(): Promise<CheckResult> {
+async function checkPromptDocument(promptId: string, label: string): Promise<CheckResult> {
   try {
     const doc = await sanityClient.fetch<{instruction: string | null}>(
-      `*[_id == "prompt.botOps"][0]{ instruction }`,
+      `*[_id == $id][0]{ instruction }`,
+      {id: promptId},
     )
     if (!doc) {
       return {
-        name: 'Bot prompt',
+        name: label,
         ok: false,
-        message:
-          'Document "prompt.botOps" not found.\n  → Run: cd apps/studio && npx sanity exec ../../scripts/seed-prompts.ts --with-user-token',
+        message: `Document "${promptId}" not found.\n  → Run: cd apps/studio && npx sanity exec ../../scripts/seed-prompts.ts --with-user-token`,
       }
     }
     if (!doc.instruction) {
       return {
-        name: 'Bot prompt',
+        name: label,
         ok: false,
-        message: '"prompt.botOps" exists but has no instruction text.',
+        message: `"${promptId}" exists but has no instruction text.`,
       }
     }
-    return {name: 'Bot prompt', ok: true, message: 'prompt.botOps loaded'}
+    return {name: label, ok: true, message: `${promptId} loaded`}
   } catch {
-    return {name: 'Bot prompt', ok: false, message: 'Failed to query prompt document'}
+    return {name: label, ok: false, message: `Failed to query ${promptId}`}
   }
 }
 
@@ -72,11 +72,12 @@ export async function runPreflight(): Promise<void> {
   results.push(checkTelegramTokenFormat())
 
   // Async checks in parallel
-  const [tokenResult, promptResult] = await Promise.all([
+  const [tokenResult, opsPromptResult, attendeePromptResult] = await Promise.all([
     checkSanityToken(),
-    checkBotOpsPrompt(),
+    checkPromptDocument('prompt.botOps', 'Ops bot prompt'),
+    checkPromptDocument('prompt.botAttendee', 'Attendee bot prompt'),
   ])
-  results.push(tokenResult, promptResult)
+  results.push(tokenResult, opsPromptResult, attendeePromptResult)
 
   let hasFailure = false
   for (const r of results) {

@@ -14,6 +14,7 @@ import {
   ActivityIcon,
   RobotIcon,
   CommentIcon,
+  HelpCircleIcon,
 } from '@sanity/icons'
 import {EmailPreview} from './components/EmailPreview'
 
@@ -217,6 +218,33 @@ export const structure: StructureResolver = (S) =>
             .defaultOrdering([{field: 'publishedAt', direction: 'desc'}]),
         ),
 
+      // FAQs
+      S.listItem()
+        .title('FAQs')
+        .icon(HelpCircleIcon)
+        .child(
+          S.list()
+            .title('FAQs')
+            .items([
+              S.listItem()
+                .title('All FAQs')
+                .icon(HelpCircleIcon)
+                .child(S.documentTypeList('faq').title('All FAQs')),
+              S.divider(),
+              ...['general', 'venue', 'schedule', 'registration', 'accessibility', 'conduct', 'speakers'].map(
+                (category) =>
+                  S.listItem()
+                    .title(category.charAt(0).toUpperCase() + category.slice(1))
+                    .child(
+                      S.documentList()
+                        .title(`${category.charAt(0).toUpperCase() + category.slice(1)} FAQs`)
+                        .filter('_type == "faq" && category == $category')
+                        .params({category}),
+                    ),
+              ),
+            ]),
+        ),
+
       // Email Templates
       S.listItem()
         .title('Email Templates')
@@ -271,6 +299,10 @@ export const structure: StructureResolver = (S) =>
                 .title('Telegram Ops Bot')
                 .icon(RobotIcon)
                 .child(S.document().schemaType('prompt').documentId('prompt.botOps')),
+              S.listItem()
+                .title('Telegram Attendee Bot')
+                .icon(RobotIcon)
+                .child(S.document().schemaType('prompt').documentId('prompt.botAttendee')),
             ]),
         ),
 

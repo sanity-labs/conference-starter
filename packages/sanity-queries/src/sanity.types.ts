@@ -43,32 +43,19 @@ export type NavItem = {
   url?: string;
 };
 
+export type FaqReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "faq";
+};
+
 export type FaqSection = {
   _type: "faqSection";
   heading?: string;
   items?: Array<{
-    question?: string;
-    answer?: Array<{
-      children?: Array<{
-        marks?: Array<string>;
-        text?: string;
-        _type: "span";
-        _key: string;
-      }>;
-      style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
-      listItem?: "bullet" | "number";
-      markDefs?: Array<{
-        href?: string;
-        _type: "link";
-        _key: string;
-      }>;
-      level?: number;
-      _type: "block";
-      _key: string;
-    }>;
-    _type: "faqItem";
     _key: string;
-  }>;
+  } & FaqReference>;
 };
 
 export type CtaBlock = {
@@ -193,6 +180,34 @@ export type AgentConversation = {
     userConfusion?: number;
   };
   contentGap?: string;
+};
+
+export type Faq = {
+  _id: string;
+  _type: "faq";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  question?: string;
+  answer?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  category?: "general" | "venue" | "schedule" | "registration" | "accessibility" | "conduct" | "speakers";
 };
 
 export type Prompt = {
@@ -894,7 +909,7 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = PageReference | SessionReference | PersonReference | NavItem | FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerGrid | SanityImageAssetReference | RichText | Hero | Cta | ChatState | AgentConversation | Prompt | SubmissionReference | EmailLog | EmailTemplate | Slug | ConferenceReference | Submission | Announcement | SanityImageCrop | SanityImageHotspot | Page | Sponsor | RoomReference | ScheduleSlot | VenueReference | Room | TrackReference | Session | Track | Color | Person | Conference | Venue | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes = PageReference | SessionReference | PersonReference | NavItem | FaqReference | FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerGrid | SanityImageAssetReference | RichText | Hero | Cta | ChatState | AgentConversation | Faq | Prompt | SubmissionReference | EmailLog | EmailTemplate | Slug | ConferenceReference | Submission | Announcement | SanityImageCrop | SanityImageHotspot | Page | Sponsor | RoomReference | ScheduleSlot | VenueReference | Room | TrackReference | Session | Track | Color | Person | Conference | Venue | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
@@ -1142,25 +1157,8 @@ export type PAGE_QUERY_RESULT = {
     heading: string | null;
     items: Array<{
       _key: string;
-      question: string | null;
-      answer: Array<{
-        children?: Array<{
-          marks?: Array<string>;
-          text?: string;
-          _type: "span";
-          _key: string;
-        }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
-        listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
-        level?: number;
-        _type: "block";
-        _key: string;
-      }> | null;
+      question: null;
+      answer: null;
     }> | null;
   } | {
     _key: string;

@@ -10,6 +10,7 @@
   },
   "scripts": {
     "dev": "email dev -p 3001 --dir emails",
+    "generate-layout": "tsx scripts/generate-layout.ts",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
@@ -18,6 +19,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "react-email": "^5.2.9",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {

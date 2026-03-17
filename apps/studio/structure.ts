@@ -16,6 +16,7 @@ import {
   CommentIcon,
   HelpCircleIcon,
 } from '@sanity/icons'
+import {AGENT_CONTEXT_SCHEMA_TYPE_NAME} from '@sanity/agent-context/studio'
 import {EmailPreview} from './components/EmailPreview'
 
 export const structure: StructureResolver = (S) =>
@@ -305,6 +306,12 @@ export const structure: StructureResolver = (S) =>
                 .child(S.document().schemaType('prompt').documentId('prompt.botAttendee')),
             ]),
         ),
+
+      // Agent Context
+      S.listItem()
+        .title('Agent Context')
+        .icon(RobotIcon)
+        .child(S.documentTypeList(AGENT_CONTEXT_SCHEMA_TYPE_NAME).title('Agent Context')),
 
       // Conversations (bot)
       S.listItem()

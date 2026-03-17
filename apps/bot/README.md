@@ -1,6 +1,6 @@
-# Bot — Telegram Ops Bot
+# Bot — Telegram Conference Bot
 
-A Telegram bot for conference organizers. Uses Sanity Content Agent to answer questions about sessions, speakers, schedule, and submissions — and can make changes to content directly from Telegram.
+Two bots in one: an **ops bot** for organizers (read/write via Content Agent) and an **attendee bot** for the public (read-only via Agent Context + Anthropic Sonnet 4.6).
 
 ## First-Time Setup
 
@@ -31,18 +31,30 @@ The preflight checks will tell you if anything is misconfigured.
                          │  └─────────────┘  │
                          └────────┬──────────┘
                                   │
-                         ┌────────▼──────────┐
-                         │  Handler          │
-                         │  ┌─────────────┐  │
-                         │  │ Content     │  │
-                         │  │ Agent (AI)  │──┼──► Content Agent API
-                         │  └─────────────┘  │
-                         │  ┌─────────────┐  │
-                         │  │ Conversation │  │
-                         │  │ History     │──┼──► Content Lake (agent.conversation docs)
-                         │  └─────────────┘  │
-                         └───────────────────┘
+                    ┌─────────────┴─────────────┐
+                    │                           │
+           ┌────────▼──────────┐     ┌──────────▼─────────┐
+           │  Ops Handler      │     │  Attendee Handler   │
+           │  (organizers)     │     │  (public)           │
+           │  ┌─────────────┐  │     │  ┌───────────────┐  │
+           │  │ Content     │  │     │  │ Anthropic     │  │
+           │  │ Agent (AI)  │──┼──►  │  │ Sonnet 4.6   │  │
+           │  └─────────────┘  │     │  └───────────────┘  │
+           └───────────────────┘     │  ┌───────────────┐  │
+                                     │  │ Agent Context │  │
+                                     │  │ MCP (tools)  │──┼──► Sanity MCP
+                                     │  └───────────────┘  │
+                                     └─────────────────────┘
 ```
+
+### Two AI Paths
+
+| | Ops Bot (organizers) | Attendee Bot (public) |
+|---|---|---|
+| **LLM** | Content Agent (opaque) | Anthropic Sonnet 4.6 |
+| **Content access** | Content Agent API | Agent Context MCP |
+| **Permissions** | Read + Write | Read-only |
+| **Config** | `SANITY_APP_KEY` + `SANITY_API_TOKEN` | `ANTHROPIC_API_KEY` + `SANITY_CONTEXT_MCP_URL` + `SANITY_API_READ_TOKEN` |
 
 ### Polling Mode (local dev)
 
@@ -56,7 +68,9 @@ Telegram pushes updates to `/api/webhooks/telegram`. Each invocation is a server
 
 - **chat** — Multi-platform chat SDK
 - **@chat-adapter/telegram** — Telegram adapter
-- **content-agent** — Sanity Content Agent provider (AI SDK compatible)
+- **content-agent** — Sanity Content Agent provider (ops bot)
+- **@ai-sdk/anthropic** — Anthropic LLM provider (attendee bot)
+- **@ai-sdk/mcp** — MCP client for Agent Context (attendee bot)
 - **ai** (Vercel AI SDK) — `streamText()` for AI responses
 - **@sanity/client** — Content Lake read/write + state adapter backend
 - **Zod 3** — environment validation
@@ -125,9 +139,12 @@ cp .env.example .env
 | `TELEGRAM_BOT_TOKEN` | Authenticate with Telegram | @BotFather → `/mytoken` |
 | `SANITY_PROJECT_ID` | Target Sanity project | sanity.io/manage → Project |
 | `SANITY_DATASET` | Target dataset | Usually `production` |
-| `SANITY_ORG_ID` | Content Agent org scoping | sanity.io/manage → Organization → Settings |
-| `SANITY_APP_KEY` | Content Agent Studio workspace | Run `contentAgent.applications()` (see [above](#application-key)) |
-| `SANITY_API_TOKEN` | Auth for Content Agent + GROQ | sanity.io/manage → Project → API → Tokens (Editor role) |
+| `SANITY_ORG_ID` | Content Agent org scoping (ops bot) | sanity.io/manage → Organization → Settings |
+| `SANITY_APP_KEY` | Content Agent Studio workspace (ops bot) | Run `contentAgent.applications()` (see [above](#application-key)) |
+| `SANITY_API_TOKEN` | Auth for Content Agent + GROQ (Editor role) | sanity.io/manage → Project → API → Tokens |
+| `ANTHROPIC_API_KEY` | Anthropic LLM for attendee bot | console.anthropic.com → API Keys |
+| `SANITY_CONTEXT_MCP_URL` | Agent Context MCP endpoint (attendee bot) | Agent Context document in Studio |
+| `SANITY_API_READ_TOKEN` | Read-only token for MCP auth (Viewer role) | sanity.io/manage → Project → API → Tokens |
 
 ## Development
 
@@ -174,7 +191,8 @@ src/
   preflight.ts                → Startup health checks (polling mode only)
 
   ai/
-    content-agent.ts          → Content Agent model initialization
+    content-agent.ts          → Content Agent model initialization (ops bot)
+    agent-context.ts          → Agent Context MCP client factory (attendee bot)
     prompts.ts                → System prompt fetching from Content Lake
 
   security/

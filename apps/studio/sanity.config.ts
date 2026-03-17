@@ -10,6 +10,7 @@ import {acceptSubmission} from './actions/acceptSubmission'
 import {rejectSubmission} from './actions/rejectSubmission'
 import {rescreenSubmission} from './actions/rescreenSubmission'
 import {sendTestEmail} from './actions/sendTestEmail'
+import {agentContextPlugin} from '@sanity/agent-context/studio'
 import {scheduleBuilder} from './tools/schedule-builder'
 
 export default defineConfig({
@@ -32,6 +33,7 @@ export default defineConfig({
       },
     }),
     scheduleBuilder(),
+    agentContextPlugin(),
   ],
 
   schema: {

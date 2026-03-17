@@ -19,15 +19,3 @@ export function getContentAgentModel(threadId: string): LanguageModelV3 {
     },
   })
 }
-
-export function getAttendeeAgentModel(threadId: string): LanguageModelV3 {
-  return contentAgent.agent(`attendee-${threadId}`, {
-    application: {key: config.sanityAppKey},
-    config: {
-      capabilities: {read: true, write: false},
-      filter: {
-        read: '_type in ["session", "person", "track", "venue", "room", "scheduleSlot", "conference", "announcement", "sponsor", "faq"]',
-      },
-    },
-  })
-}

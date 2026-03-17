@@ -47,6 +47,56 @@ async function checkPromptDocument(promptId: string, label: string): Promise<Che
   }
 }
 
+function checkAnthropicKeyFormat(): CheckResult {
+  const key = config.anthropicApiKey
+  if (!key.startsWith('sk-ant-')) {
+    return {
+      name: 'Anthropic API key format',
+      ok: false,
+      message: `Key should start with "sk-ant-". Check your ANTHROPIC_API_KEY.`,
+    }
+  }
+  return {name: 'Anthropic API key format', ok: true, message: 'Format valid'}
+}
+
+async function checkAgentContextMcp(): Promise<CheckResult> {
+  try {
+    const res = await fetch(config.mcpUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${config.readToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({jsonrpc: '2.0', method: 'initialize', id: 1, params: {protocolVersion: '2024-11-05', capabilities: {}, clientInfo: {name: 'preflight', version: '1.0.0'}}}),
+    })
+    if (res.status === 401) {
+      return {
+        name: 'Agent Context MCP',
+        ok: false,
+        message: `401 Unauthorized. Check SANITY_API_READ_TOKEN — create a Viewer token at sanity.io/manage → Project → API → Tokens.`,
+      }
+    }
+    if (res.status === 404) {
+      return {
+        name: 'Agent Context MCP',
+        ok: false,
+        message: `404 Not Found. Check SANITY_CONTEXT_MCP_URL — ensure the Agent Context document is published and the slug matches.`,
+      }
+    }
+    if (!res.ok) {
+      return {
+        name: 'Agent Context MCP',
+        ok: false,
+        message: `HTTP ${res.status} from MCP endpoint.`,
+      }
+    }
+    return {name: 'Agent Context MCP', ok: true, message: 'MCP endpoint reachable'}
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    return {name: 'Agent Context MCP', ok: false, message: `Connection failed: ${msg}`}
+  }
+}
+
 function checkTelegramTokenFormat(): CheckResult {
   const token = config.telegramBotToken
   // Telegram bot tokens follow the pattern: <bot-id>:<secret>
@@ -68,16 +118,18 @@ export async function runPreflight(): Promise<void> {
 
   const results: CheckResult[] = []
 
-  // Sync check
+  // Sync checks
   results.push(checkTelegramTokenFormat())
+  results.push(checkAnthropicKeyFormat())
 
   // Async checks in parallel
-  const [tokenResult, opsPromptResult, attendeePromptResult] = await Promise.all([
+  const [tokenResult, opsPromptResult, attendeePromptResult, mcpResult] = await Promise.all([
     checkSanityToken(),
     checkPromptDocument('prompt.botOps', 'Ops bot prompt'),
     checkPromptDocument('prompt.botAttendee', 'Attendee bot prompt'),
+    checkAgentContextMcp(),
   ])
-  results.push(tokenResult, opsPromptResult, attendeePromptResult)
+  results.push(tokenResult, opsPromptResult, attendeePromptResult, mcpResult)
 
   let hasFailure = false
   for (const r of results) {

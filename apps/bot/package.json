@@ -8,6 +8,8 @@
     "start": "node --env-file=.env dist/src/index.js"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.58",
+    "@ai-sdk/mcp": "^1.0.25",
     "@ai-sdk/provider": "^3.0.8",
     "@chat-adapter/telegram": "^4.20.1",
     "@sanity/client": "^7.17.0",

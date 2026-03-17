@@ -12,6 +12,8 @@
  * ---------------------------------------------------------------------------------
  */
 
+export declare const internalGroqTypeReferenceTo: unique symbol;
+
 // Source: schema.json
 export type PageReference = {
   _ref: string;
@@ -792,6 +794,19 @@ export type Venue = {
   };
 };
 
+export type SanityAgentContext = {
+  _id: string;
+  _type: "sanity.agentContext";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  version?: string;
+  name?: string;
+  slug?: Slug;
+  groqFilter?: string;
+  instructions?: string;
+};
+
 export type RgbaColor = {
   _type: "rgbaColor";
   r?: number;
@@ -913,9 +928,7 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = PageReference | SessionReference | PersonReference | NavItem | FaqReference | FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerGrid | SanityImageAssetReference | RichText | Hero | Cta | ChatState | AgentConversation | Faq | Prompt | SubmissionReference | EmailLog | EmailTemplate | Slug | ConferenceReference | Submission | Announcement | SanityImageCrop | SanityImageHotspot | Page | Sponsor | RoomReference | ScheduleSlot | VenueReference | Room | TrackReference | Session | Track | Color | Person | Conference | Venue | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
-
-export declare const internalGroqTypeReferenceTo: unique symbol;
+export type AllSanitySchemaTypes = PageReference | SessionReference | PersonReference | NavItem | FaqReference | FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerGrid | SanityImageAssetReference | RichText | Hero | Cta | ChatState | AgentConversation | Faq | Prompt | SubmissionReference | EmailLog | EmailTemplate | Slug | ConferenceReference | Submission | Announcement | SanityImageCrop | SanityImageHotspot | Page | Sponsor | RoomReference | ScheduleSlot | VenueReference | Room | TrackReference | Session | Track | Color | Person | Conference | Venue | SanityAgentContext | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 
 // Source: ../../packages/sanity-queries/src/announcements.ts
 // Variable: ANNOUNCEMENTS_QUERY

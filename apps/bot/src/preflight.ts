@@ -66,6 +66,7 @@ async function checkAgentContextMcp(): Promise<CheckResult> {
       headers: {
         Authorization: `Bearer ${config.readToken}`,
         'Content-Type': 'application/json',
+        Accept: 'application/json, text/event-stream',
       },
       body: JSON.stringify({jsonrpc: '2.0', method: 'initialize', id: 1, params: {protocolVersion: '2024-11-05', capabilities: {}, clientInfo: {name: 'preflight', version: '1.0.0'}}}),
     })

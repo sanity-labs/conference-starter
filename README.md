@@ -1,8 +1,20 @@
 # Everything NYC 2026
 
-A conference operations platform built on [Sanity](https://www.sanity.io) as a reference architecture. Not just a CMS-backed website — a **content operating system** for events where the Content Lake drives the website, emails, AI screening, Telegram ops bot, and automation.
+A conference operations platform built on [Sanity](https://www.sanity.io) as a reference architecture. Not just a CMS-backed website — a **content operating system** for events where the Content Lake drives the website, emails, AI screening, Telegram bot, and automation.
 
 Built for [Everything NYC 2026](https://everything.nyc), a Sanity conference.
+
+## Features
+
+- **Conference website** — Next.js 16 with App Router, `use cache`, and Visual Editing. Pages for speakers, sessions, schedule, sponsors, venue, announcements, CFP, and dynamic content pages.
+- **Call for Proposals** — Public submission form with honeypot spam protection. AI-powered screening scores submissions using Agent Actions. Studio actions to accept (auto-creates speaker + session), reject, or re-screen.
+- **Email pipeline** — Portable Text email templates with variable interpolation (`sanity-plugin-pte-interpolation`). Automated emails for CFP confirmation, acceptance/rejection, and announcement distribution. Preview and test-send from Studio.
+- **Multi-channel announcements** — Publish an announcement in Studio and it distributes to email subscribers and a Telegram channel simultaneously, with per-channel delivery tracking.
+- **Telegram bot (dual-mode)** — Organizer bot with Content Agent (read+write access to the Content Lake) for ops queries. Attendee bot with Anthropic Sonnet + Agent Context MCP (read-only) for public Q&A. Conversation persistence and auto-classification.
+- **Schedule builder** — Custom Studio tool with drag-and-drop slot assignment and conflict detection.
+- **7 serverless functions** — Event-driven Sanity Functions (Blueprints) for CFP screening, email sends, announcement distribution, conversation classification, and re-screening.
+- **Visual Editing** — Stega-based click-to-edit across the entire website. Works automatically for ~80% of content through CSM reference tracking.
+- **End-to-end type safety** — `sanity typegen` generates TypeScript types from schema and GROQ queries, consumed by all apps.
 
 ## Architecture
 
@@ -20,26 +32,26 @@ Built for [Everything NYC 2026](https://everything.nyc), a Sanity conference.
 |-------|-----------|
 | Monorepo | Turborepo + pnpm |
 | Frontend | Next.js 16 (App Router, `use cache`) |
-| CMS | Sanity Studio (custom structure, schedule builder) |
+| CMS | Sanity Studio (custom structure, schedule builder, 5 document actions) |
 | Queries | GROQ with end-to-end TypeGen |
-| Email | React Email + Resend |
-| Automation | Sanity Functions (Blueprints) — CFP screening, email triggers |
-| AI | Sanity Agent Actions, Content Agent |
-| Ops Bot | Telegram bot with Content Agent for organizer queries |
+| Email | React Email + Resend + Portable Text interpolation |
+| Automation | Sanity Functions (Blueprints) — 7 functions for CFP, email, announcements, classification |
+| AI | Agent Actions (CFP screening), Content Agent (ops bot), Agent Context MCP (attendee bot) |
+| Bot | Telegram — dual-mode: ops (Content Agent read+write) + attendee (Anthropic Sonnet + MCP) |
 | Types | `sanity typegen` — schema to frontend type safety |
 
 ## Monorepo Structure
 
 ```
 apps/
-  web/                     → Next.js 16 conference website
+  web/                     → Next.js 16 conference website (11 pages, 6 API routes)
   studio/                  → Sanity Studio + Functions + schedule builder
-  bot/                     → Telegram ops bot (Content Agent)
+  bot/                     → Telegram bot — dual-mode (ops + attendee)
 
 packages/
-  sanity-schema/           → Content model (16 document types)
+  sanity-schema/           → Content model (17 document types, 9 object types)
   sanity-queries/          → GROQ queries + TypeGen types
-  email/                   → React Email templates + Resend
+  email/                   → React Email templates + Resend integration
 
 plans/                     → Architecture docs, decisions, specs
 scripts/                   → Seed data, migrations, utilities
@@ -117,18 +129,49 @@ pnpm type-check
 | `scheduleSlot` | Join document — links sessions to rooms and time slots |
 | `track` | Color-coded session categories (Design, Backend, etc.) |
 | `venue` | Physical location with rooms |
-| `room` | Individual rooms within a venue |
-| `sponsor` | Sponsors with tier levels (platinum, gold, silver) |
-| `page` | Dynamic content pages with rich text sections |
-| `announcement` | News items and updates |
-| `submission` | CFP submissions with AI screening workflow |
-| `emailTemplate` | Email designs with Portable Text body |
+| `room` | Individual rooms within capacity and location |
+| `sponsor` | Sponsors with tier levels (platinum, gold, silver, bronze, community) |
+| `page` | Dynamic content pages with composable sections |
+| `announcement` | Multi-channel updates — distributes to email + Telegram with delivery tracking |
+| `submission` | CFP submissions with AI screening (score, summary, scoredAt) |
+| `emailTemplate` | Email designs with Portable Text body and variable interpolation |
 | `emailLog` | Email delivery audit trail |
 | `prompt` | Editable AI instructions (live-edited, no publish workflow) |
-| `chat.state` | Chat SDK state (subscriptions, locks, cache) |
-| `agent.conversation` | Telegram bot conversation persistence |
+| `faq` | Categorized FAQ items |
+| `agent.conversation` | Telegram bot conversation history with classification |
+| `chat.state` | Chat SDK state persistence (subscriptions, locks, cache) |
 
 The schema lives in `packages/sanity-schema/` and is consumed by all apps.
+
+## Sanity Functions
+
+7 event-driven serverless functions deployed as Blueprints:
+
+| Function | Trigger | What it does |
+|----------|---------|-------------|
+| `screen-cfp` | Submission created | AI scores the submission using Agent Actions |
+| `rescreen-cfp` | Submission status → "screening" | Re-evaluates a submission after organizer resets it |
+| `send-cfp-confirmation` | Submission created | Sends confirmation email to submitter |
+| `send-status-email` | Submission status changed | Sends acceptance or rejection email |
+| `send-announcement-email` | Announcement status → "published" | Distributes announcement via Resend |
+| `push-announcement-telegram` | Announcement status → "published" | Posts announcement to Telegram channel |
+| `classify-conversation` | Conversation created/updated | Auto-classifies bot conversations (Anthropic Haiku) |
+
+## Studio Customizations
+
+### Document Actions
+
+| Action | Schema type | What it does |
+|--------|------------|-------------|
+| Accept Submission | `submission` | Creates `person` + `session` documents, updates status to "accepted" |
+| Reject Submission | `submission` | Updates status to "rejected", triggers email |
+| Re-screen Submission | `submission` | Resets screening, re-triggers AI evaluation |
+| Send Test Email | `emailTemplate` | Sends a preview email to the current user |
+| Send Update | `announcement` | Publishes and distributes an announcement |
+
+### Custom Structure
+
+Studio navigation groups content by workflow: People (with travel status filters), Sessions (by type), Sponsors (by tier), CFP Submissions (by status), Announcements (by status), FAQs (by category), Email Templates, AI Prompts (singletons), and Agent Context configuration.
 
 ## Key Patterns
 
@@ -171,6 +214,16 @@ Submitter fills form → submission created (status: submitted)
   → Function: send-status-email (acceptance/rejection email)
 ```
 
+### Announcement Distribution
+
+```
+Editor writes announcement in Studio → sets status to "ready"
+  → Document action: Send Update (publishes document)
+  → Function: send-announcement-email (Resend to subscribers)
+  → Function: push-announcement-telegram (posts to Telegram channel)
+  → Distribution log updated per channel
+```
+
 ### Visual Editing
 
 Stega by default — ~80% of Visual Editing works automatically through CSM reference tracking. Use `createDataAttribute` only for non-text elements (images, dates, wrapper elements).
@@ -178,6 +231,33 @@ Stega by default — ~80% of Visual Editing works automatically through CSM refe
 ### GROQ Queries
 
 All queries live in `packages/sanity-queries/` — never scattered in page components. TypeGen generates types for every query.
+
+## Website Pages
+
+| Route | Description |
+|-------|-------------|
+| `/` | Landing page with composable hero, CTA, speaker grid, schedule preview, sponsor bar |
+| `/speakers` | Speaker grid |
+| `/speakers/[slug]` | Speaker detail with linked sessions |
+| `/sessions/[slug]` | Session detail with speaker, track, and schedule info |
+| `/schedule` | Full schedule grid |
+| `/cfp` | Call for Proposals submission form |
+| `/announcements` | Announcement listing |
+| `/announcements/[slug]` | Announcement detail |
+| `/sponsors` | Sponsor listing by tier |
+| `/venue` | Venue and room information |
+| `/[slug]` | Dynamic catch-all for CMS-managed pages |
+
+## API Routes
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/cfp/submit` | POST | CFP form submission with honeypot validation |
+| `/api/email-preview` | GET | Email template preview (used by Studio) |
+| `/api/send-test-email` | POST | Send test email to current user |
+| `/api/webhooks/resend` | POST | Resend delivery event webhook (bounces, complaints) |
+| `/api/draft-mode/enable` | GET | Enable Visual Editing draft mode |
+| `/api/draft-mode/disable` | GET | Exit draft mode |
 
 ## Apps
 

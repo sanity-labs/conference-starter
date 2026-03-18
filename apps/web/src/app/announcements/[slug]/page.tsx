@@ -6,12 +6,9 @@ import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
 import {client} from '@/sanity/client'
 import {ANNOUNCEMENT_DETAIL_QUERY, ANNOUNCEMENT_SLUGS_QUERY} from '@repo/sanity-queries'
-import {SanityImage} from '@/components/sanity-image'
-import {PortableText} from '@/components/portable-text'
 import {JsonLd} from '@/components/json-ld'
 import type {NewsArticle} from 'schema-dts'
-import {SITE_URL, ogImageUrl} from '@/lib/metadata'
-import {BreadcrumbJsonLd} from '@/components/breadcrumb-json-ld'
+import {SITE_URL} from '@/lib/metadata'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -24,14 +21,17 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const announcement = await fetchAnnouncementForMetadata(slug)
   if (!announcement) return {}
-  const image = ogImageUrl(announcement.ogImage) ?? ogImageUrl(announcement.coverImage)
+  const excerpt = announcement.body
+    ? announcement.body.length > 160
+      ? `${announcement.body.slice(0, 160)}…`
+      : announcement.body
+    : undefined
   return {
-    title: announcement.seoTitle || announcement.title,
-    description: announcement.seoDescription || announcement.excerpt || undefined,
+    title: announcement.title,
+    description: excerpt,
     openGraph: {
       type: 'article',
       ...(announcement.publishedAt && {publishedTime: announcement.publishedAt}),
-      ...(image && {images: [{url: image, width: 1200, height: 630}]}),
     },
   }
 }
@@ -45,6 +45,17 @@ async function fetchAnnouncementForMetadata(slug: string) {
     stega: false,
   })
   return data
+}
+
+const prefixMap: Record<string, string> = {
+  session: '/sessions',
+  person: '/speakers',
+  venue: '/venue',
+}
+
+function resolveInternalHref(ref: {_type: string | null; slug: string | null}): string {
+  const prefix = (ref._type && prefixMap[ref._type]) || ''
+  return ref.slug ? `${prefix}/${ref.slug}` : prefix || '/'
 }
 
 export default async function AnnouncementPage({params}: Props) {
@@ -79,16 +90,8 @@ async function AnnouncementDetailCached({
 
   if (!announcement) notFound()
 
-  const image = ogImageUrl(announcement.coverImage)
-
   return (
     <article>
-      <BreadcrumbJsonLd
-        items={[
-          {name: 'Announcements', path: '/announcements'},
-          {name: announcement.title ?? 'Announcement', path: `/announcements/${slug}`},
-        ]}
-      />
       <JsonLd<NewsArticle>
         data={{
           '@context': 'https://schema.org',
@@ -96,8 +99,7 @@ async function AnnouncementDetailCached({
           headline: announcement.title ?? undefined,
           url: `${SITE_URL}/announcements/${slug}`,
           ...(announcement.publishedAt && {datePublished: announcement.publishedAt}),
-          ...(announcement.excerpt && {description: announcement.excerpt}),
-          ...(image && {image}),
+          ...(announcement.body && {description: announcement.body.slice(0, 200)}),
           author: {
             '@type': 'Organization',
             name: 'Sanity',
@@ -124,19 +126,37 @@ async function AnnouncementDetailCached({
         )}
       </header>
 
-      {announcement.coverImage && (
-        <SanityImage
-          value={announcement.coverImage}
-          width={800}
-          height={400}
-          className="mt-6 w-full rounded-lg object-cover"
-        />
+      {announcement.body && (
+        <p className="mt-8" style={{whiteSpace: 'pre-wrap'}}>
+          {announcement.body}
+        </p>
       )}
 
-      {announcement.body && (
-        <div className="prose mt-8">
-          <PortableText value={announcement.body} />
-        </div>
+      {announcement.links && announcement.links.length > 0 && (
+        <ul className="mt-6 space-y-1">
+          {announcement.links.map((link, i) => {
+            if (link._type === 'externalLink' && link.url) {
+              return (
+                <li key={i}>
+                  <a href={link.url} className="underline" target="_blank" rel="noopener noreferrer">
+                    {link.label || link.url}
+                  </a>
+                </li>
+              )
+            }
+            if (link._type === 'internalLink' && link.reference) {
+              const href = resolveInternalHref(link.reference)
+              return (
+                <li key={i}>
+                  <Link href={href} className="underline">
+                    {link.label || link.reference.name || 'Link'}
+                  </Link>
+                </li>
+              )
+            }
+            return null
+          })}
+        </ul>
       )}
 
       <p className="mt-12">

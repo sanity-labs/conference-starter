@@ -57,7 +57,11 @@ async function AnnouncementsListCached({perspective, stega}: DynamicFetchOptions
                 })}
               </time>
             )}
-            {item.excerpt && <p className="mt-1 text-gray-600">{item.excerpt}</p>}
+            {item.body && (
+              <p className="mt-1 text-gray-600">
+                {item.body.length > 200 ? `${item.body.slice(0, 200)}…` : item.body}
+              </p>
+            )}
           </article>
         </li>
       ))}

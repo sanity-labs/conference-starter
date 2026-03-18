@@ -10,6 +10,7 @@ import {acceptSubmission} from './actions/acceptSubmission'
 import {rejectSubmission} from './actions/rejectSubmission'
 import {rescreenSubmission} from './actions/rescreenSubmission'
 import {sendTestEmail} from './actions/sendTestEmail'
+import {sendUpdate} from './actions/sendUpdate'
 import {agentContextPlugin} from '@sanity/agent-context/studio'
 import {scheduleBuilder} from './tools/schedule-builder'
 
@@ -47,6 +48,9 @@ export default defineConfig({
       }
       if (context.schemaType === 'emailTemplate') {
         return [...prev, sendTestEmail]
+      }
+      if (context.schemaType === 'announcement') {
+        return [...prev, sendUpdate]
       }
       return prev
     },

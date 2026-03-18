@@ -209,14 +209,34 @@ export const structure: StructureResolver = (S) =>
         .icon(DocumentIcon)
         .child(S.documentTypeList('page').title('Pages')),
 
-      // Announcements
+      // Announcements with status filtering
       S.listItem()
         .title('Announcements')
         .icon(BellIcon)
         .child(
-          S.documentTypeList('announcement')
+          S.list()
             .title('Announcements')
-            .defaultOrdering([{field: 'publishedAt', direction: 'desc'}]),
+            .items([
+              S.listItem()
+                .title('All Announcements')
+                .icon(BellIcon)
+                .child(
+                  S.documentTypeList('announcement')
+                    .title('All Announcements')
+                    .defaultOrdering([{field: 'publishedAt', direction: 'desc'}]),
+                ),
+              S.divider(),
+              ...(['draft', 'ready', 'published'] as const).map((status) =>
+                S.listItem()
+                  .title(status.charAt(0).toUpperCase() + status.slice(1))
+                  .child(
+                    S.documentList()
+                      .title(`${status.charAt(0).toUpperCase() + status.slice(1)} Announcements`)
+                      .filter('_type == "announcement" && status == $status')
+                      .params({status}),
+                  ),
+              ),
+            ]),
         ),
 
       // FAQs

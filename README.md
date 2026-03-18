@@ -233,6 +233,75 @@ Stega by default — ~80% of Visual Editing works automatically through CSM refe
 
 All queries live in `packages/sanity-queries/` — never scattered in page components. TypeGen generates types for every query.
 
+## AI-Powered Experiences
+
+This project demonstrates three distinct patterns for building agentic end-user experiences on top of Sanity content. Each uses a different Sanity AI capability depending on the trust level, access needs, and LLM ownership.
+
+### Ops Bot — Content Agent API (read+write)
+
+![Conference management bot — organizer ops via Content Agent](conference-management-bot.png)
+
+The organizer-facing Telegram bot uses the [Content Agent API](https://www.sanity.io/docs/apis-and-sdks/content-agent-api) via the [`content-agent`](https://npmx.dev/package/content-agent) npm package — a [Vercel AI SDK](https://sdk.vercel.ai/) provider that bundles an LLM with full content access. The agent can read and write documents, query with GROQ, and perform bulk operations — all scoped by GROQ filters and capabilities.
+
+**Why Content Agent**: organizers are trusted users who need to read _and write_ conference content (update sessions, manage speakers, process submissions) through natural language. Content Agent provides an opaque, managed LLM that already understands your schema — no prompt engineering or tool wiring required.
+
+Key configuration in [`apps/bot/src/ai/content-agent.ts`](apps/bot/src/ai/content-agent.ts):
+
+```typescript
+const model = contentAgent.agent(threadId, {
+  application: {key: config.sanityAppKey},
+  config: {
+    capabilities: {read: true, write: true},
+    filter: {
+      read: '_type in ["session", "person", "track", ...]',
+      write: '_type in ["session", "person", "track", ...]',
+    },
+  },
+})
+```
+
+Docs: [Content Agent API](https://www.sanity.io/docs/apis-and-sdks/content-agent-api) · [Content Agent introduction](https://www.sanity.io/docs/content-agent/introduction)
+
+### Attendee Bot — Agent Context + BYO LLM (read-only)
+
+![Conference concierge — attendee Q&A via Agent Context](conference-consierge.png)
+
+The attendee-facing bot uses a different pattern: **bring your own LLM** (Anthropic Sonnet) with content access provided by [Agent Context](https://www.sanity.io/docs/ai) through the [Model Context Protocol (MCP)](https://www.sanity.io/docs/ai/mcp-server). The `@sanity/agent-context` Studio plugin creates an MCP endpoint that exposes your content as tools (`initial_context`, `groq_query`, `schema_explorer`), which any MCP-compatible LLM can call.
+
+**Why Agent Context**: attendees get read-only access to public content (schedule, speakers, FAQs, venue info). Since the bot doesn't need write access and you may want to control the LLM (cost, model choice, system prompt), Agent Context lets you wire up any LLM while Sanity handles the content retrieval layer.
+
+Key configuration in [`apps/bot/src/ai/agent-context.ts`](apps/bot/src/ai/agent-context.ts):
+
+```typescript
+const mcpClient = await createMCPClient({
+  transport: {
+    type: 'http',
+    url: agentContextConfig.mcpUrl,
+    headers: {Authorization: `Bearer ${agentContextConfig.readToken}`},
+  },
+})
+const tools = await mcpClient.tools()
+// Pass tools to any Vercel AI SDK-compatible model
+```
+
+Docs: [Sanity MCP server](https://www.sanity.io/docs/ai/mcp-server) · [Build with AI](https://www.sanity.io/docs/ai)
+
+### CFP Screening — Agent Actions (serverless)
+
+The CFP screening pipeline uses [Agent Actions](https://www.sanity.io/docs/agent-actions/agent-action-cheatsheet) inside a [Sanity Function](https://www.sanity.io/docs/functions/functions-introduction) to score submissions. Agent Actions are document-level AI operations (generate, instruct, transform) that run against your schema — here invoked programmatically from a serverless function rather than interactively in Studio.
+
+**Why Agent Actions**: the CFP screener is a single-shot task (score this submission), not a conversation. Agent Actions handle the schema awareness, field targeting, and validation. The function calls `generate` with `noWrite` to get a score and summary without modifying the document, then writes the results itself.
+
+Docs: [Agent Actions patterns](https://www.sanity.io/docs/agent-actions/agent-action-cheatsheet) · [Functions](https://www.sanity.io/docs/functions/functions-introduction) · [Blueprints CLI](https://www.sanity.io/docs/cli-reference/cli-blueprints)
+
+### Choosing the Right Pattern
+
+| Pattern | LLM | Content access | Write access | Best for |
+|---------|-----|---------------|-------------|----------|
+| **Content Agent API** | Managed (Sanity) | Built-in | Yes | Trusted users, ops, admin bots |
+| **Agent Context (MCP)** | BYO (any provider) | MCP tools | No | Public-facing, cost control, custom models |
+| **Agent Actions** | Managed (Sanity) | Schema-aware | Optional | Single-shot tasks, serverless, document operations |
+
 ## Website Pages
 
 | Route | Description |

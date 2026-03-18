@@ -19,10 +19,10 @@ Built for [Everything NYC 2026](https://everything.nyc), a Sanity conference.
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────┐
 │                   Sanity Content Lake                    │
-│         17 document types · GROQ · TypeGen              │
-└────┬──────────┬──────────┬──────────┬──────────┬────────┘
+│         17 document types · GROQ · TypeGen               │
+└────┬──────────┬──────────┬──────────┬──────────┬─────────┘
      │          │          │          │          │
   Studio    Next.js    Functions   Bot      Emails
   (admin)   (public)   (events)  (Telegram) (Resend)

@@ -1,13 +1,12 @@
 import {defineQuery} from 'groq'
 
 export const ANNOUNCEMENTS_QUERY = defineQuery(
-  `*[_type == "announcement"] | order(publishedAt desc) {
+  `*[_type == "announcement" && status == "published"] | order(publishedAt desc) {
     _id,
     title,
     "slug": slug.current,
     publishedAt,
-    excerpt,
-    coverImage { ..., alt }
+    body
   }`,
 )
 
@@ -17,15 +16,20 @@ export const ANNOUNCEMENT_DETAIL_QUERY = defineQuery(
     title,
     "slug": slug.current,
     publishedAt,
-    excerpt,
-    body[] { ... },
-    coverImage { ..., alt },
-    seoTitle,
-    seoDescription,
-    ogImage
+    body,
+    links[] {
+      _type,
+      label,
+      url,
+      reference-> {
+        _type,
+        "slug": slug.current,
+        "name": coalesce(title, name)
+      }
+    }
   }`,
 )
 
 export const ANNOUNCEMENT_SLUGS_QUERY = defineQuery(
-  `*[_type == "announcement" && defined(slug.current)]{ "slug": slug.current }`,
+  `*[_type == "announcement" && status == "published" && defined(slug.current)]{ "slug": slug.current }`,
 )

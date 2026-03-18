@@ -1,11 +1,9 @@
-# Everything NYC 2026
+# A Conference Operating System
 
 > [!WARNING]
 > This project is a work in progress. It's meant as inspiration and a reference architecture for building conference platforms on Sanity — it's not a production-ready starter kit... yet. APIs, patterns, and dependencies may change without notice.
 
 A conference operations platform built on [Sanity](https://www.sanity.io) as a reference architecture. Not just a CMS-backed website — a **content operating system** for events where the Content Lake drives the website, emails, AI screening, Telegram bot, and automation.
-
-Built for [Everything NYC 2026](https://everything.nyc), a Sanity conference.
 
 ## Features
 
@@ -303,4 +301,4 @@ Key decisions from `plans/decisions.md`:
 
 ## License
 
-Private — built for Everything NYC 2026.
+MIT

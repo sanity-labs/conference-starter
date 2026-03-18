@@ -56,5 +56,29 @@ export default defineBlueprint({
       },
       timeout: 60,
     }),
+    defineDocumentFunction({
+      name: 'send-announcement-email',
+      event: {
+        on: ['update'],
+        filter:
+          '_type == "announcement" && delta::changedAny(status) && after().status == "published"',
+        projection:
+          '{ _id, title, "slug": slug.current, body, "links": links[]{ _type, label, url, reference->{ _type, "slug": slug.current, "name": coalesce(title, name) } }, distributionLog }',
+        resource: {type: 'dataset', id: 'yjorde43.production'},
+      },
+      timeout: 30,
+    }),
+    defineDocumentFunction({
+      name: 'push-announcement-telegram',
+      event: {
+        on: ['update'],
+        filter:
+          '_type == "announcement" && delta::changedAny(status) && after().status == "published"',
+        projection:
+          '{ _id, title, "slug": slug.current, body, "links": links[]{ _type, label, url, reference->{ _type, "slug": slug.current, "name": coalesce(title, name) } }, distributionLog }',
+        resource: {type: 'dataset', id: 'yjorde43.production'},
+      },
+      timeout: 30,
+    }),
   ],
 })

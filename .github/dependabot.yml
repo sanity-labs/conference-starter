@@ -1,0 +1,167 @@
+version: 2
+updates:
+  # Root (Turborepo, tooling)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "dependencies"
+    groups:
+      turbo:
+        patterns:
+          - "turbo"
+          - "@turbo/*"
+      tooling:
+        patterns:
+          - "tsx"
+          - "typescript"
+
+  # Web app (Next.js)
+  - package-ecosystem: "npm"
+    directory: "/apps/web"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "dependencies"
+      - "area:web"
+    groups:
+      next:
+        patterns:
+          - "next"
+          - "next-*"
+          - "@next/*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      sanity:
+        patterns:
+          - "next-sanity"
+          - "@sanity/*"
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+
+  # Studio (Sanity)
+  - package-ecosystem: "npm"
+    directory: "/apps/studio"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "dependencies"
+      - "area:studio"
+    groups:
+      sanity:
+        patterns:
+          - "sanity"
+          - "@sanity/*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+
+  # Bot (Telegram)
+  - package-ecosystem: "npm"
+    directory: "/apps/bot"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "dependencies"
+      - "area:bot"
+    groups:
+      ai-sdk:
+        patterns:
+          - "ai"
+          - "@ai-sdk/*"
+      chat-sdk:
+        patterns:
+          - "chat"
+          - "@chat-adapter/*"
+      sanity:
+        patterns:
+          - "@sanity/*"
+
+  # Email package
+  - package-ecosystem: "npm"
+    directory: "/packages/email"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "dependencies"
+      - "area:email"
+    groups:
+      react-email:
+        patterns:
+          - "@react-email/*"
+          - "react-email"
+      portabletext:
+        patterns:
+          - "@portabletext/*"
+
+  # Schema package
+  - package-ecosystem: "npm"
+    directory: "/packages/sanity-schema"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "dependencies"
+      - "area:schema"
+    groups:
+      sanity:
+        patterns:
+          - "sanity"
+          - "@sanity/*"
+
+  # Queries package
+  - package-ecosystem: "npm"
+    directory: "/packages/sanity-queries"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "dependencies"
+      - "area:queries"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "dependencies"
+      - "area:ci"

@@ -1,0 +1,37 @@
+name: Question
+description: Ask about architecture, patterns, or how something works
+labels: ["question"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: What area is your question about?
+      options:
+        - Architecture / Patterns
+        - Content Model
+        - Visual Editing / Live Preview
+        - use cache / Next.js 16
+        - AI features (Content Agent, Functions)
+        - Email pipeline
+        - Telegram bot
+        - Deployment / CI
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: What would you like to know?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What are you trying to achieve? Links to relevant docs you've already read?
+    validations:
+      required: false

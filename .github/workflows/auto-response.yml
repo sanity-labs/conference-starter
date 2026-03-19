@@ -1,0 +1,73 @@
+name: Auto Response
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  respond:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = issue.labels.map(l => l.name);
+            const body = (issue.body || '').toLowerCase();
+
+            const lines = [];
+
+            lines.push(`Thanks for opening this issue! Here are some resources that might help:\n`);
+
+            if (labels.includes('setup')) {
+              lines.push(`**Setup issues:**`);
+              lines.push(`- Check the [Getting Started guide](../blob/main/README.md#getting-started) in the README`);
+              lines.push(`- Make sure you're using **pnpm** (not npm or yarn) — check the lockfile`);
+              lines.push(`- Run \`pnpm typegen\` before \`pnpm dev\` — TypeGen generates required types`);
+              lines.push(`- Verify your \`.env.local\` files have the correct Sanity project ID and dataset`);
+              lines.push(``);
+            }
+
+            if (labels.includes('bug')) {
+              lines.push(`**Bug reports:**`);
+              lines.push(`- Please include error output and steps to reproduce if you haven't already`);
+              lines.push(`- Check if the issue reproduces with a fresh \`pnpm install && pnpm typegen\``);
+              lines.push(``);
+            }
+
+            if (labels.includes('enhancement')) {
+              lines.push(`**Feature ideas:**`);
+              lines.push(`- Check the [architecture decisions](../blob/main/plans/decisions.md) for context on existing design choices`);
+              lines.push(`- The [plans/ directory](../tree/main/plans) has specs for the current roadmap`);
+              lines.push(``);
+            }
+
+            if (labels.includes('question')) {
+              lines.push(`**Questions:**`);
+              lines.push(`- The [plans/ directory](../tree/main/plans) has detailed architecture docs`);
+              lines.push(`- [decisions.md](../blob/main/plans/decisions.md) explains the reasoning behind key choices`);
+              lines.push(`- For general Sanity questions, the [Sanity Slack](https://slack.sanity.io) community is very active`);
+              lines.push(``);
+            }
+
+            // Detect common token/auth errors in body
+            if (body.includes('sio-401') || body.includes('unauthorized') || body.includes('permission')) {
+              lines.push(`**Token/auth note:** If you're seeing SIO-401 or unauthorized errors, make sure you're using a **project token** (not an organization token). You can create one at https://www.sanity.io/manage.`);
+              lines.push(``);
+            }
+
+            // Only post if we have something useful beyond the greeting
+            if (lines.length > 1) {
+              lines.push(`---`);
+              lines.push(`*This is an automated response. A maintainer will follow up when available.*`);
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: lines.join('\n'),
+              });
+            }

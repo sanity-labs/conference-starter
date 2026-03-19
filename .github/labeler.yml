@@ -1,0 +1,37 @@
+"area:web":
+  - changed-files:
+      - any-glob-to-any-file: "apps/web/**"
+
+"area:studio":
+  - changed-files:
+      - any-glob-to-any-file: "apps/studio/**"
+
+"area:bot":
+  - changed-files:
+      - any-glob-to-any-file: "apps/bot/**"
+
+"area:schema":
+  - changed-files:
+      - any-glob-to-any-file: "packages/sanity-schema/**"
+
+"area:queries":
+  - changed-files:
+      - any-glob-to-any-file: "packages/sanity-queries/**"
+
+"area:email":
+  - changed-files:
+      - any-glob-to-any-file: "packages/email/**"
+
+"area:ci":
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
+          - "turbo.json"
+          - "pnpm-workspace.yaml"
+
+"area:docs":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "*.md"
+          - "plans/**"
+          - "CONTRIBUTING.md"

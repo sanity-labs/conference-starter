@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Sanity Community Slack
+    url: https://slack.sanity.io
+    about: Ask general Sanity questions in the community Slack
+  - name: Sanity Documentation
+    url: https://www.sanity.io/docs
+    about: Read the official Sanity documentation
+  - name: Next.js Documentation
+    url: https://nextjs.org/docs
+    about: Read the Next.js documentation

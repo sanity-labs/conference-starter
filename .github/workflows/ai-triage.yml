@@ -1,0 +1,107 @@
+name: AI Triage
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  triage:
+    # Only run on blank issues (no labels from templates)
+    if: github.event.issue.labels[0] == null
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        with:
+          script: |
+            const apiKey = process.env.OPENAI_API_KEY;
+            if (!apiKey) {
+              console.log('No OPENAI_API_KEY configured — skipping AI triage');
+              return;
+            }
+
+            const issue = context.payload.issue;
+            const title = issue.title || '';
+            const body = (issue.body || '').slice(0, 2000); // Limit token usage
+
+            const VALID_LABELS = [
+              'bug', 'enhancement', 'setup', 'question',
+              'area:web', 'area:studio', 'area:bot', 'area:schema',
+              'area:queries', 'area:email', 'area:ci', 'area:docs',
+            ];
+
+            const prompt = `You are a GitHub issue classifier for a conference starter project built with Sanity, Next.js, and Telegram.
+
+            The project has these areas:
+            - web: Next.js conference website (apps/web)
+            - studio: Sanity Studio (apps/studio)
+            - bot: Telegram bot (apps/bot)
+            - schema: Content model (packages/sanity-schema)
+            - queries: GROQ queries (packages/sanity-queries)
+            - email: Email pipeline (packages/email)
+            - ci: CI/CD and build config
+            - docs: Documentation
+
+            Classify this issue. Return ONLY a JSON object with:
+            - "type": one of "bug", "enhancement", "setup", "question"
+            - "area": one of "web", "studio", "bot", "schema", "queries", "email", "ci", "docs" (or null if unclear)
+
+            Issue title: ${title}
+            Issue body: ${body}`;
+
+            try {
+              const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({
+                  model: 'gpt-4o-mini',
+                  messages: [{ role: 'user', content: prompt }],
+                  temperature: 0,
+                  max_tokens: 100,
+                  response_format: { type: 'json_object' },
+                }),
+              });
+
+              if (!response.ok) {
+                console.log(`OpenAI API error: ${response.status}`);
+                return;
+              }
+
+              const data = await response.json();
+              const content = data.choices?.[0]?.message?.content;
+              if (!content) return;
+
+              const classification = JSON.parse(content);
+              const labelsToApply = [];
+
+              if (classification.type && VALID_LABELS.includes(classification.type)) {
+                labelsToApply.push(classification.type);
+              }
+
+              if (classification.area) {
+                const areaLabel = `area:${classification.area}`;
+                if (VALID_LABELS.includes(areaLabel)) {
+                  labelsToApply.push(areaLabel);
+                }
+              }
+
+              if (labelsToApply.length > 0) {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  labels: labelsToApply,
+                });
+                console.log(`Applied labels: ${labelsToApply.join(', ')}`);
+              }
+            } catch (error) {
+              console.log(`AI triage error: ${error.message}`);
+              // Graceful failure — issue stays unlabeled
+            }

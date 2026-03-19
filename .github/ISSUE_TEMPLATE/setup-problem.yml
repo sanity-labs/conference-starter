@@ -1,0 +1,62 @@
+name: Setup Problem
+description: Something went wrong during installation or initial setup
+labels: ["setup", "help wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for trying out the ContentOps Conf starter! Let's figure out what went wrong.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of the project is affected?
+      options:
+        - General setup (monorepo, pnpm, env vars)
+        - Web app (Next.js)
+        - Studio (Sanity)
+        - Bot (Telegram)
+        - Schema / TypeGen
+        - Email / Functions
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: What step are you on?
+      description: Which README step failed? Paste the command you ran.
+      placeholder: |
+        I ran `pnpm install` and then `pnpm dev`, but...
+    validations:
+      required: true
+
+  - type: textarea
+    id: error
+    attributes:
+      label: Error output
+      description: Paste the full error message or screenshot.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Node version, OS, pnpm version, etc.
+      placeholder: |
+        - Node: v22.x
+        - pnpm: 9.x
+        - OS: macOS 15 / Ubuntu 24 / Windows 11
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else that might help (screenshots, related issues, etc.)
+    validations:
+      required: false

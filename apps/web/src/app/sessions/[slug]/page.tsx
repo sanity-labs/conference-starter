@@ -122,26 +122,28 @@ async function SessionDetailCached({
         }}
       />
       <header>
-        <p className="text-sm text-gray-500">
-          {[
-            session.sessionType &&
-              session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1),
-            session.level,
-            session.duration && `${session.duration} min`,
-          ]
-            .filter(Boolean)
-            .join(' · ')}
-        </p>
-        <h1 className="mt-2 text-4xl font-bold tracking-tight">{session.title}</h1>
+        <div className="flex flex-wrap items-center gap-2">
+          {session.sessionType && (
+            <span className="rounded-full bg-surface-muted px-2.5 py-0.5 text-xs font-medium text-text-secondary">
+              {session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)}
+            </span>
+          )}
+          <span className="text-sm text-text-muted">
+            {[session.level, session.duration && `${session.duration} min`]
+              .filter(Boolean)
+              .join(' · ')}
+          </span>
+        </div>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{session.title}</h1>
 
         {session.track && (
-          <p className="mt-2 text-sm">
+          <p className="mt-2 text-sm text-text-secondary">
             Track: <strong>{session.track.name}</strong>
           </p>
         )}
 
         {session.slot && session.slot.startTime && (
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-text-muted">
             <time dateTime={session.slot.startTime}>
               {new Date(session.slot.startTime).toLocaleDateString('en-US', {
                 weekday: 'long',
@@ -177,7 +179,7 @@ async function SessionDetailCached({
       <SpeakersList speakers={session.speakers} moderator={session.moderator} />
 
       {session.abstract && (
-        <section className="prose mt-8">
+        <section className="prose mt-8 max-w-none">
           <h2>About this session</h2>
           <PortableText value={session.abstract} />
         </section>
@@ -187,7 +189,7 @@ async function SessionDetailCached({
       <MediaLinks session={session} />
 
       <p className="mt-12">
-        <Link href="/schedule" className="text-sm underline">
+        <Link href="/schedule" className="text-sm text-text-muted transition-colors hover:text-text-primary">
           &larr; Back to schedule
         </Link>
       </p>
@@ -214,18 +216,19 @@ function SpeakersList({
           <li key={speaker._id} className="flex items-center gap-3">
             {speaker.photo && (
               <SanityImage
-                value={speaker.photo}
+                value={{...speaker.photo, alt: speaker.photo.alt || speaker.name}}
                 className="h-10 w-10 rounded-full object-cover"
                 width={80}
                 height={80}
+                sizes="40px"
               />
             )}
             <div>
-              <Link href={`/speakers/${speaker.slug}`} className="font-medium underline">
+              <Link href={`/speakers/${speaker.slug}`} className="font-medium hover:underline">
                 {speaker.name}
               </Link>
               {speaker.role && (
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-text-muted">
                   {speaker.role}
                   {speaker.company && `, ${speaker.company}`}
                 </p>
@@ -235,9 +238,9 @@ function SpeakersList({
         ))}
       </ul>
       {moderator && (
-        <p className="mt-3 text-sm text-gray-600">
+        <p className="mt-3 text-sm text-text-muted">
           Moderated by{' '}
-          <Link href={`/speakers/${moderator.slug}`} className="underline">
+          <Link href={`/speakers/${moderator.slug}`} className="hover:underline">
             {moderator.name}
           </Link>
         </p>
@@ -254,28 +257,34 @@ function WorkshopDetails({
   if (stegaClean(session.sessionType) !== 'workshop') return null
 
   return (
-    <section className="mt-8 space-y-4">
+    <section className="mt-8 rounded-md border border-border p-6 space-y-4">
+      <h2 className="text-lg font-semibold">Workshop Details</h2>
       {session.capacity && (
-        <p className="text-sm">
+        <p className="text-sm text-text-secondary">
           <strong>Capacity:</strong> {session.capacity} participants
         </p>
       )}
       {session.prerequisites && (
         <div>
-          <h3 className="font-semibold">Prerequisites</h3>
-          <p className="mt-1 text-gray-700">{session.prerequisites}</p>
+          <h3 className="text-sm font-semibold">Prerequisites</h3>
+          <p className="mt-1 text-sm text-text-secondary">{session.prerequisites}</p>
         </div>
       )}
       {session.materials && session.materials.length > 0 && (
         <div>
-          <h3 className="font-semibold">Materials</h3>
+          <h3 className="text-sm font-semibold">Materials</h3>
           <ul className="mt-1 space-y-1">
             {session.materials.map((m) => (
               <li key={m.url}>
-                <a href={m.url!} target="_blank" rel="noopener noreferrer" className="underline">
+                <a
+                  href={m.url!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-text-secondary hover:underline"
+                >
                   {m.title}
                 </a>
-                {m.type && <span className="ml-1 text-xs text-gray-500">({m.type})</span>}
+                {m.type && <span className="ml-1 text-xs text-text-muted">({m.type})</span>}
               </li>
             ))}
           </ul>
@@ -294,15 +303,25 @@ function MediaLinks({session}: {session: NonNullable<SESSION_DETAIL_QUERY_RESULT
       <ul className="mt-2 space-y-1">
         {session.slidesUrl && (
           <li>
-            <a href={session.slidesUrl} target="_blank" rel="noopener noreferrer" className="underline">
-              View slides
+            <a
+              href={session.slidesUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+            >
+              View slides &rarr;
             </a>
           </li>
         )}
         {session.recordingUrl && (
           <li>
-            <a href={session.recordingUrl} target="_blank" rel="noopener noreferrer" className="underline">
-              Watch recording
+            <a
+              href={session.recordingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+            >
+              Watch recording &rarr;
             </a>
           </li>
         )}

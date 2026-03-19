@@ -38,7 +38,7 @@ async function CfpContentCached({perspective, stega}: DynamicFetchOptions) {
   })
 
   if (!config) {
-    return <p className="mt-8 text-gray-500">Conference information not available.</p>
+    return <p className="mt-8 text-text-muted">Conference information not available.</p>
   }
 
   const isPastDeadline = config.cfpDeadline ? new Date(config.cfpDeadline) < new Date() : false
@@ -48,14 +48,14 @@ async function CfpContentCached({perspective, stega}: DynamicFetchOptions) {
     <>
       <CfpStatus config={config} isOpen={isOpen} />
       {config.cfpGuidelines && (
-        <section className="prose mt-8">
+        <section className="prose mt-8 max-w-none">
           <PortableText value={config.cfpGuidelines} />
         </section>
       )}
       {isOpen ? (
         <CfpForm />
       ) : (
-        <p className="mt-8 text-gray-500">
+        <p className="mt-8 text-text-muted">
           The Call for Papers is currently closed.
           {config.cfpDeadline &&
             !isPastDeadline &&
@@ -77,7 +77,9 @@ function CfpStatus({
     <dl className="mt-6 space-y-2 text-sm">
       <div className="flex gap-2">
         <dt className="font-medium">Status:</dt>
-        <dd>{isOpen ? 'Open for submissions' : 'Closed'}</dd>
+        <dd className={isOpen ? 'font-medium text-accent' : 'text-text-muted'}>
+          {isOpen ? 'Open for submissions' : 'Closed'}
+        </dd>
       </div>
       {config.cfpDeadline && (
         <div className="flex gap-2">

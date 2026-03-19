@@ -40,7 +40,7 @@ async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
   })
 
   if (!conference?.startDate) {
-    return <p className="mt-8 text-gray-500">Schedule not available yet.</p>
+    return <p className="mt-8 text-text-muted">Schedule not available yet.</p>
   }
 
   // Compute day boundaries for Day 1 in NYC timezone
@@ -61,7 +61,7 @@ async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
   })
 
   if (!slots || slots.length === 0) {
-    return <p className="mt-8 text-gray-500">No sessions scheduled yet.</p>
+    return <p className="mt-8 text-text-muted">No sessions scheduled yet.</p>
   }
 
   // Group slots by start time
@@ -77,7 +77,7 @@ async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
 
   return (
     <section className="mt-8">
-      <p className="mb-6 text-sm text-gray-500">
+      <p className="mb-6 text-sm text-text-muted">
         {startDate.toLocaleDateString('en-US', {
           weekday: 'long',
           month: 'long',
@@ -89,7 +89,7 @@ async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
       <ol className="space-y-8">
         {Array.from(timeGroups.entries()).map(([time, groupSlots]) => (
           <li key={time}>
-            <time dateTime={time} className="text-sm font-medium text-gray-500">
+            <time dateTime={time} className="text-sm font-semibold text-text-primary">
               {new Date(time).toLocaleTimeString('en-US', {
                 hour: 'numeric',
                 minute: '2-digit',
@@ -116,25 +116,28 @@ function SlotCard({slot}: {slot: SCHEDULE_DAY_QUERY_RESULT[number]}) {
   const isBreak = sessionType === 'break' || sessionType === 'social'
 
   return (
-    <li className={`border-l-2 pl-4 ${slot.isPlenary ? 'sm:col-span-2 lg:col-span-3' : ''}`}>
+    <li
+      className={`rounded-md p-4 ${
+        isBreak
+          ? 'bg-surface-muted text-text-muted'
+          : 'border border-border transition-colors hover:border-border-strong'
+      } ${slot.isPlenary ? 'sm:col-span-2 lg:col-span-3' : ''}`}
+    >
       {isBreak ? (
-        <p className="font-medium text-gray-500">{session.title}</p>
+        <p className="font-medium">{session.title}</p>
       ) : (
-        <Link href={`/sessions/${session.slug}`} className="font-medium underline">
+        <Link href={`/sessions/${session.slug}`} className="font-medium hover:underline">
           {session.title}
         </Link>
       )}
 
-      <p className="text-sm text-gray-600">
-        {[
-          session.sessionType &&
-            session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1),
-          session.level,
-          session.track?.name,
-          slot.room?.name,
-        ]
-          .filter(Boolean)
-          .join(' · ')}
+      <p className="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-text-muted">
+        {session.sessionType && (
+          <span className="rounded-full bg-surface-muted px-2.5 py-0.5 text-xs font-medium">
+            {session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)}
+          </span>
+        )}
+        {[session.level, session.track?.name, slot.room?.name].filter(Boolean).join(' · ')}
       </p>
 
       {session.speakers && session.speakers.length > 0 && (
@@ -147,9 +150,10 @@ function SlotCard({slot}: {slot: SCHEDULE_DAY_QUERY_RESULT[number]}) {
                   className="h-6 w-6 rounded-full object-cover"
                   width={48}
                   height={48}
+                  sizes="24px"
                 />
               )}
-              <Link href={`/speakers/${speaker.slug}`} className="underline">
+              <Link href={`/speakers/${speaker.slug}`} className="hover:underline">
                 {speaker.name}
               </Link>
             </li>

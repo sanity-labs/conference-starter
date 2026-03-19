@@ -49,8 +49,8 @@ async function VenueCached({perspective, stega}: DynamicFetchOptions) {
   if (!venue) {
     return (
       <>
-        <h1 className="text-4xl font-bold tracking-tight">Venue</h1>
-        <p className="mt-4 text-gray-500">Venue details coming soon.</p>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Venue</h1>
+        <p className="mt-4 text-text-muted">Venue details coming soon.</p>
       </>
     )
   }
@@ -64,10 +64,11 @@ async function VenueCached({perspective, stega}: DynamicFetchOptions) {
           className="mt-8 w-full rounded-lg object-cover"
           width={800}
           height={400}
+          sizes="(min-width: 768px) 48rem, 100vw"
         />
       )}
       {venue.description && (
-        <section className="prose mt-8">
+        <section className="prose mt-8 max-w-none">
           <PortableText value={venue.description} />
         </section>
       )}
@@ -83,9 +84,9 @@ async function VenueCached({perspective, stega}: DynamicFetchOptions) {
 function VenueHeader({venue}: {venue: NonNullable<VENUE_QUERY_RESULT>}) {
   return (
     <header>
-      <h1 className="text-4xl font-bold tracking-tight">{venue.name}</h1>
+      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{venue.name}</h1>
       {venue.address && (
-        <address className="mt-2 text-lg text-gray-600 not-italic">{venue.address}</address>
+        <address className="mt-2 text-lg text-text-muted not-italic">{venue.address}</address>
       )}
       {venue.mapUrl && (
         <p className="mt-2">
@@ -93,9 +94,9 @@ function VenueHeader({venue}: {venue: NonNullable<VENUE_QUERY_RESULT>}) {
             href={venue.mapUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium underline"
+            className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary"
           >
-            Get Directions
+            Get Directions &rarr;
           </a>
         </p>
       )}
@@ -108,12 +109,12 @@ function RoomsList({rooms}: {rooms: NonNullable<VENUE_QUERY_RESULT>['rooms']}) {
 
   return (
     <section className="mt-12">
-      <h2 className="text-2xl font-bold">Rooms</h2>
+      <h2 className="text-2xl font-semibold tracking-tight">Rooms</h2>
       <ul className="mt-4 space-y-4">
         {rooms.map((room) => (
-          <li key={room._id} className="border-l-2 pl-4">
+          <li key={room._id} className="rounded-md border-l-4 border-border-strong pl-4 py-3">
             <p className="font-medium">{room.name}</p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-text-muted">
               {[
                 room.floor,
                 room.capacity ? `${room.capacity} seats` : null,
@@ -126,7 +127,7 @@ function RoomsList({rooms}: {rooms: NonNullable<VENUE_QUERY_RESULT>['rooms']}) {
                 {room.amenities.map((amenity) => (
                   <li
                     key={amenity}
-                    className="inline-block rounded-full border px-2 py-0.5 text-xs text-gray-600"
+                    className="rounded-full bg-surface-muted px-2.5 py-0.5 text-xs text-text-muted"
                   >
                     {amenity}
                   </li>
@@ -147,8 +148,8 @@ function TransitSection({
 }) {
   return (
     <section className="mt-12">
-      <h2 className="text-2xl font-bold">Getting Here</h2>
-      <div className="prose mt-4">
+      <h2 className="text-2xl font-semibold tracking-tight">Getting Here</h2>
+      <div className="prose mt-4 max-w-none">
         <PortableText value={transitInfo} />
       </div>
     </section>
@@ -162,17 +163,17 @@ function WifiSection({
 }) {
   return (
     <section className="mt-12">
-      <h2 className="text-2xl font-bold">WiFi</h2>
-      <dl className="mt-4">
+      <h2 className="text-2xl font-semibold tracking-tight">WiFi</h2>
+      <dl className="mt-4 rounded-md border border-border p-4">
         {wifiInfo.network && (
           <>
-            <dt className="text-sm font-medium text-gray-500">Network</dt>
+            <dt className="text-sm font-medium text-text-muted">Network</dt>
             <dd className="mt-1">{wifiInfo.network}</dd>
           </>
         )}
         {wifiInfo.password && (
           <>
-            <dt className="mt-3 text-sm font-medium text-gray-500">Password</dt>
+            <dt className="mt-3 text-sm font-medium text-text-muted">Password</dt>
             <dd className="mt-1 font-mono">{wifiInfo.password}</dd>
           </>
         )}

@@ -11,9 +11,18 @@ interface SanityImageProps {
   width?: number
   height?: number
   className?: string
+  sizes?: string
+  priority?: boolean
 }
 
-export function SanityImage({value, width = 800, height = 800, className}: SanityImageProps) {
+export function SanityImage({
+  value,
+  width = 800,
+  height = 800,
+  className,
+  sizes,
+  priority,
+}: SanityImageProps) {
   const url = urlForImage(value)?.width(width).height(height).url()
   if (!url) return null
 
@@ -24,6 +33,8 @@ export function SanityImage({value, width = 800, height = 800, className}: Sanit
       width={width}
       height={height}
       className={className}
+      {...(sizes && {sizes})}
+      {...(priority && {priority})}
     />
   )
 }

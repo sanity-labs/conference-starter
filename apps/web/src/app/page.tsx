@@ -67,9 +67,9 @@ async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
 
   if (!conference) {
     return (
-      <section className="mx-auto max-w-3xl px-6 py-24">
-        <h1 className="text-4xl font-bold tracking-tight">Everything NYC 2026</h1>
-        <p className="mt-4 text-gray-500">No conference data found.</p>
+      <section className="mx-auto max-w-content px-6 py-16 sm:py-24">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Everything NYC 2026</h1>
+        <p className="mt-4 text-text-muted">No conference data found.</p>
       </section>
     )
   }
@@ -119,16 +119,16 @@ async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
 
 function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RESULT>}) {
   return (
-    <section className="mx-auto max-w-3xl px-6 py-24">
-      <h1 className="text-4xl font-bold tracking-tight">{conference.name}</h1>
+    <section className="mx-auto max-w-content px-6 py-16 sm:py-24">
+      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{conference.name}</h1>
       {conference.tagline && (
-        <p className="mt-4 text-xl text-gray-600">{conference.tagline}</p>
+        <p className="mt-4 text-xl text-text-secondary">{conference.tagline}</p>
       )}
       {conference.description && (
-        <p className="mt-6 text-gray-700">{conference.description}</p>
+        <p className="mt-6 text-text-secondary">{conference.description}</p>
       )}
       {conference.startDate && (
-        <p className="mt-4 text-sm text-gray-500">
+        <p className="mt-4 text-sm text-text-muted">
           <time dateTime={conference.startDate}>
             {new Date(conference.startDate).toLocaleDateString('en-US', {
               weekday: 'long',
@@ -162,7 +162,7 @@ function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RES
               <li key={track._id}>
                 <Link
                   href={`/schedule?track=${track.slug}`}
-                  className="inline-block rounded-full border px-3 py-1 text-sm"
+                  className="inline-block rounded-full border border-border px-3 py-1 text-sm text-text-secondary transition-colors hover:border-border-strong hover:text-text-primary"
                 >
                   {track.name}
                 </Link>
@@ -171,17 +171,17 @@ function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RES
           </ul>
         </nav>
       )}
-      <nav className="mt-8 flex gap-4">
-        <Link href="/schedule" className="font-medium underline">
+      <nav className="mt-8 flex flex-wrap gap-3">
+        <Link href="/schedule" className="btn btn-secondary">
           View Schedule
         </Link>
-        <Link href="/speakers" className="font-medium underline">
+        <Link href="/speakers" className="btn btn-secondary">
           Speakers
         </Link>
-        <Link href="/sponsors" className="font-medium underline">
+        <Link href="/sponsors" className="btn btn-secondary">
           Sponsors
         </Link>
-        <Link href="/venue" className="font-medium underline">
+        <Link href="/venue" className="btn btn-secondary">
           Venue
         </Link>
       </nav>
@@ -195,23 +195,24 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
   const featured = speakers.slice(0, 8)
 
   return (
-    <section className="mx-auto max-w-3xl px-6 py-12">
-      <h2 className="text-2xl font-bold">Speakers</h2>
+    <section className="mx-auto max-w-content px-6 py-12">
+      <h2 className="text-2xl font-semibold tracking-tight">Speakers</h2>
       <ul className="mt-6 grid grid-cols-2 gap-6 sm:grid-cols-4">
         {featured.map((speaker) => (
-          <li key={speaker._id}>
+          <li key={speaker._id} className="group">
             <Link href={`/speakers/${speaker.slug}`}>
               {speaker.photo && (
                 <SanityImage
                   value={speaker.photo}
-                  className="aspect-square w-full rounded-lg object-cover"
+                  className="aspect-square w-full rounded-lg object-cover transition-opacity group-hover:opacity-90"
                   width={200}
                   height={200}
+                  sizes="(min-width: 640px) 25vw, 50vw"
                 />
               )}
               <p className="mt-2 font-medium">{speaker.name}</p>
               {speaker.role && (
-                <p className="text-sm text-gray-600">{speaker.role}</p>
+                <p className="text-sm text-text-muted">{speaker.role}</p>
               )}
             </Link>
           </li>
@@ -219,8 +220,8 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
       </ul>
       {speakers.length > 8 && (
         <p className="mt-6">
-          <Link href="/speakers" className="font-medium underline">
-            View all {speakers.length} speakers
+          <Link href="/speakers" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+            View all {speakers.length} speakers &rarr;
           </Link>
         </p>
       )}
@@ -232,15 +233,17 @@ function VenueSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RE
   if (!conference.venue) return null
 
   return (
-    <section className="mx-auto max-w-3xl px-6 py-12">
-      <h2 className="text-2xl font-bold">Venue</h2>
-      <p className="mt-2 text-lg">{conference.venue.name}</p>
-      <address className="mt-1 text-gray-600 not-italic">{conference.venue.address}</address>
-      <p className="mt-4">
-        <Link href="/venue" className="font-medium underline">
-          Venue details
-        </Link>
-      </p>
+    <section className="mx-auto max-w-content px-6 py-12">
+      <h2 className="text-2xl font-semibold tracking-tight">Venue</h2>
+      <div className="mt-4 rounded-lg border border-border p-6">
+        <p className="text-lg font-medium">{conference.venue.name}</p>
+        <address className="mt-1 text-text-muted not-italic">{conference.venue.address}</address>
+        <p className="mt-4">
+          <Link href="/venue" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+            Venue details &rarr;
+          </Link>
+        </p>
+      </div>
     </section>
   )
 }

@@ -28,29 +28,48 @@ export async function SponsorBarSection({
   if (filtered.length === 0) return null
 
   return (
-    <section>
-      {heading && <h2>{heading}</h2>}
-      <ul>
+    <section className="mx-auto max-w-content px-6 py-12">
+      {heading && <h2 className="text-2xl font-semibold tracking-tight">{heading}</h2>}
+      <ul className="mt-6 flex flex-wrap items-center justify-center gap-8">
         {filtered.map((sponsor) => (
           <li key={sponsor._id}>
             {sponsor.website ? (
-              <a href={sponsor.website} target="_blank" rel="noopener noreferrer">
+              <a
+                href={sponsor.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block opacity-80 transition-opacity hover:opacity-100"
+              >
                 {sponsor.logo ? (
-                  <SanityImage value={sponsor.logo} width={160} height={80} />
+                  <SanityImage
+                    value={{...sponsor.logo, alt: sponsor.logo.alt || `${sponsor.name} logo`}}
+                    width={160}
+                    height={80}
+                    className="h-12 w-auto object-contain"
+                    sizes="160px"
+                  />
                 ) : (
-                  <span>{sponsor.name}</span>
+                  <span className="text-sm font-medium text-text-muted">{sponsor.name}</span>
                 )}
               </a>
             ) : sponsor.logo ? (
-              <SanityImage value={sponsor.logo} width={160} height={80} />
+              <SanityImage
+                value={{...sponsor.logo, alt: sponsor.logo.alt || `${sponsor.name} logo`}}
+                width={160}
+                height={80}
+                className="h-12 w-auto object-contain opacity-80"
+                sizes="160px"
+              />
             ) : (
-              <span>{sponsor.name}</span>
+              <span className="text-sm font-medium text-text-muted">{sponsor.name}</span>
             )}
           </li>
         ))}
       </ul>
-      <p>
-        <Link href="/sponsors">View all sponsors</Link>
+      <p className="mt-6 text-center">
+        <Link href="/sponsors" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+          View all sponsors &rarr;
+        </Link>
       </p>
     </section>
   )

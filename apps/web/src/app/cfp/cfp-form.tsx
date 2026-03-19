@@ -48,9 +48,9 @@ export function CfpForm() {
 
   if (state.success) {
     return (
-      <section className="mt-8">
-        <h2 className="text-2xl font-bold">Thank you!</h2>
-        <p className="mt-2 text-gray-600">
+      <section className="mt-8 rounded-md border border-border bg-surface-alt p-6" aria-live="polite">
+        <h2 className="text-2xl font-semibold tracking-tight">Thank you!</h2>
+        <p className="mt-2 text-text-secondary">
           Your submission has been received. We will review it and get back to you.
         </p>
       </section>
@@ -59,7 +59,11 @@ export function CfpForm() {
 
   return (
     <form action={action} className="mt-8 space-y-6">
-      {state.error && <p className="text-red-600">{state.error}</p>}
+      {state.error && (
+        <p className="rounded-md border border-error bg-error/5 p-3 text-sm text-error">
+          {state.error}
+        </p>
+      )}
 
       {/* Honeypot */}
       <div aria-hidden="true" style={{position: 'absolute', left: '-9999px'}}>
@@ -83,9 +87,11 @@ export function CfpForm() {
               name="sessionTitle"
               required
               maxLength={200}
-              className="mt-1 block w-full border px-3 py-2"
+              className="form-input"
+              aria-invalid={state.errors?.sessionTitle ? 'true' : undefined}
+              aria-describedby={state.errors?.sessionTitle ? 'sessionTitle-error' : undefined}
             />
-            <FieldError errors={state.errors?.sessionTitle} />
+            <FieldError id="sessionTitle-error" errors={state.errors?.sessionTitle} />
           </div>
 
           <div>
@@ -96,7 +102,9 @@ export function CfpForm() {
               id="sessionType"
               name="sessionType"
               required
-              className="mt-1 block w-full border px-3 py-2"
+              className="form-input"
+              aria-invalid={state.errors?.sessionType ? 'true' : undefined}
+              aria-describedby={state.errors?.sessionType ? 'sessionType-error' : undefined}
             >
               <option value="">Select a format</option>
               <option value="talk">Talk (30 min)</option>
@@ -104,7 +112,7 @@ export function CfpForm() {
               <option value="panel">Panel</option>
               <option value="workshop">Workshop (90 min)</option>
             </select>
-            <FieldError errors={state.errors?.sessionType} />
+            <FieldError id="sessionType-error" errors={state.errors?.sessionType} />
           </div>
 
           <div>
@@ -118,10 +126,12 @@ export function CfpForm() {
               rows={6}
               minLength={100}
               maxLength={2000}
-              className="mt-1 block w-full border px-3 py-2"
+              className="form-input"
+              aria-invalid={state.errors?.abstract ? 'true' : undefined}
+              aria-describedby="abstract-hint abstract-error"
             />
-            <p className="mt-1 text-xs text-gray-500">100-2000 characters</p>
-            <FieldError errors={state.errors?.abstract} />
+            <p id="abstract-hint" className="mt-1 text-xs text-text-muted">100-2000 characters</p>
+            <FieldError id="abstract-error" errors={state.errors?.abstract} />
           </div>
 
           <div>
@@ -132,14 +142,16 @@ export function CfpForm() {
               id="level"
               name="level"
               required
-              className="mt-1 block w-full border px-3 py-2"
+              className="form-input"
+              aria-invalid={state.errors?.level ? 'true' : undefined}
+              aria-describedby={state.errors?.level ? 'level-error' : undefined}
             >
               <option value="">Select a level</option>
               <option value="beginner">Beginner</option>
               <option value="intermediate">Intermediate</option>
               <option value="advanced">Advanced</option>
             </select>
-            <FieldError errors={state.errors?.level} />
+            <FieldError id="level-error" errors={state.errors?.level} />
           </div>
 
           <div>
@@ -151,10 +163,12 @@ export function CfpForm() {
               id="topics"
               name="topics"
               required
-              className="mt-1 block w-full border px-3 py-2"
+              className="form-input"
+              aria-invalid={state.errors?.topics ? 'true' : undefined}
+              aria-describedby="topics-hint topics-error"
             />
-            <p className="mt-1 text-xs text-gray-500">Comma-separated (e.g., React, AI, Design Systems)</p>
-            <FieldError errors={state.errors?.topics} />
+            <p id="topics-hint" className="mt-1 text-xs text-text-muted">Comma-separated (e.g., React, AI, Design Systems)</p>
+            <FieldError id="topics-error" errors={state.errors?.topics} />
           </div>
         </div>
       </fieldset>
@@ -172,9 +186,11 @@ export function CfpForm() {
               id="submitterName"
               name="submitterName"
               required
-              className="mt-1 block w-full border px-3 py-2"
+              className="form-input"
+              aria-invalid={state.errors?.submitterName ? 'true' : undefined}
+              aria-describedby={state.errors?.submitterName ? 'submitterName-error' : undefined}
             />
-            <FieldError errors={state.errors?.submitterName} />
+            <FieldError id="submitterName-error" errors={state.errors?.submitterName} />
           </div>
 
           <div>
@@ -186,9 +202,11 @@ export function CfpForm() {
               id="submitterEmail"
               name="submitterEmail"
               required
-              className="mt-1 block w-full border px-3 py-2"
+              className="form-input"
+              aria-invalid={state.errors?.submitterEmail ? 'true' : undefined}
+              aria-describedby={state.errors?.submitterEmail ? 'submitterEmail-error' : undefined}
             />
-            <FieldError errors={state.errors?.submitterEmail} />
+            <FieldError id="submitterEmail-error" errors={state.errors?.submitterEmail} />
           </div>
 
           <div>
@@ -199,7 +217,7 @@ export function CfpForm() {
               type="text"
               id="company"
               name="company"
-              className="mt-1 block w-full border px-3 py-2"
+              className="form-input"
             />
           </div>
 
@@ -214,10 +232,12 @@ export function CfpForm() {
               rows={4}
               minLength={50}
               maxLength={500}
-              className="mt-1 block w-full border px-3 py-2"
+              className="form-input"
+              aria-invalid={state.errors?.bio ? 'true' : undefined}
+              aria-describedby="bio-hint bio-error"
             />
-            <p className="mt-1 text-xs text-gray-500">50-500 characters</p>
-            <FieldError errors={state.errors?.bio} />
+            <p id="bio-hint" className="mt-1 text-xs text-text-muted">50-500 characters</p>
+            <FieldError id="bio-error" errors={state.errors?.bio} />
           </div>
         </div>
       </fieldset>
@@ -225,7 +245,7 @@ export function CfpForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="border px-6 py-2 font-medium disabled:opacity-50"
+        className="btn btn-primary"
       >
         {isPending ? 'Submitting…' : 'Submit Proposal'}
       </button>
@@ -233,10 +253,10 @@ export function CfpForm() {
   )
 }
 
-function FieldError({errors}: {errors?: string[]}) {
+function FieldError({id, errors}: {id: string; errors?: string[]}) {
   if (!errors || errors.length === 0) return null
   return (
-    <ul className="mt-1 text-sm text-red-600">
+    <ul id={id} className="mt-1 text-sm text-error">
       {errors.map((error) => (
         <li key={error}>{error}</li>
       ))}

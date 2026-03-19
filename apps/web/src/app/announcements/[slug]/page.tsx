@@ -113,9 +113,9 @@ async function AnnouncementDetailCached({
         }}
       />
       <header>
-        <h1 className="text-4xl font-bold tracking-tight">{announcement.title}</h1>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{announcement.title}</h1>
         {announcement.publishedAt && (
-          <time dateTime={announcement.publishedAt} className="mt-2 block text-gray-500">
+          <time dateTime={announcement.publishedAt} className="mt-2 block text-text-muted">
             {new Date(announcement.publishedAt).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
@@ -127,7 +127,7 @@ async function AnnouncementDetailCached({
       </header>
 
       {announcement.body && (
-        <p className="mt-8" style={{whiteSpace: 'pre-wrap'}}>
+        <p className="mt-8 text-text-secondary" style={{whiteSpace: 'pre-wrap'}}>
           {announcement.body}
         </p>
       )}
@@ -138,8 +138,13 @@ async function AnnouncementDetailCached({
             if (link._type === 'externalLink' && link.url) {
               return (
                 <li key={i}>
-                  <a href={link.url} className="underline" target="_blank" rel="noopener noreferrer">
-                    {link.label || link.url}
+                  <a
+                    href={link.url}
+                    className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {link.label || link.url} &rarr;
                   </a>
                 </li>
               )
@@ -148,8 +153,8 @@ async function AnnouncementDetailCached({
               const href = resolveInternalHref(link.reference)
               return (
                 <li key={i}>
-                  <Link href={href} className="underline">
-                    {link.label || link.reference.name || 'Link'}
+                  <Link href={href} className="text-sm text-text-secondary transition-colors hover:text-text-primary">
+                    {link.label || link.reference.name || 'Link'} &rarr;
                   </Link>
                 </li>
               )
@@ -160,7 +165,7 @@ async function AnnouncementDetailCached({
       )}
 
       <p className="mt-12">
-        <Link href="/announcements" className="text-sm underline">
+        <Link href="/announcements" className="text-sm text-text-muted transition-colors hover:text-text-primary">
           &larr; All announcements
         </Link>
       </p>

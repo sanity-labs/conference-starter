@@ -21,13 +21,27 @@ interface HeroSectionProps {
 
 export function HeroSection({heading, subheading, backgroundImage, cta}: HeroSectionProps) {
   return (
-    <section>
+    <section className="relative overflow-hidden py-16 sm:py-24">
       {backgroundImage && (
-        <SanityImage value={backgroundImage} width={1200} height={600} />
+        <div className="absolute inset-0 -z-10 opacity-10">
+          <SanityImage
+            value={backgroundImage}
+            width={1200}
+            height={600}
+            className="h-full w-full object-cover"
+            sizes="100vw"
+          />
+        </div>
       )}
-      {heading && <h2>{heading}</h2>}
-      {subheading && <p>{subheading}</p>}
-      <CtaLink cta={cta} />
+      <div className="mx-auto max-w-content px-6">
+        {heading && <h2 className="text-2xl font-semibold tracking-tight">{heading}</h2>}
+        {subheading && <p className="mt-3 text-lg text-text-secondary">{subheading}</p>}
+        {cta && (
+          <div className="mt-6">
+            <CtaLink cta={cta} />
+          </div>
+        )}
+      </div>
     </section>
   )
 }

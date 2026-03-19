@@ -34,7 +34,7 @@ async function SponsorsListCached({perspective, stega}: DynamicFetchOptions) {
   const {data: sponsors} = await sanityFetch({query: SPONSORS_QUERY, perspective, stega})
 
   if (!sponsors || sponsors.length === 0) {
-    return <p className="mt-8 text-gray-500">No sponsors announced yet.</p>
+    return <p className="mt-8 text-text-muted">No sponsors announced yet.</p>
   }
 
   const tiers = groupByTier(sponsors)
@@ -43,11 +43,11 @@ async function SponsorsListCached({perspective, stega}: DynamicFetchOptions) {
     <div className="mt-8 space-y-12">
       {tiers.map(({tier, label, sponsors: tierSponsors}) => (
         <section key={tier}>
-          <h2 className="text-2xl font-bold">{label}</h2>
-          <ul className="mt-4 grid grid-cols-2 gap-6 sm:grid-cols-3">
+          <h2 className="text-2xl font-semibold tracking-tight">{label}</h2>
+          <ul className={`mt-4 ${tierGridClass(tier)}`}>
             {tierSponsors.map((sponsor) => (
               <li key={sponsor._id}>
-                <SponsorCard sponsor={sponsor} />
+                <SponsorCard sponsor={sponsor} tier={tier} />
               </li>
             ))}
           </ul>
@@ -57,26 +57,62 @@ async function SponsorsListCached({perspective, stega}: DynamicFetchOptions) {
   )
 }
 
+function tierGridClass(tier: string): string {
+  switch (tier) {
+    case 'platinum':
+      return 'grid grid-cols-1 gap-8 sm:grid-cols-2'
+    case 'gold':
+      return 'grid grid-cols-2 gap-6 sm:grid-cols-3'
+    case 'silver':
+      return 'grid grid-cols-2 gap-4 sm:grid-cols-4'
+    case 'bronze':
+      return 'grid grid-cols-3 gap-3 sm:grid-cols-5'
+    case 'community':
+      return 'grid grid-cols-3 gap-3 sm:grid-cols-5'
+    default:
+      return 'grid grid-cols-2 gap-6 sm:grid-cols-3'
+  }
+}
+
+function tierLogoHeight(tier: string): string {
+  switch (tier) {
+    case 'platinum':
+      return 'h-24'
+    case 'gold':
+      return 'h-16'
+    case 'silver':
+      return 'h-12'
+    case 'bronze':
+      return 'h-10'
+    case 'community':
+      return 'h-8'
+    default:
+      return 'h-16'
+  }
+}
+
 type Sponsor = NonNullable<SPONSORS_QUERY_RESULT>[number]
 
-function SponsorCard({sponsor}: {sponsor: Sponsor}) {
+function SponsorCard({sponsor, tier}: {sponsor: Sponsor; tier: string}) {
+  const logoHeight = tierLogoHeight(tier)
   const content = (
-    <>
+    <div className="flex flex-col items-center rounded-md border border-border p-4 text-center transition-colors hover:border-border-strong">
       {sponsor.logo && (
         <SanityImage
-          value={sponsor.logo}
-          className="h-16 w-auto object-contain"
+          value={{...sponsor.logo, alt: sponsor.logo.alt || `${sponsor.name} logo`}}
+          className={`${logoHeight} w-auto object-contain`}
           width={200}
           height={100}
+          sizes="200px"
         />
       )}
-      <p className="mt-2 font-medium">{sponsor.name}</p>
-      {sponsor.description && (
-        <div className="mt-1 text-sm text-gray-600">
+      <p className="mt-2 text-sm font-medium">{sponsor.name}</p>
+      {tier === 'platinum' && sponsor.description && (
+        <div className="mt-1 text-xs text-text-muted">
           <PortableText value={sponsor.description} />
         </div>
       )}
-    </>
+    </div>
   )
 
   if (sponsor.website) {

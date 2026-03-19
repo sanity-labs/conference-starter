@@ -108,22 +108,23 @@ async function SpeakerDetailCached({
       <header className="flex flex-col gap-6 sm:flex-row sm:items-start">
         {speaker.photo && (
           <SanityImage
-            value={speaker.photo}
+            value={{...speaker.photo, alt: speaker.photo.alt || speaker.name}}
             className="h-32 w-32 rounded-lg object-cover"
             width={256}
             height={256}
+            sizes="128px"
           />
         )}
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">{speaker.name}</h1>
-          {speaker.role && <p className="mt-1 text-lg text-gray-600">{speaker.role}</p>}
-          {speaker.company && <p className="text-gray-500">{speaker.company}</p>}
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{speaker.name}</h1>
+          {speaker.role && <p className="mt-1 text-lg text-text-secondary">{speaker.role}</p>}
+          {speaker.company && <p className="text-text-muted">{speaker.company}</p>}
           <SocialLinks speaker={speaker} />
         </div>
       </header>
 
       {speaker.bio && (
-        <section className="prose mt-8">
+        <section className="prose mt-8 max-w-none">
           <PortableText value={speaker.bio} />
         </section>
       )}
@@ -131,7 +132,7 @@ async function SpeakerDetailCached({
       <SpeakerSessions sessions={speaker.sessions} />
 
       <p className="mt-12">
-        <Link href="/speakers" className="text-sm underline">
+        <Link href="/speakers" className="text-sm text-text-muted transition-colors hover:text-text-primary">
           &larr; All speakers
         </Link>
       </p>
@@ -153,7 +154,12 @@ function SocialLinks({speaker}: {speaker: NonNullable<SPEAKER_DETAIL_QUERY_RESUL
     <ul className="mt-2 flex gap-3 text-sm">
       {links.map((link) => (
         <li key={link.href}>
-          <a href={link.href} target="_blank" rel="noopener noreferrer" className="underline">
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-text-muted transition-colors hover:text-text-primary"
+          >
             {link.label}
           </a>
         </li>
@@ -171,14 +177,14 @@ function SpeakerSessions({
 
   return (
     <section className="mt-12">
-      <h2 className="text-2xl font-bold">Sessions</h2>
+      <h2 className="text-2xl font-semibold tracking-tight">Sessions</h2>
       <ul className="mt-4 space-y-4">
         {sessions.map((session) => (
-          <li key={session._id} className="border-l-2 pl-4">
-            <Link href={`/sessions/${session.slug}`} className="font-medium underline">
+          <li key={session._id} className="rounded-md border border-border p-4 transition-colors hover:border-border-strong">
+            <Link href={`/sessions/${session.slug}`} className="font-medium hover:underline">
               {session.title}
             </Link>
-            <p className="text-sm text-gray-600">
+            <p className="mt-1 text-sm text-text-muted">
               {[
                 session.sessionType &&
                   session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1),
@@ -189,7 +195,7 @@ function SpeakerSessions({
                 .join(' · ')}
             </p>
             {session.slot && session.slot.startTime && (
-              <p className="text-sm text-gray-500">
+              <p className="mt-1 text-sm text-text-muted">
                 <time dateTime={session.slot.startTime}>
                   {new Date(session.slot.startTime).toLocaleTimeString('en-US', {
                     hour: 'numeric',

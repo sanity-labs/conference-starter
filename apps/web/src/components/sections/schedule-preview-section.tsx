@@ -43,13 +43,13 @@ export async function SchedulePreviewSection({
   const displayed = maxSlots ? slots.slice(0, maxSlots) : slots
 
   return (
-    <section>
-      {heading && <h2>{heading}</h2>}
-      <ul>
+    <section className="mx-auto max-w-content px-6 py-12">
+      {heading && <h2 className="text-2xl font-semibold tracking-tight">{heading}</h2>}
+      <ul className="mt-4 divide-y divide-border">
         {displayed.map((slot) => (
-          <li key={slot._id}>
+          <li key={slot._id} className="flex gap-4 py-3">
             {slot.startTime && (
-              <time dateTime={slot.startTime}>
+              <time dateTime={slot.startTime} className="w-20 shrink-0 text-sm font-medium text-text-muted">
                 {new Date(slot.startTime).toLocaleTimeString('en-US', {
                   hour: 'numeric',
                   minute: '2-digit',
@@ -57,24 +57,28 @@ export async function SchedulePreviewSection({
                 })}
               </time>
             )}
-            {slot.session && (
-              <>
-                {' '}
-                <Link href={`/sessions/${slot.session.slug}`}>{slot.session.title}</Link>
-                {slot.session.speakers && slot.session.speakers.length > 0 && (
-                  <span>
-                    {' — '}
-                    {slot.session.speakers.map((s) => s.name).join(', ')}
-                  </span>
-                )}
-              </>
-            )}
-            {slot.room && <span> ({slot.room.name})</span>}
+            <div className="min-w-0">
+              {slot.session && (
+                <>
+                  <Link href={`/sessions/${slot.session.slug}`} className="font-medium hover:underline">
+                    {slot.session.title}
+                  </Link>
+                  {slot.session.speakers && slot.session.speakers.length > 0 && (
+                    <p className="text-sm text-text-muted">
+                      {slot.session.speakers.map((s) => s.name).join(', ')}
+                    </p>
+                  )}
+                </>
+              )}
+              {slot.room && <span className="text-xs text-text-muted"> {slot.room.name}</span>}
+            </div>
           </li>
         ))}
       </ul>
-      <p>
-        <Link href="/schedule">View full schedule</Link>
+      <p className="mt-4">
+        <Link href="/schedule" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+          View full schedule &rarr;
+        </Link>
       </p>
     </section>
   )

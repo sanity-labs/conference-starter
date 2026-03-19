@@ -30,7 +30,7 @@ export function FaqSection({heading, items}: FaqSectionProps) {
   const faqItems = items.filter((item) => item.question)
 
   return (
-    <section>
+    <section className="mx-auto max-w-content px-6 py-12">
       {faqItems.length > 0 && (
         <JsonLd<FAQPage>
           data={{
@@ -47,17 +47,22 @@ export function FaqSection({heading, items}: FaqSectionProps) {
           }}
         />
       )}
-      {heading && <h2>{heading}</h2>}
-      <dl>
+      {heading && <h2 className="text-2xl font-semibold tracking-tight">{heading}</h2>}
+      <div className="mt-4 divide-y divide-border">
         {items.map((item) => (
-          <div key={item._key}>
-            <dt>{item.question}</dt>
-            <dd>
+          <details key={item._key} className="group py-4">
+            <summary className="flex cursor-pointer items-center justify-between font-medium">
+              {item.question}
+              <span className="ml-2 shrink-0 text-text-muted transition-transform group-open:rotate-45">
+                +
+              </span>
+            </summary>
+            <div className="prose mt-3 max-w-none text-text-secondary">
               <PortableText value={item.answer} />
-            </dd>
-          </div>
+            </div>
+          </details>
         ))}
-      </dl>
+      </div>
     </section>
   )
 }

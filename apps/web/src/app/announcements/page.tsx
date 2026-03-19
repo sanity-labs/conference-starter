@@ -36,19 +36,19 @@ async function AnnouncementsListCached({perspective, stega}: DynamicFetchOptions
   })
 
   if (!announcements || announcements.length === 0) {
-    return <p className="mt-8 text-gray-500">No announcements yet.</p>
+    return <p className="mt-8 text-text-muted">No announcements yet.</p>
   }
 
   return (
-    <ul className="mt-8 space-y-8">
+    <ul className="mt-8 divide-y divide-border" aria-label="Announcements">
       {announcements.map((item) => (
-        <li key={item._id}>
+        <li key={item._id} className="py-6 first:pt-0">
           <article>
-            <Link href={`/announcements/${item.slug}`}>
-              <h2 className="text-xl font-semibold">{item.title}</h2>
+            <Link href={`/announcements/${item.slug}`} className="group">
+              <h2 className="text-xl font-semibold group-hover:underline">{item.title}</h2>
             </Link>
             {item.publishedAt && (
-              <time dateTime={item.publishedAt} className="text-sm text-gray-500">
+              <time dateTime={item.publishedAt} className="mt-1 block text-sm text-text-muted">
                 {new Date(item.publishedAt).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
@@ -58,7 +58,7 @@ async function AnnouncementsListCached({perspective, stega}: DynamicFetchOptions
               </time>
             )}
             {item.body && (
-              <p className="mt-1 text-gray-600">
+              <p className="mt-2 text-text-secondary">
                 {item.body.length > 200 ? `${item.body.slice(0, 200)}…` : item.body}
               </p>
             )}

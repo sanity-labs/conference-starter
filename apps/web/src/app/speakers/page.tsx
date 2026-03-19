@@ -33,31 +33,32 @@ async function SpeakersListCached({perspective, stega}: DynamicFetchOptions) {
   const {data: speakers} = await sanityFetch({query: SPEAKERS_QUERY, perspective, stega})
 
   if (!speakers || speakers.length === 0) {
-    return <p className="mt-8 text-gray-500">No speakers announced yet.</p>
+    return <p className="mt-8 text-text-muted">No speakers announced yet.</p>
   }
 
   return (
     <ul className="mt-8 grid grid-cols-2 gap-8 sm:grid-cols-3">
       {speakers.map((speaker) => (
-        <li key={speaker._id}>
+        <li key={speaker._id} className="group">
           <Link href={`/speakers/${speaker.slug}`}>
             {speaker.photo && (
               <SanityImage
                 value={speaker.photo}
-                className="aspect-square w-full rounded-lg object-cover"
+                className="aspect-square w-full rounded-lg object-cover transition-opacity group-hover:opacity-90"
                 width={300}
                 height={300}
+                sizes="(min-width: 640px) 33vw, 50vw"
               />
             )}
             <p className="mt-2 font-medium">{speaker.name}</p>
             {speaker.role && (
-              <p className="text-sm text-gray-600">{speaker.role}</p>
+              <p className="text-sm text-text-muted">{speaker.role}</p>
             )}
             {speaker.company && (
-              <p className="text-sm text-gray-500">{speaker.company}</p>
+              <p className="text-sm text-text-muted">{speaker.company}</p>
             )}
             {speaker.sessionCount > 0 && (
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-text-muted">
                 {speaker.sessionCount} session{speaker.sessionCount !== 1 ? 's' : ''}
               </p>
             )}

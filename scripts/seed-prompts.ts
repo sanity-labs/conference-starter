@@ -1,14 +1,66 @@
 /**
- * Seed script for AI prompt documents and FAQ data.
+ * Seed script for prompts, FAQs, email templates, submissions, announcements,
+ * and code of conduct page.
  *
- * Usage (from apps/studio/): npx sanity exec ../../scripts/seed-prompts.ts --with-user-token
+ * Usage (from apps/studio/ — script must be local for --with-user-token to inject):
+ *   cp ../../scripts/seed-prompts.ts . && npx sanity exec ./seed-prompts.ts --with-user-token && rm seed-prompts.ts
  */
 
 import {getCliClient} from 'sanity/cli'
 
 const client = getCliClient({apiVersion: '2026-03-15'})
 
-// ─── Prompt documents ────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────
+
+function textBlock(text: string, key: string) {
+  return {
+    _type: 'block',
+    _key: key,
+    style: 'normal',
+    markDefs: [],
+    children: [{_type: 'span', _key: `${key}-s`, marks: [], text}],
+  }
+}
+
+function headingBlock(text: string, key: string, style: 'h1' | 'h2' | 'h3' = 'h2') {
+  return {
+    _type: 'block',
+    _key: key,
+    style,
+    markDefs: [],
+    children: [{_type: 'span', _key: `${key}-s`, marks: [], text}],
+  }
+}
+
+function variable(key: string) {
+  return {_type: 'pteInterpolationVariable', _key: `var-${key}`, variableKey: key}
+}
+
+function span(text: string, key: string) {
+  return {_type: 'span', _key: key, text, marks: []}
+}
+
+function block(children: Array<Record<string, unknown>>, key: string) {
+  return {
+    _type: 'block',
+    _key: key,
+    style: 'normal',
+    markDefs: [],
+    children,
+  }
+}
+
+function heading(text: string, key: string, style: 'h1' | 'h2' | 'h3' = 'h1') {
+  return {
+    _type: 'block',
+    _key: key,
+    style,
+    markDefs: [],
+    children: [{_type: 'span', _key: `${key}-s`, text, marks: []}],
+  }
+}
+
+// ─── Prompts ─────────────────────────────────────────────────────────────
 
 const prompts = [
   {
@@ -40,7 +92,12 @@ Write a brief 2-3 sentence evaluation summary explaining the score.`,
     _id: 'prompt.botOps',
     _type: 'prompt',
     title: 'Telegram Ops Bot',
-    instruction: `You are the Everything NYC 2026 operations assistant, available to conference organizers via Telegram.
+    instruction: `You are the ContentOps Conf operations assistant, available to conference organizers via Telegram.
+
+The conference has three tracks:
+- Structure That Scales (content modeling, GROQ, type-safe schemas)
+- AI That Works (CFP screening, agents, AI concierge)
+- Build Without Limits (monorepos, edge rendering, visual editing, email pipelines)
 
 You can help with:
 - Reviewing CFP submissions (search by topic, score, status)
@@ -57,7 +114,9 @@ When listing items, format them clearly. Reference document titles when discussi
     _id: 'prompt.botAttendee',
     _type: 'prompt',
     title: 'Telegram Attendee Bot',
-    instruction: `You are the Everything NYC 2026 conference assistant, helping attendees get the most out of the event.
+    instruction: `You are the ContentOps Conf conference assistant, helping attendees get the most out of the event.
+
+ContentOps Conf is about building content operating systems — platforms where structured content drives websites, emails, AI agents, and automation from a single source of truth. Every talk showcases a feature from this open-source conference starter.
 
 You can help with:
 - Finding sessions by topic, speaker, or time
@@ -79,129 +138,507 @@ Guidelines:
   },
 ]
 
-// ─── FAQ seed documents ──────────────────────────────────────────────────
+// ─── FAQs ────────────────────────────────────────────────────────────────
 
 const faqs = [
   {
     _type: 'faq',
-    question: 'What is the WiFi password?',
+    question: 'What is ContentOps Conf?',
     answer: [
-      {
-        _type: 'block',
-        style: 'normal',
-        children: [
-          {
-            _type: 'span',
-            text: 'WiFi network and password details will be shared at check-in and displayed on signage throughout the venue. Look for the "EverythingNYC" network.',
-          },
-        ],
-      },
+      textBlock(
+        'A conference about building content operating systems. Every talk showcases a feature from this open-source conference starter — the same platform running the event. Think of it as a meta-conference: the product is the conference, and the conference is the product.',
+        'a1',
+      ),
     ],
-    category: 'venue',
+    category: 'general',
   },
   {
     _type: 'faq',
-    question: 'What is the code of conduct?',
+    question: 'Who is this for?',
     answer: [
-      {
-        _type: 'block',
-        style: 'normal',
-        children: [
-          {
-            _type: 'span',
-            text: 'Everything NYC 2026 is dedicated to providing a harassment-free experience for everyone. We do not tolerate harassment in any form. Participants asked to stop harassing behavior are expected to comply immediately. If you experience or witness a violation, please report it to any staff member or email conduct@everythingnyc.dev.',
-          },
-        ],
-      },
+      textBlock(
+        'Developers building content-heavy applications, engineering managers evaluating headless CMS options, and product managers who want to understand what structured content makes possible. Whether you write code, manage teams, or shape product strategy, the talks cover your angle.',
+        'a1',
+      ),
     ],
-    category: 'conduct',
+    category: 'general',
   },
   {
     _type: 'faq',
-    question: 'Is the venue wheelchair accessible?',
+    question: 'What makes this different from a CMS conference?',
     answer: [
-      {
-        _type: 'block',
-        style: 'normal',
-        children: [
-          {
-            _type: 'span',
-            text: 'Yes, the venue is fully wheelchair accessible. All session rooms, restrooms, and common areas are accessible. If you need specific accommodations, please email access@everythingnyc.dev and we will make arrangements.',
-          },
-        ],
-      },
+      textBlock(
+        'This is not about picking a CMS. It is about content as infrastructure — how structured content drives websites, emails, AI agents, and automation from one source of truth. The talks cover architecture, engineering patterns, and operational workflows, not product demos.',
+        'a1',
+      ),
+    ],
+    category: 'general',
+  },
+  {
+    _type: 'faq',
+    question: 'Is the venue accessible?',
+    answer: [
+      textBlock(
+        'Yes, The Glasshouse is fully wheelchair accessible. All session rooms, restrooms, and common areas are accessible. Email access@contentops.dev for specific accommodations.',
+        'a1',
+      ),
     ],
     category: 'accessibility',
   },
   {
     _type: 'faq',
-    question: 'What are the lunch and dietary options?',
+    question: 'What are the food options?',
     answer: [
-      {
-        _type: 'block',
-        style: 'normal',
-        children: [
-          {
-            _type: 'span',
-            text: 'Lunch is provided on both conference days. We offer vegetarian, vegan, gluten-free, and halal options. Please indicate dietary requirements during registration. Snacks and coffee are available throughout the day.',
-          },
-        ],
-      },
+      textBlock(
+        'Lunch on both days. Vegetarian, vegan, gluten-free, and halal options available. Indicate requirements during registration. Coffee and snacks throughout.',
+        'a1',
+      ),
     ],
     category: 'venue',
-  },
-  {
-    _type: 'faq',
-    question: 'Where can I park, and what are the transit options?',
-    answer: [
-      {
-        _type: 'block',
-        style: 'normal',
-        children: [
-          {
-            _type: 'span',
-            text: 'We recommend taking public transit. The venue is a 5-minute walk from the subway. If you drive, there are several parking garages nearby — check the venue page on our website for details and directions.',
-          },
-        ],
-      },
-    ],
-    category: 'venue',
-  },
-  {
-    _type: 'faq',
-    question: 'Can I get a refund or transfer my ticket?',
-    answer: [
-      {
-        _type: 'block',
-        style: 'normal',
-        children: [
-          {
-            _type: 'span',
-            text: 'Tickets can be fully refunded up to 30 days before the event. Within 30 days, tickets can be transferred to another person at no charge. Contact registration@everythingnyc.dev for transfers or refund requests.',
-          },
-        ],
-      },
-    ],
-    category: 'registration',
   },
   {
     _type: 'faq',
     question: 'Will sessions be recorded?',
     answer: [
-      {
-        _type: 'block',
-        style: 'normal',
-        children: [
-          {
-            _type: 'span',
-            text: 'Most sessions will be recorded and published on our YouTube channel after the conference. Speakers can opt out of recording. Workshop sessions are not recorded to encourage interactive participation.',
-          },
-        ],
-      },
+      textBlock(
+        'Most sessions are recorded and published after the conference. Speakers can opt out. Workshops are not recorded to encourage interactive participation.',
+        'a1',
+      ),
     ],
     category: 'general',
   },
+  {
+    _type: 'faq',
+    question: 'Can I get a refund?',
+    answer: [
+      textBlock(
+        'Full refund up to 30 days before the event. Within 30 days, tickets can be transferred to another person at no charge. Email registration@contentops.dev.',
+        'a1',
+      ),
+    ],
+    category: 'registration',
+  },
 ]
+
+// ─── Email Templates ─────────────────────────────────────────────────────
+
+const emailTemplates = [
+  {
+    _id: 'emailTemplate.cfp-confirmation',
+    _type: 'emailTemplate',
+    name: 'CFP Confirmation',
+    slug: {_type: 'slug', current: 'cfp-confirmation'},
+    subject: 'Submission received: {{sessionTitle}}',
+    audience: 'submitters',
+    trigger: 'on-submission-received',
+    status: 'active',
+    body: [
+      heading('Submission Received', 'b1'),
+      block([span('Hi ', 's1'), variable('submitterName'), span(',', 's2')], 'b2'),
+      block(
+        [
+          span('Thanks for submitting ', 's3'),
+          variable('sessionTitle'),
+          span(' to ', 's4'),
+          variable('conferenceName'),
+          span("! We're excited to review your proposal.", 's5'),
+        ],
+        'b3',
+      ),
+      block([span("Here's what happens next:", 's6')], 'b4'),
+      block(
+        [span('1. Your submission will be screened by our AI-assisted review system', 's7')],
+        'b5',
+      ),
+      block(
+        [span('2. Our editorial team will review top-scoring proposals', 's8')],
+        'b6',
+      ),
+      block([span("3. You'll receive a decision via email", 's9')], 'b7'),
+      block(
+        [
+          span(
+            "This process typically takes 2-3 weeks. We'll keep you posted on any updates.",
+            's10',
+          ),
+        ],
+        'b8',
+      ),
+      block(
+        [span('If you have questions about your submission, reply to this email.', 's11')],
+        'b9',
+      ),
+    ],
+  },
+  {
+    _id: 'emailTemplate.cfp-accepted',
+    _type: 'emailTemplate',
+    name: 'CFP Accepted',
+    slug: {_type: 'slug', current: 'cfp-accepted'},
+    subject: 'Your talk "{{sessionTitle}}" has been accepted!',
+    audience: 'submitters',
+    trigger: 'on-submission-accepted',
+    status: 'active',
+    body: [
+      heading('Your Talk Has Been Accepted!', 'b1'),
+      block([span('Hi ', 's1'), variable('submitterName'), span(',', 's2')], 'b2'),
+      block(
+        [
+          span("Great news! We're thrilled to let you know that ", 's3'),
+          variable('sessionTitle'),
+          span(' has been accepted for ', 's4'),
+          variable('conferenceName'),
+          span('.', 's5'),
+        ],
+        'b3',
+      ),
+      block(
+        [
+          span(
+            "We received many outstanding proposals and yours stood out. We can't wait for you to share your ideas with our audience.",
+            's6',
+          ),
+        ],
+        'b4',
+      ),
+      heading('Next Steps', 'b5', 'h3'),
+      block(
+        [span('1. Confirm your participation by replying to this email', 's7')],
+        'b6',
+      ),
+      block(
+        [span("2. We'll create your speaker profile on our website", 's8')],
+        'b7',
+      ),
+      block(
+        [span("3. You'll receive a speaker welcome email with logistics details", 's9')],
+        'b8',
+      ),
+      block(
+        [
+          span(
+            'If you can no longer present, please let us know as soon as possible so we can offer the slot to another speaker.',
+            's10',
+          ),
+        ],
+        'b9',
+      ),
+    ],
+  },
+  {
+    _id: 'emailTemplate.cfp-rejected',
+    _type: 'emailTemplate',
+    name: 'CFP Rejected',
+    slug: {_type: 'slug', current: 'cfp-rejected'},
+    subject: 'Update on your submission: {{sessionTitle}}',
+    audience: 'submitters',
+    trigger: 'on-submission-rejected',
+    status: 'active',
+    body: [
+      heading('Thank You for Submitting', 'b1'),
+      block([span('Hi ', 's1'), variable('submitterName'), span(',', 's2')], 'b2'),
+      block(
+        [
+          span('Thank you for submitting ', 's3'),
+          variable('sessionTitle'),
+          span(' to ', 's4'),
+          variable('conferenceName'),
+          span('. We appreciate the time and effort you put into your proposal.', 's5'),
+        ],
+        'b3',
+      ),
+      block(
+        [
+          span(
+            "After careful review, we're unable to include your session in this year's program. We received an exceptional number of submissions and the selection process was highly competitive.",
+            's6',
+          ),
+        ],
+        'b4',
+      ),
+      block(
+        [
+          span(
+            "This doesn't reflect on the quality of your work — we encourage you to submit again in the future and to join us as an attendee. We'd love to see you there.",
+            's7',
+          ),
+        ],
+        'b5',
+      ),
+      block(
+        [
+          span(
+            'If you have questions about our review process, feel free to reply to this email.',
+            's8',
+          ),
+        ],
+        'b6',
+      ),
+    ],
+  },
+  {
+    _id: 'emailTemplate.speaker-welcome',
+    _type: 'emailTemplate',
+    name: 'Speaker Welcome',
+    slug: {_type: 'slug', current: 'speaker-welcome'},
+    subject: 'Welcome to the {{conferenceName}} speaker roster!',
+    audience: 'speakers',
+    trigger: 'on-speaker-confirmed',
+    status: 'active',
+    body: [
+      heading('Welcome, Speaker!', 'b1'),
+      block([span('Hi ', 's1'), variable('speakerName'), span(',', 's2')], 'b2'),
+      block(
+        [
+          span('Welcome to the ', 's3'),
+          variable('conferenceName'),
+          span(' speaker roster! Your session ', 's4'),
+          variable('sessionTitle'),
+          span(
+            ' has been added to our program and your speaker profile is now live on our website.',
+            's5',
+          ),
+        ],
+        'b3',
+      ),
+      heading('Speaker Checklist', 'b4', 'h3'),
+      block(
+        [span('Review your speaker profile and let us know of any updates', 's6')],
+        'b5',
+      ),
+      block([span('Confirm your travel arrangements', 's7')], 'b6'),
+      block([span('Submit your slides 1 week before the event', 's8')], 'b7'),
+      block(
+        [span('Join the speaker Slack channel (invite link coming soon)', 's9')],
+        'b8',
+      ),
+      heading('Important Dates', 'b9h', 'h3'),
+      block(
+        [
+          span(
+            "We'll share the full schedule and your assigned time slot closer to the event. In the meantime, please ensure your availability for the full conference dates.",
+            's10',
+          ),
+        ],
+        'b10',
+      ),
+      block(
+        [
+          span(
+            'For logistics questions (travel, AV requirements, dietary needs), reply to this email.',
+            's11',
+          ),
+        ],
+        'b11',
+      ),
+    ],
+  },
+]
+
+// ─── CFP Submissions ─────────────────────────────────────────────────────
+
+const submissions = [
+  {
+    _type: 'submission',
+    sessionTitle: 'Headless Commerce with Sanity and Shopify',
+    sessionType: 'talk',
+    level: 'intermediate',
+    abstract:
+      'A practical guide to building headless commerce experiences where Sanity manages product storytelling and Shopify handles transactions. Covers content modeling for product pages, real-time inventory-aware rendering, and the editorial workflows that let marketing teams ship without deployments.',
+    topics: ['e-commerce', 'headless', 'integrations'],
+    submitterName: 'Lena Park',
+    submitterEmail: 'lena.park@example.com',
+    company: 'Shopify',
+    bio: 'Lena is a developer advocate at Shopify focusing on headless commerce architectures. She has helped hundreds of merchants build custom storefronts with composable content systems.',
+    status: 'scored',
+    submittedAt: '2026-06-15T14:30:00Z',
+    aiScreening: {
+      _type: 'aiScreening',
+      score: 78,
+      summary:
+        'Strong practical proposal with clear commerce use case. Good speaker background in the space. Abstract could be more specific about the Sanity integration patterns.',
+      scoredAt: '2026-06-15T14:35:00Z',
+    },
+    conference: {_type: 'reference', _ref: 'conference'},
+  },
+  {
+    _type: 'submission',
+    sessionTitle: 'Real-time Collaboration Patterns in Content Teams',
+    sessionType: 'talk',
+    level: 'advanced',
+    abstract:
+      'How do you build real-time collaboration into a content authoring experience without conflicts, data loss, or confusion? This talk covers the operational transform and CRDT-inspired patterns behind collaborative editing, presence indicators, and the UX decisions that make multiplayer content feel natural.',
+    topics: ['collaboration', 'real-time', 'editorial'],
+    submitterName: 'Marcus Webb',
+    submitterEmail: 'marcus.webb@example.com',
+    company: 'Figma',
+    bio: 'Marcus is a senior engineer at Figma working on real-time collaboration infrastructure. Previously built collaborative editing systems for Google Docs.',
+    status: 'accepted',
+    submittedAt: '2026-06-10T09:15:00Z',
+    aiScreening: {
+      _type: 'aiScreening',
+      score: 92,
+      summary:
+        'Exceptional proposal. Deep technical expertise from a leader in real-time collaboration. Directly relevant to content operations. Highly recommended.',
+      scoredAt: '2026-06-10T09:20:00Z',
+    },
+    conference: {_type: 'reference', _ref: 'conference'},
+  },
+  {
+    _type: 'submission',
+    sessionTitle: 'Why We Migrated Away from WordPress (and Back)',
+    sessionType: 'lightning',
+    level: 'beginner',
+    abstract:
+      'We moved our blog from WordPress to a headless CMS, then moved it back. This lightning talk covers what went wrong, what we learned, and why sometimes the boring choice is the right choice.',
+    topics: ['migration', 'WordPress', 'CMS'],
+    submitterName: 'Rajesh Patel',
+    submitterEmail: 'rajesh.patel@example.com',
+    company: 'BlogScale',
+    bio: 'Rajesh runs a content agency that manages blogs for mid-size companies. He has opinions about CMS choices.',
+    status: 'rejected',
+    submittedAt: '2026-06-20T16:45:00Z',
+    aiScreening: {
+      _type: 'aiScreening',
+      score: 34,
+      summary:
+        'Topic does not align well with the conference focus on content operations and structured content. The backwards migration narrative, while honest, lacks actionable insights for the audience.',
+      scoredAt: '2026-06-20T16:50:00Z',
+    },
+    conference: {_type: 'reference', _ref: 'conference'},
+  },
+  {
+    _type: 'submission',
+    sessionTitle: 'Building Accessible Content Authoring Experiences',
+    sessionType: 'talk',
+    level: 'intermediate',
+    abstract:
+      'Accessibility in content platforms means two things: the content editors produce must be accessible, and the editing experience itself must be accessible. This talk covers both — ARIA patterns for rich text editors, automated content accessibility checks, and how to build Studio plugins that work with screen readers.',
+    topics: ['accessibility', 'authoring', 'a11y'],
+    submitterName: 'Aisha Johnson',
+    submitterEmail: 'aisha.johnson@example.com',
+    company: 'Deque',
+    bio: 'Aisha is an accessibility engineer at Deque, makers of axe. She specializes in making complex web applications accessible and has contributed to the ARIA authoring practices guide.',
+    status: 'in-review',
+    submittedAt: '2026-06-18T11:00:00Z',
+    aiScreening: {
+      _type: 'aiScreening',
+      score: 85,
+      summary:
+        'Excellent proposal covering an underserved but important topic. Strong speaker credentials in accessibility. Good balance of authoring UX and output accessibility. Recommended for review.',
+      scoredAt: '2026-06-18T11:05:00Z',
+    },
+    conference: {_type: 'reference', _ref: 'conference'},
+  },
+  {
+    _type: 'submission',
+    sessionTitle: 'Content Mesh: Federating Multiple Content Sources',
+    sessionType: 'workshop',
+    level: 'advanced',
+    abstract:
+      'Most organizations have content in multiple systems. This workshop walks through building a content mesh — a federation layer that queries across Sanity, Contentful, and custom APIs using a unified schema. Participants will build a working federation gateway and learn when federation helps vs. when migration is better.',
+    topics: ['federation', 'content-mesh', 'architecture'],
+    submitterName: 'Henrik Larsson',
+    submitterEmail: 'henrik.larsson@example.com',
+    company: 'Contentful',
+    bio: 'Henrik is a solutions architect at Contentful. He works with enterprise customers on multi-CMS strategies and content federation patterns.',
+    status: 'scored',
+    submittedAt: '2026-06-22T08:30:00Z',
+    aiScreening: {
+      _type: 'aiScreening',
+      score: 62,
+      summary:
+        'Interesting technical topic but potentially misaligned with conference philosophy of unified content operations. Workshop format is good for the complexity. Speaker has relevant enterprise experience.',
+      scoredAt: '2026-06-22T08:35:00Z',
+    },
+    conference: {_type: 'reference', _ref: 'conference'},
+  },
+  {
+    _type: 'submission',
+    sessionTitle: 'Sanity Functions: Event-Driven Content Automation',
+    sessionType: 'talk',
+    level: 'intermediate',
+    abstract:
+      'Content changes should trigger actions automatically — sending emails, updating search indices, notifying stakeholders, scoring submissions. This talk covers Sanity Functions (Blueprints): how to write event handlers in TypeScript, deploy them alongside your Studio, and build automation that treats content events as the source of truth.',
+    topics: ['automation', 'serverless', 'events'],
+    submitterName: 'Tomoko Yamada',
+    submitterEmail: 'tomoko.yamada@example.com',
+    company: 'Rakuten',
+    bio: 'Tomoko is a platform engineer at Rakuten working on content automation for their marketplace. She has built event-driven content systems serving millions of product pages.',
+    status: 'submitted',
+    submittedAt: '2026-07-01T13:00:00Z',
+    conference: {_type: 'reference', _ref: 'conference'},
+  },
+]
+
+// ─── Announcements ───────────────────────────────────────────────────────
+
+const announcements = [
+  {
+    _type: 'announcement',
+    title: 'CFP is now open!',
+    slug: {_type: 'slug', current: 'cfp-is-now-open'},
+    body: 'We are accepting proposals for ContentOps Conf. Whether you have built a content pipeline, shipped an AI agent, or solved a gnarly GROQ query — we want to hear about it. Submit by August 15.',
+    status: 'published',
+    publishedAt: '2026-05-01T10:00:00Z',
+  },
+  {
+    _type: 'announcement',
+    title: 'Schedule published',
+    slug: {_type: 'slug', current: 'schedule-published'},
+    body: 'The full two-day schedule is live. Two tracks running in parallel plus keynotes and a closing panel. See the schedule page for details.',
+    status: 'published',
+    publishedAt: '2026-09-01T10:00:00Z',
+  },
+  {
+    _type: 'announcement',
+    title: 'Workshop capacity update',
+    slug: {_type: 'slug', current: 'workshop-capacity-update'},
+    body: 'Workshop sessions in The Schema Lab and The Query Engine are limited to 40 seats each. Register early to secure your spot.',
+    status: 'draft',
+  },
+]
+
+// ─── Code of Conduct Page ────────────────────────────────────────────────
+
+const codeOfConduct = {
+  _type: 'page',
+  title: 'Code of Conduct',
+  slug: {_type: 'slug', current: 'code-of-conduct'},
+  sections: [
+    {
+      _type: 'richText',
+      _key: 'coc-section',
+      body: [
+        headingBlock('Our Commitment', 'coc-1', 'h2'),
+        textBlock(
+          'ContentOps Conf is dedicated to providing a harassment-free experience for everyone, regardless of gender, gender identity and expression, age, sexual orientation, disability, physical appearance, body size, race, ethnicity, religion, or technology choices. We do not tolerate harassment of participants in any form.',
+          'coc-2',
+        ),
+        headingBlock('Expected Behavior', 'coc-3', 'h2'),
+        textBlock(
+          'Be respectful and considerate in your speech and actions. Refrain from demeaning, discriminatory, or harassing behavior and speech. Be mindful of your surroundings and of your fellow participants. Alert conference organizers if you notice a dangerous situation or someone in distress.',
+          'coc-4',
+        ),
+        headingBlock('Unacceptable Behavior', 'coc-5', 'h2'),
+        textBlock(
+          'Harassment includes offensive verbal comments related to gender, sexual orientation, disability, physical appearance, body size, race, religion, sexual images in public spaces, deliberate intimidation, stalking, following, harassing photography or recording, sustained disruption of talks or events, inappropriate physical contact, and unwelcome sexual attention.',
+          'coc-6',
+        ),
+        headingBlock('Reporting', 'coc-7', 'h2'),
+        textBlock(
+          'If you experience or witness unacceptable behavior, or have any other concerns, please notify a conference organizer as soon as possible. You can find organizers at the registration desk, or email conduct@contentops.dev. All reports will be handled with discretion.',
+          'coc-8',
+        ),
+        headingBlock('Consequences', 'coc-9', 'h2'),
+        textBlock(
+          'Participants asked to stop any harassing behavior are expected to comply immediately. If a participant engages in harassing behavior, the conference organizers may take any action they deem appropriate, including warning the offender, expulsion from the conference with no refund, or referral to local law enforcement.',
+          'coc-10',
+        ),
+      ],
+    },
+  ],
+}
 
 // ─── Main ────────────────────────────────────────────────────────────────
 
@@ -209,26 +646,77 @@ async function seed() {
   const {projectId, dataset} = client.config()
   console.log(`Seeding into ${projectId}/${dataset}...\n`)
 
-  // Seed prompts via transaction (createIfNotExists — won't overwrite existing)
+  // 1. Prompts (createOrReplace — always update)
+  console.log('Seeding prompts...')
   const promptTx = client.transaction()
   for (const prompt of prompts) {
     console.log(`  ${prompt._id} — "${prompt.title}"`)
-    promptTx.createIfNotExists(prompt)
+    promptTx.createOrReplace(prompt)
   }
   const promptResult = await promptTx.commit()
-  console.log(`\n${promptResult.documentIds.length} prompt(s) seeded.\n`)
+  console.log(`  ${promptResult.documentIds.length} prompt(s) seeded.\n`)
 
-  // Seed FAQs via client.create (regular UUIDs — skip if FAQs already exist)
-  const existingCount = await client.fetch<number>(`count(*[_type == "faq"])`)
-  if (existingCount > 0) {
-    console.log(`Skipping FAQ seed — ${existingCount} FAQ document(s) already exist.\n`)
+  // 2. Email templates (createOrReplace — always update)
+  console.log('Seeding email templates...')
+  const emailTx = client.transaction()
+  for (const template of emailTemplates) {
+    console.log(`  ${template._id} — "${template.name}"`)
+    emailTx.createOrReplace(template)
+  }
+  const emailResult = await emailTx.commit()
+  console.log(`  ${emailResult.documentIds.length} template(s) seeded.\n`)
+
+  // 3. FAQs (skip if already exist)
+  const existingFaqCount = await client.fetch<number>(`count(*[_type == "faq"])`)
+  if (existingFaqCount > 0) {
+    console.log(`Skipping FAQ seed — ${existingFaqCount} FAQ(s) already exist.\n`)
   } else {
-    console.log('Seeding FAQ documents...\n')
+    console.log('Seeding FAQs...')
     for (const faq of faqs) {
       const created = await client.create(faq)
       console.log(`  ${created._id} — "${faq.question}"`)
     }
-    console.log(`\n${faqs.length} FAQ document(s) created.\n`)
+    console.log(`  ${faqs.length} FAQ(s) created.\n`)
+  }
+
+  // 4. Submissions (skip if already exist)
+  const existingSubCount = await client.fetch<number>(`count(*[_type == "submission"])`)
+  if (existingSubCount > 0) {
+    console.log(`Skipping submission seed — ${existingSubCount} submission(s) already exist.\n`)
+  } else {
+    console.log('Seeding CFP submissions...')
+    for (const sub of submissions) {
+      const created = await client.create(sub)
+      console.log(`  ${created._id} — "${sub.sessionTitle}" (${sub.status})`)
+    }
+    console.log(`  ${submissions.length} submission(s) created.\n`)
+  }
+
+  // 5. Announcements (skip if already exist)
+  const existingAnnCount = await client.fetch<number>(`count(*[_type == "announcement"])`)
+  if (existingAnnCount > 0) {
+    console.log(
+      `Skipping announcement seed — ${existingAnnCount} announcement(s) already exist.\n`,
+    )
+  } else {
+    console.log('Seeding announcements...')
+    for (const ann of announcements) {
+      const created = await client.create(ann)
+      console.log(`  ${created._id} — "${ann.title}" (${ann.status})`)
+    }
+    console.log(`  ${announcements.length} announcement(s) created.\n`)
+  }
+
+  // 6. Code of Conduct page (skip if exists)
+  const existingCoc = await client.fetch<number>(
+    `count(*[_type == "page" && slug.current == "code-of-conduct"])`,
+  )
+  if (existingCoc > 0) {
+    console.log('Skipping code of conduct — page already exists.\n')
+  } else {
+    console.log('Seeding code of conduct page...')
+    const created = await client.create(codeOfConduct)
+    console.log(`  ${created._id} — "Code of Conduct"\n`)
   }
 
   console.log('Done!')

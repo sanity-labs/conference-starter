@@ -40,3 +40,8 @@ production-export-*/
 # Vercel
 .vercel
 .env*.local
+
+# AI tooling
+.codex/
+.so/
+.mcp.json

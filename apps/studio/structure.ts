@@ -18,6 +18,14 @@ import {
 } from '@sanity/icons'
 import {AGENT_CONTEXT_SCHEMA_TYPE_NAME} from '@sanity/agent-context/studio'
 import {EmailPreview} from './components/EmailPreview'
+import {OgPreview} from './components/OgPreview'
+
+const OG_PREVIEW_TYPES: Record<string, 'session' | 'speaker' | 'page' | 'conference'> = {
+  session: 'session',
+  person: 'speaker',
+  page: 'page',
+  conference: 'conference',
+}
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -351,5 +359,14 @@ export const defaultDocumentNode: DefaultDocumentNodeResolver = (S, {schemaType}
       S.view.component(EmailPreview).title('Email Preview'),
     ])
   }
+
+  const ogType = OG_PREVIEW_TYPES[schemaType]
+  if (ogType) {
+    return S.document().views([
+      S.view.form(),
+      S.view.component(OgPreview).options({type: ogType}).title('Social Preview'),
+    ])
+  }
+
   return S.document()
 }

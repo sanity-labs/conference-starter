@@ -68,9 +68,16 @@ tools/schedule-builder/
     timeGrid.ts           → Time slot calculations
 ```
 
+## Document Preview Panes
+
+| Pane | Schema types | What it shows |
+|------|-------------|---------------|
+| Email Preview | `emailTemplate` | Rendered email HTML via `/api/email-preview` |
+| Social Preview | `session`, `person`, `conference`, `page` | Live OG image from `/api/og` with title/description character counts |
+
 ## Sanity Functions (Blueprints)
 
-Five document event handlers defined in `sanity.blueprint.ts`:
+Seven document event handlers defined in `sanity.blueprint.ts`:
 
 | Function | Trigger | Action |
 |----------|---------|--------|
@@ -78,6 +85,8 @@ Five document event handlers defined in `sanity.blueprint.ts`:
 | `send-cfp-confirmation` | Any submission created | Sends confirmation email via Resend |
 | `send-status-email` | Submission status changes | Sends appropriate email (accepted/rejected/screened) |
 | `rescreen-cfp` | Status changed back to "screening" | Re-runs AI scoring |
+| `send-announcement-email` | Announcement status → "published" | Distributes announcement via Resend |
+| `push-announcement-telegram` | Announcement status → "published" | Posts announcement to Telegram channel |
 | `classify-conversation` | Bot conversation created/updated | Classifies conversation topic via AI |
 
 ### Deploying Functions
@@ -145,7 +154,7 @@ Note: must use project-local `npx sanity exec` (not `pnpx`) for token injection 
 
 ```
 sanity.config.ts          → Studio configuration (plugins, schema, document actions)
-sanity.blueprint.ts       → Sanity Functions manifest (5 event handlers)
+sanity.blueprint.ts       → Sanity Functions manifest (7 event handlers)
 structure.ts              → Custom sidebar structure
 resolve.ts                → Presentation tool URL resolver
 
@@ -156,9 +165,11 @@ actions/
 
 functions/
   screen-cfp/             → AI screening with Agent Actions
+  rescreen-cfp/           → Re-screening handler
   send-cfp-confirmation/  → Confirmation email on submission
   send-status-email/      → Status change emails
-  rescreen-cfp/           → Re-screening handler
+  send-announcement-email/→ Announcement distribution via Resend
+  push-announcement-telegram/ → Announcement posting to Telegram
   classify-conversation/  → Bot conversation classification
 
 tools/
@@ -166,4 +177,5 @@ tools/
 
 components/
   EmailPreview.tsx        → Email template preview in Studio
+  OgPreview.tsx           → Social share (OG image) preview in Studio
 ```

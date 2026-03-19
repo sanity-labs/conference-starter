@@ -23,17 +23,20 @@ Next.js 16 public-facing website for Everything NYC 2026. Uses the App Router wi
 | `/schedule` | Full schedule grid organized by day |
 | `/announcements` | News and updates |
 | `/announcements/[slug]` | Announcement detail |
-| `/sponsors` | Sponsor grid grouped by tier |
-| `/venue` | Venue info, rooms, logistics |
+| `/sponsors` | Sponsor grid grouped by tier (with anchor IDs for inbound linking) |
+| `/venue` | Venue info, rooms with per-room schedules |
+| `/faq` | FAQ grouped by category with `FAQPage` JSON-LD |
 
 ### API Routes
 
 | Route | Method | Purpose |
 |-------|--------|---------|
+| `/api/og` | GET | Dynamic OG image generation (`@vercel/og`) — session, speaker, and default cards |
 | `/api/cfp/submit` | POST | CFP form submission (creates `submission` doc, honeypot validation) |
 | `/api/draft-mode/enable` | GET | Enable draft mode for Visual Editing |
 | `/api/draft-mode/disable` | GET | Exit draft mode |
-| `/api/email-preview` | GET | Preview email templates |
+| `/api/email-preview` | GET | Preview email templates (used by Studio) |
+| `/api/send-test-email` | POST | Send test email to current user (used by Studio) |
 | `/api/webhooks/resend` | POST | Resend webhook handler (bounces, complaints) |
 
 ## Three-Layer `use cache` Pattern

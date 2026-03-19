@@ -154,7 +154,12 @@ function SlotCard({slot}: {slot: SCHEDULE_DAY_QUERY_RESULT[number]}) {
         {slot.room?.name && (
           <>
             {(session.level || session.track?.name) && ' · '}
-            {slot.room.name}
+            <Link
+              href={`/venue#room-${slot.room.slug}`}
+              className="hover:text-text-primary hover:underline"
+            >
+              {slot.room.name}
+            </Link>
           </>
         )}
       </p>

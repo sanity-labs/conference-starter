@@ -14,6 +14,7 @@ export const VENUE_QUERY = defineQuery(
     "rooms": *[_type == "room" && venue._ref == ^._id] | order(order asc, name asc) {
       _id,
       name,
+      "slug": slug.current,
       floor,
       capacity,
       amenities

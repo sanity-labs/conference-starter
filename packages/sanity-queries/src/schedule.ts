@@ -13,6 +13,7 @@ export const SCHEDULE_DAY_QUERY = defineQuery(
     room->{
       _id,
       name,
+      "slug": slug.current,
       capacity,
       floor
     },

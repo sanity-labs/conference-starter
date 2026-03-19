@@ -175,8 +175,18 @@ async function SessionDetailCached({
                 </time>
               </>
             )}
-            {session.slot.room && ` · ${session.slot.room.name}`}
-            {session.slot.room?.floor && ` (${session.slot.room.floor})`}
+            {session.slot.room && (
+              <>
+                {' · '}
+                <Link
+                  href={`/venue#room-${session.slot.room.slug}`}
+                  className="hover:underline"
+                >
+                  {session.slot.room.name}
+                </Link>
+                {session.slot.room.floor && ` (${session.slot.room.floor})`}
+              </>
+            )}
           </p>
         )}
       </header>

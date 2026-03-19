@@ -37,7 +37,7 @@ export const SESSION_DETAIL_QUERY = defineQuery(
     "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {
       startTime,
       endTime,
-      room->{ name, floor }
+      room->{ name, "slug": slug.current, floor }
     }
   }`,
 )

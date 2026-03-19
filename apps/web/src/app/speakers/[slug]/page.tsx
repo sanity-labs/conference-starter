@@ -217,7 +217,17 @@ function SpeakerSessions({
                     timeZone: 'America/New_York',
                   })}
                 </time>
-                {session.slot.room?.name && ` — ${session.slot.room.name}`}
+                {session.slot.room?.name && (
+                  <>
+                    {' — '}
+                    <Link
+                      href={`/venue#room-${session.slot.room.slug}`}
+                      className="hover:underline"
+                    >
+                      {session.slot.room.name}
+                    </Link>
+                  </>
+                )}
               </p>
             )}
           </li>

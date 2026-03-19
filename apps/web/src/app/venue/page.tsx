@@ -116,7 +116,7 @@ function RoomsList({rooms}: {rooms: NonNullable<VENUE_QUERY_RESULT>['rooms']}) {
       <h2 className="text-2xl font-semibold tracking-tight">Rooms</h2>
       <ul className="mt-4 space-y-4">
         {rooms.map((room) => (
-          <li key={room._id} className="rounded-md border-l-4 border-border-strong pl-4 py-3">
+          <li key={room._id} id={`room-${room.slug}`} className="rounded-md border-l-4 border-border-strong pl-4 py-3">
             <p className="font-medium">{room.name}</p>
             <p className="text-sm text-text-muted">
               {[

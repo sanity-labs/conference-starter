@@ -1,15 +1,17 @@
 import {Suspense} from 'react'
 import Link from 'next/link'
-import type {Metadata} from 'next'
 import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
 import {SPEAKERS_QUERY} from '@repo/sanity-queries'
 import {SanityImage} from '@/components/sanity-image'
+import {createMetadata} from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = createMetadata({
   title: 'Speakers',
-  description: 'Meet the speakers at Everything NYC 2026.',
-}
+  description:
+    'Meet the speakers at Everything NYC 2026 — developers, designers, and creative thinkers shaping digital experiences.',
+  path: '/speakers',
+})
 
 export default function SpeakersPage() {
   return (

@@ -1,16 +1,18 @@
 import {Suspense} from 'react'
-import type {Metadata} from 'next'
 import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
 import {SPONSORS_QUERY} from '@repo/sanity-queries'
 import type {SPONSORS_QUERY_RESULT} from '@repo/sanity-queries'
 import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
+import {createMetadata} from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = createMetadata({
   title: 'Sponsors',
-  description: 'The companies and communities making Everything NYC 2026 possible.',
-}
+  description:
+    'The companies and communities making Everything NYC 2026 possible.',
+  path: '/sponsors',
+})
 
 export default function SponsorsPage() {
   return (

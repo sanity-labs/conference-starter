@@ -1,16 +1,18 @@
 import {Suspense} from 'react'
-import type {Metadata} from 'next'
 import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
 import {CFP_CONFIG_QUERY} from '@repo/sanity-queries'
 import type {CFP_CONFIG_QUERY_RESULT} from '@repo/sanity-queries'
 import {PortableText} from '@/components/portable-text'
 import {CfpForm} from './cfp-form'
+import {createMetadata} from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = createMetadata({
   title: 'Call for Papers',
-  description: 'Submit your talk proposal for Everything NYC 2026.',
-}
+  description:
+    'Submit your talk proposal for Everything NYC 2026. We welcome talks on web development, AI, design, and more.',
+  path: '/cfp',
+})
 
 export default function CfpPage() {
   return (

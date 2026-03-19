@@ -11,7 +11,7 @@ import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
 import {JsonLd} from '@/components/json-ld'
 import type {Person} from 'schema-dts'
-import {SITE_URL, ogImageUrl} from '@/lib/metadata'
+import {SITE_URL, ogImageUrl, createMetadata} from '@/lib/metadata'
 import {BreadcrumbJsonLd} from '@/components/breadcrumb-json-ld'
 
 type Props = {params: Promise<{slug: string}>}
@@ -26,14 +26,13 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const speaker = await fetchSpeakerForMetadata(slug)
   if (!speaker) return {}
   const image = ogImageUrl(speaker.ogImage) ?? ogImageUrl(speaker.photo)
-  return {
-    title: speaker.seoTitle || speaker.name,
+  return createMetadata({
+    title: speaker.seoTitle || speaker.name || 'Speaker',
     description: speaker.seoDescription || `${speaker.role} at ${speaker.company}`,
-    openGraph: {
-      type: 'profile',
-      ...(image && {images: [{url: image, width: 1200, height: 630}]}),
-    },
-  }
+    ogImage: image,
+    path: `/speakers/${slug}`,
+    type: 'profile',
+  })
 }
 
 async function fetchSpeakerForMetadata(slug: string) {
@@ -102,6 +101,7 @@ async function SpeakerDetailCached({
           ...(speaker.role && {jobTitle: speaker.role}),
           ...(speaker.company && {worksFor: {'@type': 'Organization', name: speaker.company}}),
           url: `${SITE_URL}/speakers/${slug}`,
+          ...(speaker.photo && {image: ogImageUrl(speaker.photo) ?? undefined}),
           ...(sameAs.length > 0 && {sameAs}),
         }}
       />

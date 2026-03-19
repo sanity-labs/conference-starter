@@ -1,17 +1,19 @@
 import {Suspense} from 'react'
 import Link from 'next/link'
-import type {Metadata} from 'next'
 import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
 import {CONFERENCE_QUERY, SCHEDULE_DAY_QUERY} from '@repo/sanity-queries'
 import type {SCHEDULE_DAY_QUERY_RESULT} from '@repo/sanity-queries'
 import {stegaClean} from '@sanity/client/stega'
 import {SanityImage} from '@/components/sanity-image'
+import {createMetadata} from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = createMetadata({
   title: 'Schedule',
-  description: 'Full conference schedule for Everything NYC 2026.',
-}
+  description:
+    'Full conference schedule for Everything NYC 2026 — times, rooms, and tracks for every session.',
+  path: '/schedule',
+})
 
 export default function SchedulePage() {
   return (

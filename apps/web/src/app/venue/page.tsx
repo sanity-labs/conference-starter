@@ -6,6 +6,7 @@ import {VENUE_QUERY} from '@repo/sanity-queries'
 import type {VENUE_QUERY_RESULT} from '@repo/sanity-queries'
 import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
+import {createMetadata} from '@/lib/metadata'
 
 async function fetchVenueForMetadata() {
   'use cache'
@@ -20,10 +21,13 @@ async function fetchVenueForMetadata() {
 export async function generateMetadata(): Promise<Metadata> {
   const venue = await fetchVenueForMetadata()
   if (!venue) return {title: 'Venue'}
-  return {
-    title: venue.name,
-    description: venue.address ? `Join us at ${venue.name}, ${venue.address}` : `Venue for Everything NYC 2026`,
-  }
+  return createMetadata({
+    title: venue.name ?? 'Venue',
+    description: venue.address
+      ? `Join us at ${venue.name}, ${venue.address}`
+      : 'Venue for Everything NYC 2026',
+    path: '/venue',
+  })
 }
 
 export default function VenuePage() {

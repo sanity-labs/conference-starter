@@ -1,14 +1,16 @@
 import {Suspense} from 'react'
 import Link from 'next/link'
-import type {Metadata} from 'next'
 import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
 import {ANNOUNCEMENTS_QUERY} from '@repo/sanity-queries'
+import {createMetadata} from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = createMetadata({
   title: 'Announcements',
-  description: 'Latest news and updates from Everything NYC 2026.',
-}
+  description:
+    'Latest news and updates from Everything NYC 2026.',
+  path: '/announcements',
+})
 
 export default function AnnouncementsPage() {
   return (

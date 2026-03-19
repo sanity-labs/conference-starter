@@ -8,7 +8,7 @@ import {client} from '@/sanity/client'
 import {ANNOUNCEMENT_DETAIL_QUERY, ANNOUNCEMENT_SLUGS_QUERY} from '@repo/sanity-queries'
 import {JsonLd} from '@/components/json-ld'
 import type {NewsArticle} from 'schema-dts'
-import {SITE_URL} from '@/lib/metadata'
+import {SITE_URL, createMetadata} from '@/lib/metadata'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -27,8 +27,12 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
       : announcement.body
     : undefined
   return {
-    title: announcement.title,
-    description: excerpt,
+    ...createMetadata({
+      title: announcement.title || 'Announcement',
+      description: excerpt,
+      path: `/announcements/${slug}`,
+      type: 'article',
+    }),
     openGraph: {
       type: 'article',
       ...(announcement.publishedAt && {publishedTime: announcement.publishedAt}),

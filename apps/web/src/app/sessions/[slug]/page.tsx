@@ -12,7 +12,7 @@ import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
 import {JsonLd} from '@/components/json-ld'
 import type {Event as EventSchema} from 'schema-dts'
-import {SITE_URL, ogImageUrl} from '@/lib/metadata'
+import {SITE_URL, ogImageUrl, createMetadata} from '@/lib/metadata'
 import {BreadcrumbJsonLd} from '@/components/breadcrumb-json-ld'
 
 type Props = {params: Promise<{slug: string}>}
@@ -27,14 +27,13 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const session = await fetchSessionForMetadata(slug)
   if (!session) return {}
   const image = ogImageUrl(session.ogImage)
-  return {
-    title: session.seoTitle || session.title,
-    description: session.seoDescription || undefined,
-    openGraph: {
-      type: 'article',
-      ...(image && {images: [{url: image, width: 1200, height: 630}]}),
-    },
-  }
+  return createMetadata({
+    title: session.seoTitle || session.title || 'Session',
+    description: session.seoDescription,
+    ogImage: image,
+    path: `/sessions/${slug}`,
+    type: 'article',
+  })
 }
 
 async function fetchSessionForMetadata(slug: string) {

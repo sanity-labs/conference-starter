@@ -30,6 +30,6 @@
     "@portabletext/types": "^4.0.2",
     "@react-email/components": "^1.0.9",
     "@react-email/render": "^2.0.4",
-    "resend": "^6.9.3"
+    "resend": "^6.9.4"
   }
 }

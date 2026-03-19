@@ -79,7 +79,10 @@ async function CachedLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-white text-gray-900 antialiased">
+      <body className="min-h-screen bg-surface text-text-primary antialiased">
+        <a href="#main-content" className="skip-nav">
+          Skip to content
+        </a>
         {navData && <Header data={navData} />}
         {children}
         {navData && <Footer data={navData} />}

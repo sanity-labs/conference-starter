@@ -12,6 +12,7 @@ type Props = {params: Promise<{slug: string}>}
 
 export async function generateStaticParams() {
   const pages = await client.fetch(PAGE_SLUGS_QUERY)
+  if (pages.length === 0) return [{slug: '__placeholder__'}]
   return pages.map((p) => ({slug: p.slug}))
 }
 

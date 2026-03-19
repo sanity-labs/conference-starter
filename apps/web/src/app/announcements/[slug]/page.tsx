@@ -14,6 +14,7 @@ type Props = {params: Promise<{slug: string}>}
 
 export async function generateStaticParams() {
   const announcements = await client.fetch(ANNOUNCEMENT_SLUGS_QUERY)
+  if (announcements.length === 0) return [{slug: '__placeholder__'}]
   return announcements.map((a) => ({slug: a.slug}))
 }
 

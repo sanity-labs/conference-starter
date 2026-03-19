@@ -3,11 +3,19 @@ import Link from 'next/link'
 import type {Metadata} from 'next'
 import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
-import {CONFERENCE_QUERY, SPEAKERS_QUERY, SESSIONS_SUMMARY_QUERY} from '@repo/sanity-queries'
+import {
+  CONFERENCE_QUERY,
+  SPEAKERS_QUERY,
+  SESSIONS_SUMMARY_QUERY,
+  FEATURED_SESSIONS_QUERY,
+  SPONSORS_QUERY,
+} from '@repo/sanity-queries'
 import type {
   CONFERENCE_QUERY_RESULT,
   SPEAKERS_QUERY_RESULT,
   SESSIONS_SUMMARY_QUERY_RESULT,
+  FEATURED_SESSIONS_QUERY_RESULT,
+  SPONSORS_QUERY_RESULT,
 } from '@repo/sanity-queries'
 import {SanityImage} from '@/components/sanity-image'
 import {JsonLd} from '@/components/json-ld'
@@ -59,10 +67,18 @@ async function HomePageDynamic() {
 async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
   'use cache'
 
-  const [{data: conference}, {data: speakers}, {data: sessions}] = await Promise.all([
+  const [
+    {data: conference},
+    {data: speakers},
+    {data: sessions},
+    {data: featuredSessions},
+    {data: sponsors},
+  ] = await Promise.all([
     sanityFetch({query: CONFERENCE_QUERY, perspective, stega}),
     sanityFetch({query: SPEAKERS_QUERY, perspective, stega}),
     sanityFetch({query: SESSIONS_SUMMARY_QUERY, perspective, stega}),
+    sanityFetch({query: FEATURED_SESSIONS_QUERY, perspective, stega}),
+    sanityFetch({query: SPONSORS_QUERY, perspective, stega}),
   ])
 
   if (!conference) {
@@ -112,6 +128,8 @@ async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
       />
       <HeroSection conference={conference} />
       <SpeakersPreview speakers={speakers} />
+      <SessionsPreview sessions={featuredSessions} />
+      <SponsorsBar sponsors={sponsors} />
       <VenueSection conference={conference} />
     </>
   )
@@ -228,6 +246,109 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
           </Link>
         </p>
       )}
+    </section>
+  )
+}
+
+function SessionsPreview({sessions}: {sessions: FEATURED_SESSIONS_QUERY_RESULT}) {
+  if (!sessions || sessions.length === 0) return null
+
+  return (
+    <section className="mx-auto max-w-content px-6 py-12">
+      <h2 className="text-2xl font-semibold tracking-tight">Sessions</h2>
+      <ul className="mt-6 space-y-4">
+        {sessions.map((session) => (
+          <li key={session._id} className="rounded-md border border-border p-4 transition-colors hover:border-border-strong">
+            <div className="flex flex-wrap items-center gap-2">
+              <Link href={`/sessions/${session.slug}`} className="font-medium hover:underline">
+                {session.title}
+              </Link>
+              {session.sessionType && (
+                <span className="rounded-full bg-surface-muted px-2.5 py-0.5 text-xs font-medium text-text-muted">
+                  {session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)}
+                </span>
+              )}
+              {session.track && (
+                <Link
+                  href={`/sessions?track=${session.track.slug}`}
+                  className="rounded-full bg-surface-muted px-2.5 py-0.5 text-xs font-medium text-text-muted hover:text-text-primary"
+                >
+                  {session.track.name}
+                </Link>
+              )}
+            </div>
+            {session.speakers && session.speakers.length > 0 && (
+              <p className="mt-1.5 text-sm text-text-muted">
+                {session.speakers.map((s, i) => (
+                  <span key={s._id}>
+                    {i > 0 && ', '}
+                    <Link href={`/speakers/${s.slug}`} className="hover:underline">
+                      {s.name}
+                    </Link>
+                  </span>
+                ))}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-6">
+        <Link href="/sessions" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+          View all sessions &rarr;
+        </Link>
+      </p>
+    </section>
+  )
+}
+
+function SponsorsBar({sponsors}: {sponsors: SPONSORS_QUERY_RESULT}) {
+  if (!sponsors || sponsors.length === 0) return null
+
+  // Show platinum and gold tier sponsors
+  const topSponsors = sponsors.filter(
+    (s) => s.tier === 'platinum' || s.tier === 'gold',
+  )
+  if (topSponsors.length === 0) return null
+
+  return (
+    <section className="mx-auto max-w-content px-6 py-12">
+      <h2 className="text-2xl font-semibold tracking-tight">Sponsors</h2>
+      <ul className="mt-6 flex flex-wrap items-center gap-8">
+        {topSponsors.map((sponsor) => (
+          <li key={sponsor._id}>
+            {sponsor.logo ? (
+              <a
+                href={sponsor.website ?? undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block transition-opacity hover:opacity-80"
+              >
+                <SanityImage
+                  value={sponsor.logo}
+                  className={sponsor.tier === 'platinum' ? 'h-12' : 'h-10'}
+                  width={sponsor.tier === 'platinum' ? 200 : 160}
+                  height={sponsor.tier === 'platinum' ? 48 : 40}
+                  sizes="200px"
+                />
+              </a>
+            ) : (
+              <a
+                href={sponsor.website ?? undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium text-text-secondary hover:text-text-primary"
+              >
+                {sponsor.name}
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-6">
+        <Link href="/sponsors" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+          View all sponsors &rarr;
+        </Link>
+      </p>
     </section>
   )
 }

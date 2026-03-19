@@ -51,6 +51,23 @@ export const SESSIONS_SUMMARY_QUERY = defineQuery(
   }`,
 )
 
+export const FEATURED_SESSIONS_QUERY = defineQuery(
+  `*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]
+    | order(select(sessionType == "keynote" => 0, sessionType == "talk" => 1, 2) asc, title asc)
+    [0...4] {
+    _id,
+    title,
+    "slug": slug.current,
+    sessionType,
+    track->{ _id, name, "slug": slug.current },
+    speakers[]->{
+      _id,
+      name,
+      "slug": slug.current
+    }
+  }`,
+)
+
 export const SESSIONS_LISTING_QUERY = defineQuery(
   `*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])] | order(title asc) {
     _id,

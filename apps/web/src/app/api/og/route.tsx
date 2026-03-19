@@ -7,6 +7,18 @@ import {urlForImage} from '@/sanity/image'
 const WIDTH = 1200
 const HEIGHT = 630
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET',
+}
+
+function withCors(response: Response): Response {
+  for (const [key, value] of Object.entries(CORS_HEADERS)) {
+    response.headers.set(key, value)
+  }
+  return response
+}
+
 export async function GET(request: NextRequest) {
   const {searchParams} = request.nextUrl
   const type = searchParams.get('type')
@@ -14,14 +26,14 @@ export async function GET(request: NextRequest) {
 
   try {
     if (type === 'session' && slug) {
-      return await sessionCard(slug)
+      return withCors(await sessionCard(slug))
     }
     if (type === 'speaker' && slug) {
-      return await speakerCard(slug)
+      return withCors(await speakerCard(slug))
     }
-    return await defaultCard()
+    return withCors(await defaultCard())
   } catch {
-    return await defaultCard()
+    return withCors(await defaultCard())
   }
 }
 

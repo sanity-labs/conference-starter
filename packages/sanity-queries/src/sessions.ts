@@ -51,6 +51,28 @@ export const SESSIONS_SUMMARY_QUERY = defineQuery(
   }`,
 )
 
+export const SESSIONS_LISTING_QUERY = defineQuery(
+  `*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])] | order(title asc) {
+    _id,
+    title,
+    "slug": slug.current,
+    sessionType,
+    level,
+    duration,
+    track->{ _id, name, "slug": slug.current, color },
+    speakers[]->{
+      _id,
+      name,
+      "slug": slug.current,
+      photo { ..., alt }
+    },
+    "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {
+      startTime,
+      room->{ name, "slug": slug.current }
+    }
+  }`,
+)
+
 export const SESSION_SLUGS_QUERY = defineQuery(
   `*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current }`,
 )

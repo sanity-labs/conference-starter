@@ -161,7 +161,7 @@ function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RES
             {conference.tracks.map((track) => (
               <li key={track._id}>
                 <Link
-                  href={`/schedule?track=${track.slug}`}
+                  href={`/sessions?track=${track.slug}`}
                   className="inline-block rounded-full border border-border px-3 py-1 text-sm text-text-secondary transition-colors hover:border-border-strong hover:text-text-primary"
                 >
                   {track.name}
@@ -173,7 +173,10 @@ function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RES
       )}
       <nav className="mt-8 flex flex-wrap gap-3">
         <Link href="/schedule" className="btn btn-secondary">
-          View Schedule
+          Schedule
+        </Link>
+        <Link href="/sessions" className="btn btn-secondary">
+          Sessions
         </Link>
         <Link href="/speakers" className="btn btn-secondary">
           Speakers

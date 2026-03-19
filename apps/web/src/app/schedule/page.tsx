@@ -86,7 +86,7 @@ async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
           timeZone: 'America/New_York',
         })}
       </p>
-      <ol className="space-y-8">
+      <ol className="space-y-8" aria-label="Schedule by time">
         {Array.from(timeGroups.entries()).map(([time, groupSlots]) => (
           <li key={time}>
             <time dateTime={time} className="text-sm font-semibold text-text-primary">

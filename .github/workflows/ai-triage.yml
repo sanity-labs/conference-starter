@@ -15,12 +15,12 @@ jobs:
     steps:
       - uses: actions/github-script@v7
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         with:
           script: |
-            const apiKey = process.env.OPENAI_API_KEY;
+            const apiKey = process.env.ANTHROPIC_API_KEY;
             if (!apiKey) {
-              console.log('No OPENAI_API_KEY configured — skipping AI triage');
+              console.log('No ANTHROPIC_API_KEY configured — skipping AI triage');
               return;
             }
 
@@ -54,31 +54,34 @@ jobs:
             Issue body: ${body}`;
 
             try {
-              const response = await fetch('https://api.openai.com/v1/chat/completions', {
+              const response = await fetch('https://api.anthropic.com/v1/messages', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${apiKey}`,
+                  'x-api-key': apiKey,
+                  'anthropic-version': '2023-06-01',
                 },
                 body: JSON.stringify({
-                  model: 'gpt-4o-mini',
-                  messages: [{ role: 'user', content: prompt }],
-                  temperature: 0,
+                  model: 'claude-haiku-4-5-20251001',
                   max_tokens: 100,
-                  response_format: { type: 'json_object' },
+                  messages: [{ role: 'user', content: prompt }],
                 }),
               });
 
               if (!response.ok) {
-                console.log(`OpenAI API error: ${response.status}`);
+                console.log(`Anthropic API error: ${response.status}`);
                 return;
               }
 
               const data = await response.json();
-              const content = data.choices?.[0]?.message?.content;
+              const content = data.content?.[0]?.text;
               if (!content) return;
 
-              const classification = JSON.parse(content);
+              // Extract JSON from response (Haiku may wrap in markdown code blocks)
+              const jsonMatch = content.match(/\{[\s\S]*\}/);
+              if (!jsonMatch) return;
+
+              const classification = JSON.parse(jsonMatch[0]);
               const labelsToApply = [];
 
               if (classification.type && VALID_LABELS.includes(classification.type)) {

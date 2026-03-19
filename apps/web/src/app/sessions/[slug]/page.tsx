@@ -26,10 +26,20 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const session = await fetchSessionForMetadata(slug)
   if (!session) return {}
-  const image = ogImageUrl(session.ogImage)
+
+  // Use custom ogImage if editors set one, otherwise use dynamic OG
+  const image =
+    ogImageUrl(session.ogImage) ?? `${SITE_URL}/api/og?type=session&slug=${slug}`
+
+  // Auto-generate description from structured data if no manual override
+  const speakerNames = session.speakers?.map((s) => s.name).filter(Boolean) ?? []
+  const autoDescription = speakerNames.length > 0
+    ? `${session.title} — a ${session.sessionType ?? 'session'} by ${speakerNames.join(', ')} at Everything NYC 2026`
+    : `${session.title} at Everything NYC 2026`
+
   return createMetadata({
     title: session.seoTitle || session.title || 'Session',
-    description: session.seoDescription,
+    description: session.seoDescription || autoDescription,
     ogImage: image,
     path: `/sessions/${slug}`,
     type: 'article',

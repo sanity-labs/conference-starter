@@ -25,10 +25,20 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const speaker = await fetchSpeakerForMetadata(slug)
   if (!speaker) return {}
-  const image = ogImageUrl(speaker.ogImage) ?? ogImageUrl(speaker.photo)
+
+  // Use custom ogImage if set, fallback to dynamic OG
+  const image =
+    ogImageUrl(speaker.ogImage) ?? `${SITE_URL}/api/og?type=speaker&slug=${slug}`
+
+  // Auto-generate description from structured data
+  const sessionTitles = speaker.sessions?.map((s) => s.title).filter(Boolean) ?? []
+  const autoDescription = sessionTitles.length > 0
+    ? `${speaker.name} is speaking about ${sessionTitles.join(', ')} at Everything NYC 2026`
+    : [speaker.role, speaker.company].filter(Boolean).join(' at ')
+
   return createMetadata({
     title: speaker.seoTitle || speaker.name || 'Speaker',
-    description: speaker.seoDescription || `${speaker.role} at ${speaker.company}`,
+    description: speaker.seoDescription || autoDescription,
     ogImage: image,
     path: `/speakers/${slug}`,
     type: 'profile',

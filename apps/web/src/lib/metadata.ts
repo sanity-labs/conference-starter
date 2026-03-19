@@ -60,6 +60,14 @@ export function createMetadata({
       type,
       ...(ogImage && {images: [{url: ogImage, width: 1200, height: 630}]}),
     },
+    ...(ogImage && {
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        ...(description && {description}),
+        images: [ogImage],
+      },
+    }),
     ...(url && {alternates: {canonical: url}}),
   }
 }

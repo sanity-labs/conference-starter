@@ -7,7 +7,7 @@ A conference operations platform built on [Sanity](https://www.sanity.io) as a r
 
 ## Features
 
-- **Conference website** — Next.js 16 with App Router, `use cache`, and Visual Editing. Pages for speakers, sessions, schedule, sponsors, venue, announcements, CFP, and dynamic content pages.
+- **Conference website** — Next.js 16 with App Router, `use cache`, and Visual Editing. Pages for speakers, sessions, schedule, sponsors, venue, FAQ, announcements, CFP, and dynamic content pages. Every entity mention is a link to its canonical page. Dynamic OG images generated from structured content via `@vercel/og`.
 - **Call for Proposals** — Public submission form with honeypot spam protection. AI-powered screening scores submissions using Agent Actions. Studio actions to accept (auto-creates speaker + session), reject, or re-screen.
 - **Email pipeline** — Portable Text email templates with variable interpolation (`sanity-plugin-pte-interpolation`). Automated emails for CFP confirmation, acceptance/rejection, and announcement distribution. Preview and test-send from Studio.
 - **Multi-channel announcements** — Publish an announcement in Studio and it distributes to email subscribers and a Telegram channel simultaneously, with per-channel delivery tracking.
@@ -45,7 +45,7 @@ A conference operations platform built on [Sanity](https://www.sanity.io) as a r
 
 ```
 apps/
-  web/                     → Next.js 16 conference website (11 pages, 6 API routes)
+  web/                     → Next.js 16 conference website (13 pages, 7 API routes)
   studio/                  → Sanity Studio + Functions + schedule builder
   bot/                     → Telegram bot — dual-mode (ops + attendee)
 
@@ -169,6 +169,13 @@ The schema lives in `packages/sanity-schema/` and is consumed by all apps.
 | Re-screen Submission | `submission` | Resets screening, re-triggers AI evaluation |
 | Send Test Email | `emailTemplate` | Sends a preview email to the current user |
 | Send Update | `announcement` | Publishes and distributes an announcement |
+
+### Document Preview Panes
+
+| Pane | Schema types | What it shows |
+|------|-------------|---------------|
+| Email Preview | `emailTemplate` | Rendered email HTML via `/api/email-preview` |
+| Social Preview | `session`, `person`, `conference`, `page` | Live OG image from `/api/og` with title/description character counts |
 
 ### Custom Structure
 
@@ -306,22 +313,25 @@ Docs: [Agent Actions patterns](https://www.sanity.io/docs/agent-actions/agent-ac
 
 | Route | Description |
 |-------|-------------|
-| `/` | Landing page with composable hero, CTA, speaker grid, schedule preview, sponsor bar |
+| `/` | Landing page — hero, speakers, featured sessions, sponsors bar, venue teaser |
+| `/sessions` | Browseable session listing with client-side filtering by track, type, and level (URL param sync) |
+| `/sessions/[slug]` | Session detail — speakers, track, schedule, abstract, with linked track/room names |
 | `/speakers` | Speaker grid |
-| `/speakers/[slug]` | Speaker detail with linked sessions |
-| `/sessions/[slug]` | Session detail with speaker, track, and schedule info |
-| `/schedule` | Full schedule grid |
+| `/speakers/[slug]` | Speaker detail — bio, social links, sessions with linked tracks and rooms |
+| `/schedule` | Time-grouped schedule grid with linked sessions, speakers, tracks, and rooms |
+| `/sponsors` | Sponsor listing by tier with anchor IDs for inbound linking |
+| `/venue` | Venue info, rooms with anchor IDs and per-room session schedules |
+| `/faq` | FAQ grouped by category with `<details>` accordions and `FAQPage` JSON-LD |
 | `/cfp` | Call for Proposals submission form |
 | `/announcements` | Announcement listing |
 | `/announcements/[slug]` | Announcement detail |
-| `/sponsors` | Sponsor listing by tier |
-| `/venue` | Venue and room information |
 | `/[slug]` | Dynamic catch-all for CMS-managed pages |
 
 ## API Routes
 
 | Route | Method | Purpose |
 |-------|--------|---------|
+| `/api/og` | GET | Dynamic OG image generation via `@vercel/og` — session, speaker, and default cards |
 | `/api/cfp/submit` | POST | CFP form submission with honeypot validation |
 | `/api/email-preview` | GET | Email template preview (used by Studio) |
 | `/api/send-test-email` | POST | Send test email to current user |

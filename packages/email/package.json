@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./send": "./src/send.ts"
+    "./send": "./src/send.ts",
+    "./render-html": "./src/render-html.ts"
   },
   "scripts": {
     "generate-layout": "tsx scripts/generate-layout.ts",

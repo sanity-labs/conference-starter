@@ -14,10 +14,10 @@ import {EmailLayout} from '../src/components/layout'
 
 const PLACEHOLDER = '{{EMAIL_BODY}}'
 
-const OUTPUT_PATH = resolve(
-  import.meta.dirname,
-  '../../../apps/studio/functions/_shared/email-layout.ts',
-)
+const OUTPUT_PATHS = [
+  resolve(import.meta.dirname, '../../../apps/studio/functions/_shared/email-layout.ts'),
+  resolve(import.meta.dirname, '../src/generated/email-layout.ts'),
+]
 
 async function main() {
   const element = createElement(EmailLayout, {
@@ -36,9 +36,11 @@ async function main() {
 export const emailLayoutHtml = ${JSON.stringify(html)}
 `
 
-  mkdirSync(dirname(OUTPUT_PATH), {recursive: true})
-  writeFileSync(OUTPUT_PATH, output, 'utf-8')
-  console.log(`Generated ${OUTPUT_PATH}`)
+  for (const outputPath of OUTPUT_PATHS) {
+    mkdirSync(dirname(outputPath), {recursive: true})
+    writeFileSync(outputPath, output, 'utf-8')
+    console.log(`Generated ${outputPath}`)
+  }
 }
 
 main().catch((err) => {

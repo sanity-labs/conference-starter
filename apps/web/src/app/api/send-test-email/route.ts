@@ -1,7 +1,6 @@
 import {NextResponse} from 'next/server'
-import {render} from '@react-email/render'
-import {EmailLayout, PortableTextEmail, resend} from '@repo/email'
-import {createElement} from 'react'
+import {renderEmailBody, wrapInLayout, interpolateSubject} from '@repo/email/render-html'
+import {resend} from '@repo/email/send'
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -26,24 +25,10 @@ export async function POST(request: Request) {
 
     const interpolationValues = (variables ?? {}) as Record<string, string>
 
-    // Interpolate {{variables}} in subject
-    const resolvedSubject = `[TEST] ${(subject as string).replace(
-      /\{\{(\w+)\}\}/g,
-      (_: string, key: string) => interpolationValues[key] ?? `{{${key}}}`,
-    )}`
+    const resolvedSubject = `[TEST] ${interpolateSubject(subject as string, interpolationValues)}`
 
-    const children = createElement(PortableTextEmail, {
-      value: body,
-      interpolationValues,
-    })
-
-    const element = createElement(EmailLayout, {
-      preview: resolvedSubject,
-      conferenceName: 'Everything NYC 2026',
-      children,
-    })
-
-    const html = await render(element)
+    const bodyHtml = renderEmailBody(body, interpolationValues)
+    const html = wrapInLayout(bodyHtml, resolvedSubject)
 
     const fromAddress = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <noreply@everything.nyc>'
 

@@ -1,7 +1,5 @@
 import {NextResponse} from 'next/server'
-import {render} from '@react-email/render'
-import {EmailLayout, PortableTextEmail} from '@repo/email'
-import {createElement} from 'react'
+import {renderEmailBody, wrapInLayout, interpolateSubject} from '@repo/email/render-html'
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -26,25 +24,13 @@ export async function POST(request: Request) {
 
     const interpolationValues = variables as Record<string, string> | undefined
 
-    const children = createElement(PortableTextEmail, {
-      value: body,
-      interpolationValues,
-    })
+    const bodyHtml = renderEmailBody(body, interpolationValues)
 
     const previewSubject = interpolationValues
-      ? (subject || 'Email Preview').replace(
-          /\{\{(\w+)\}\}/g,
-          (_: string, key: string) => interpolationValues[key] ?? `{{${key}}}`,
-        )
+      ? interpolateSubject(subject || 'Email Preview', interpolationValues)
       : subject || 'Email Preview'
 
-    const element = createElement(EmailLayout, {
-      preview: previewSubject,
-      conferenceName: 'Everything NYC 2026',
-      children,
-    })
-
-    const html = await render(element)
+    const html = wrapInLayout(bodyHtml, previewSubject)
 
     return NextResponse.json({html}, {headers: CORS_HEADERS})
   } catch (err) {

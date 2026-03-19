@@ -95,7 +95,7 @@ async function SessionDetailCached({
     <article>
       <BreadcrumbJsonLd
         items={[
-          {name: 'Schedule', path: '/schedule'},
+          {name: 'Sessions', path: '/sessions'},
           {name: session.title ?? 'Session', path: `/sessions/${slug}`},
         ]}
       />
@@ -214,8 +214,8 @@ async function SessionDetailCached({
       <MediaLinks session={session} />
 
       <p className="mt-12">
-        <Link href="/schedule" className="text-sm text-text-muted transition-colors hover:text-text-primary">
-          &larr; Back to schedule
+        <Link href="/sessions" className="text-sm text-text-muted transition-colors hover:text-text-primary">
+          &larr; All sessions
         </Link>
       </p>
     </article>

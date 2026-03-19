@@ -4,8 +4,6 @@ import {client} from '@/sanity/client'
 import {SESSION_DETAIL_QUERY, SPEAKER_DETAIL_QUERY, CONFERENCE_QUERY} from '@repo/sanity-queries'
 import {urlForImage} from '@/sanity/image'
 
-export const runtime = 'edge'
-
 const WIDTH = 1200
 const HEIGHT = 630
 

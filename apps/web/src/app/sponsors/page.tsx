@@ -48,7 +48,7 @@ async function SponsorsListCached({perspective, stega}: DynamicFetchOptions) {
           <h2 className="text-2xl font-semibold tracking-tight">{label}</h2>
           <ul className={`mt-4 ${tierGridClass(tier)}`}>
             {tierSponsors.map((sponsor) => (
-              <li key={sponsor._id}>
+              <li key={sponsor._id} id={sponsor.slug ?? undefined}>
                 <SponsorCard sponsor={sponsor} tier={tier} />
               </li>
             ))}

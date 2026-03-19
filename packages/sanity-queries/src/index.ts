@@ -4,6 +4,7 @@ export {
   ANNOUNCEMENT_SLUGS_QUERY,
 } from './announcements'
 export {CONFERENCE_QUERY, CFP_CONFIG_QUERY} from './conference'
+export {FAQ_QUERY} from './faq'
 export {NAV_QUERY} from './navigation'
 export {PAGE_QUERY, PAGE_SLUGS_QUERY} from './pages'
 export {SPEAKERS_QUERY, SPEAKER_DETAIL_QUERY, SPEAKER_SLUGS_QUERY} from './people'

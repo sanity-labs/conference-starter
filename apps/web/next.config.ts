@@ -14,12 +14,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Prevent Turbopack from bundling these — avoids duplicate React instances
-  // when @portabletext/react and @react-email/render are used together in API routes
+  // Prevent Turbopack from bundling @react-email — avoids duplicate React
+  // instances in API routes that use @react-email/render
   serverExternalPackages: [
     '@react-email/render',
     '@react-email/components',
-    '@portabletext/react',
   ],
 }
 

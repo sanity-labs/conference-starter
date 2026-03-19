@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 
 export default function SpeakersPage() {
   return (
-    <main className="mx-auto max-w-3xl px-6 py-24">
-      <h1 className="text-4xl font-bold tracking-tight">Speakers</h1>
+    <main id="main-content" className="mx-auto max-w-content px-6 py-16 sm:py-24">
+      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Speakers</h1>
       <Suspense>
         <SpeakersListDynamic />
       </Suspense>

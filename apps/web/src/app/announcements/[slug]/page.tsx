@@ -61,7 +61,7 @@ function resolveInternalHref(ref: {_type: string | null; slug: string | null}): 
 export default async function AnnouncementPage({params}: Props) {
   const {slug} = await params
   return (
-    <main className="mx-auto max-w-3xl px-6 py-24">
+    <main id="main-content" className="mx-auto max-w-content px-6 py-16 sm:py-24">
       <Suspense>
         <AnnouncementDetailDynamic slug={slug} />
       </Suspense>

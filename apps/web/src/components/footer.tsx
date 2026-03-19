@@ -20,32 +20,43 @@ export function Footer({data}: {data: NavData}) {
     : []
 
   return (
-    <footer>
-      {data.footerNav && data.footerNav.length > 0 && (
-        <nav aria-label="Footer navigation">
-          <ul>
-            {data.footerNav.map((item) => (
-              <li key={item._key}>
-                <NavLink item={item} />
+    <footer className="border-t border-border bg-surface-alt">
+      <div className="mx-auto flex max-w-content-wide flex-col gap-8 px-6 py-12 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-6 sm:flex-row sm:gap-12">
+          {data.footerNav && data.footerNav.length > 0 && (
+            <nav aria-label="Footer navigation">
+              <ul className="flex flex-col gap-2">
+                {data.footerNav.map((item) => (
+                  <li key={item._key}>
+                    <NavLink item={item} />
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+        </div>
+        {socialLinks.length > 0 && (
+          <ul aria-label="Social links" className="flex gap-4">
+            {socialLinks.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-text-muted transition-colors hover:text-text-primary"
+                >
+                  {link.label}
+                </a>
               </li>
             ))}
           </ul>
-        </nav>
-      )}
-      {socialLinks.length > 0 && (
-        <ul aria-label="Social links">
-          {socialLinks.map((link) => (
-            <li key={link.href}>
-              <a href={link.href} target="_blank" rel="noopener noreferrer">
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
-      <p>
-        &copy; {year} {data.name ?? 'Conference'}. All rights reserved.
-      </p>
+        )}
+      </div>
+      <div className="mx-auto max-w-content-wide border-t border-border px-6 py-6">
+        <p className="text-sm text-text-muted">
+          &copy; {year} {data.name ?? 'Conference'}. All rights reserved.
+        </p>
+      </div>
     </footer>
   )
 }

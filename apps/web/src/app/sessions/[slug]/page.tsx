@@ -51,7 +51,7 @@ async function fetchSessionForMetadata(slug: string) {
 export default async function SessionPage({params}: Props) {
   const {slug} = await params
   return (
-    <main className="mx-auto max-w-3xl px-6 py-24">
+    <main id="main-content" className="mx-auto max-w-content px-6 py-16 sm:py-24">
       <Suspense>
         <SessionDetailDynamic slug={slug} />
       </Suspense>

@@ -41,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
 // Layer 1: Sync page with Suspense
 export default function HomePage() {
   return (
-    <main>
+    <main id="main-content">
       <Suspense>
         <HomePageDynamic />
       </Suspense>

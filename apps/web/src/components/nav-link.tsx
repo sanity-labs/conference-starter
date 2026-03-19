@@ -67,13 +67,20 @@ export function NavLink({item}: {item: NavItemData}) {
   const resolved = resolveNavItem(item)
   if (!resolved) return null
 
+  const className =
+    'inline-flex items-center px-3 py-2 text-sm text-text-secondary transition-colors hover:text-text-primary'
+
   if (resolved.external) {
     return (
-      <a href={resolved.href} target="_blank" rel="noopener noreferrer">
+      <a href={resolved.href} target="_blank" rel="noopener noreferrer" className={className}>
         {resolved.label}
       </a>
     )
   }
 
-  return <Link href={resolved.href}>{resolved.label}</Link>
+  return (
+    <Link href={resolved.href} className={className}>
+      {resolved.label}
+    </Link>
+  )
 }

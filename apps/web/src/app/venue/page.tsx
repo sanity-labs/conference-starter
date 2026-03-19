@@ -1,4 +1,5 @@
 import {Suspense} from 'react'
+import Link from 'next/link'
 import type {Metadata} from 'next'
 import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
@@ -136,6 +137,36 @@ function RoomsList({rooms}: {rooms: NonNullable<VENUE_QUERY_RESULT>['rooms']}) {
                     {amenity}
                   </li>
                 ))}
+              </ul>
+            )}
+            {room.schedule && room.schedule.length > 0 && (
+              <ul className="mt-3 space-y-1.5">
+                {room.schedule.map((slot) => {
+                  if (!slot.session) return null
+                  const time = slot.startTime
+                    ? new Date(slot.startTime).toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        timeZone: 'America/New_York',
+                      })
+                    : null
+                  return (
+                    <li key={slot._id} className="text-sm">
+                      {time && (
+                        <time dateTime={slot.startTime!} className="text-text-muted">
+                          {time}
+                        </time>
+                      )}
+                      {time && ' — '}
+                      <Link
+                        href={`/sessions/${slot.session.slug}`}
+                        className="text-text-secondary hover:text-text-primary hover:underline"
+                      >
+                        {slot.session.title}
+                      </Link>
+                    </li>
+                  )
+                })}
               </ul>
             )}
           </li>

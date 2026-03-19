@@ -17,7 +17,17 @@ export const VENUE_QUERY = defineQuery(
       "slug": slug.current,
       floor,
       capacity,
-      amenities
+      amenities,
+      "schedule": *[_type == "scheduleSlot" && room._ref == ^._id] | order(startTime asc) {
+        _id,
+        startTime,
+        endTime,
+        session->{
+          title,
+          "slug": slug.current,
+          sessionType
+        }
+      }
     }
   }`,
 )

@@ -14,9 +14,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Prevent Turbopack from bundling @react-email — avoids duplicate React
-  // instances in API routes that use @react-email/render
+  // Prevent Turbopack from bundling email packages — avoids duplicate React
+  // instances in API routes that render React Email components
   serverExternalPackages: [
+    '@repo/email',
     '@react-email/render',
     '@react-email/components',
   ],

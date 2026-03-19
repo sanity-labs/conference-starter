@@ -34,11 +34,11 @@ export const SPEAKER_DETAIL_QUERY = defineQuery(
       "slug": slug.current,
       sessionType,
       level,
-      track->{ name, color },
+      track->{ name, "slug": slug.current, color },
       "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {
         startTime,
         endTime,
-        room->{ name }
+        room->{ name, "slug": slug.current }
       }
     }
   }`,

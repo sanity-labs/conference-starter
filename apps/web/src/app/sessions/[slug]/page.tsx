@@ -137,7 +137,13 @@ async function SessionDetailCached({
 
         {session.track && (
           <p className="mt-2 text-sm text-text-secondary">
-            Track: <strong>{session.track.name}</strong>
+            Track:{' '}
+            <Link
+              href={`/sessions?track=${session.track.slug}`}
+              className="font-semibold hover:underline"
+            >
+              {session.track.name}
+            </Link>
           </p>
         )}
 

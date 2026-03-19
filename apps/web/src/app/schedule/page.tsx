@@ -139,7 +139,24 @@ function SlotCard({slot}: {slot: SCHEDULE_DAY_QUERY_RESULT[number]}) {
             {session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)}
           </span>
         )}
-        {[session.level, session.track?.name, slot.room?.name].filter(Boolean).join(' · ')}
+        {session.level}
+        {session.track?.name && (
+          <>
+            {session.level && ' · '}
+            <Link
+              href={`/sessions?track=${session.track.slug}`}
+              className="hover:text-text-primary hover:underline"
+            >
+              {session.track.name}
+            </Link>
+          </>
+        )}
+        {slot.room?.name && (
+          <>
+            {(session.level || session.track?.name) && ' · '}
+            {slot.room.name}
+          </>
+        )}
       </p>
 
       {session.speakers && session.speakers.length > 0 && (

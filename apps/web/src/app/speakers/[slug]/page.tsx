@@ -184,15 +184,29 @@ function SpeakerSessions({
             <Link href={`/sessions/${session.slug}`} className="font-medium hover:underline">
               {session.title}
             </Link>
-            <p className="mt-1 text-sm text-text-muted">
-              {[
-                session.sessionType &&
-                  session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1),
-                session.level,
-                session.track?.name,
-              ]
-                .filter(Boolean)
-                .join(' · ')}
+            <p className="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-text-muted">
+              {session.sessionType && (
+                <span>
+                  {session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)}
+                </span>
+              )}
+              {session.level && (
+                <>
+                  {session.sessionType && ' · '}
+                  <span>{session.level}</span>
+                </>
+              )}
+              {session.track?.name && (
+                <>
+                  {(session.sessionType || session.level) && ' · '}
+                  <Link
+                    href={`/sessions?track=${session.track.slug}`}
+                    className="hover:text-text-primary hover:underline"
+                  >
+                    {session.track.name}
+                  </Link>
+                </>
+              )}
             </p>
             {session.slot && session.slot.startTime && (
               <p className="mt-1 text-sm text-text-muted">

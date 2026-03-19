@@ -15,7 +15,7 @@ export const metadata = createMetadata({
 
 export default function SpeakersPage() {
   return (
-    <main id="main-content" className="mx-auto max-w-content px-6 py-16 sm:py-24">
+    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
       <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Speakers</h1>
       <Suspense>
         <SpeakersListDynamic />
@@ -39,7 +39,7 @@ async function SpeakersListCached({perspective, stega}: DynamicFetchOptions) {
   }
 
   return (
-    <ul className="mt-8 grid grid-cols-2 gap-8 sm:grid-cols-3">
+    <ul className="mt-8 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
       {speakers.map((speaker) => (
         <li key={speaker._id} className="group">
           <Link href={`/speakers/${speaker.slug}`}>

@@ -19,7 +19,7 @@
     "@types/react-dom": "^19.2.3",
     "react-email": "^5.2.9",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "peerDependencies": {
     "react": "^19.0.0",

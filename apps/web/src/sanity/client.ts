@@ -14,4 +14,7 @@ export const client = createClient({
   dataset: dataset || 'production',
   apiVersion: '2026-03-15',
   useCdn: true,
+  stega: {
+    studioUrl: process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'http://localhost:3333',
+  },
 })

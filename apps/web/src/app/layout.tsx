@@ -1,4 +1,5 @@
 import type {Metadata} from 'next'
+import {Suspense} from 'react'
 import {draftMode} from 'next/headers'
 import {VisualEditing} from 'next-sanity/visual-editing'
 import {SanityLive, getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
@@ -33,40 +34,11 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const {isEnabled: isDraftMode} = await draftMode()
-  const opts = await getDynamicFetchOptions()
-  return (
-    <CachedLayout
-      live={<SanityLive key="live" />}
-      visualEditing={isDraftMode && <VisualEditing key="visual-editing" />}
-      perspective={opts.perspective}
-      stega={opts.stega}
-    >
-      {children}
-    </CachedLayout>
-  )
-}
-
-async function CachedLayout({
-  children,
-  live,
-  visualEditing,
-  perspective,
-  stega,
-}: {
-  children: React.ReactNode
-  live: React.ReactNode
-  visualEditing: React.ReactNode
-} & DynamicFetchOptions) {
-  'use cache'
-
-  const {data: navData} = await sanityFetch({query: NAV_QUERY, perspective, stega})
-
   return (
     <html lang="en">
       <head>
@@ -83,12 +55,53 @@ async function CachedLayout({
         <a href="#main-content" className="skip-nav">
           Skip to content
         </a>
-        {navData && <Header data={navData} />}
-        {children}
-        {navData && <Footer data={navData} />}
-        {live}
-        {visualEditing}
+        <Suspense>
+          <DynamicShell>{children}</DynamicShell>
+        </Suspense>
+        <Suspense>
+          <DraftModeShell />
+        </Suspense>
       </body>
     </html>
+  )
+}
+
+async function DynamicShell({children}: {children: React.ReactNode}) {
+  const {isEnabled: isDraftMode} = await draftMode()
+  const opts = await getDynamicFetchOptions()
+  return (
+    <CachedNav perspective={opts.perspective} stega={opts.stega}>
+      {children}
+    </CachedNav>
+  )
+}
+
+async function CachedNav({
+  children,
+  perspective,
+  stega,
+}: {
+  children: React.ReactNode
+} & DynamicFetchOptions) {
+  'use cache'
+
+  const {data: navData} = await sanityFetch({query: NAV_QUERY, perspective, stega})
+
+  return (
+    <>
+      {navData && <Header data={navData} />}
+      {children}
+      {navData && <Footer data={navData} />}
+    </>
+  )
+}
+
+async function DraftModeShell() {
+  const {isEnabled: isDraftMode} = await draftMode()
+  return (
+    <>
+      <SanityLive />
+      {isDraftMode && <VisualEditing />}
+    </>
   )
 }

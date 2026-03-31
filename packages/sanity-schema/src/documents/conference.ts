@@ -172,11 +172,11 @@ export const conference = defineType({
     defineField({
       name: 'scoringCriteria',
       title: 'Scoring Criteria',
-      type: 'text',
+      type: 'array',
+      of: [defineArrayMember({type: 'scoringCriterion'})],
       group: 'cfp',
-      rows: 6,
       description:
-        'Internal scoring criteria used by the AI screener (Sprint 3). Describe what makes a strong submission — topic relevance, speaker experience, audience fit, novelty. Not displayed publicly.',
+        'Weighted scoring criteria used by the AI screener. Each criterion has a name, description, and percentage weight. Weights should sum to 100. Not displayed publicly.',
     }),
     // Links
     defineField({

@@ -26,6 +26,7 @@ import {schedulePreview} from './objects/schedulePreview'
 import {ctaBlock} from './objects/ctaBlock'
 import {faqSection} from './objects/faqSection'
 import {navItem} from './objects/navItem'
+import {scoringCriterion} from './objects/scoringCriterion'
 
 export const schemaTypes = [
   // Documents
@@ -56,4 +57,5 @@ export const schemaTypes = [
   ctaBlock,
   faqSection,
   navItem,
+  scoringCriterion,
 ]

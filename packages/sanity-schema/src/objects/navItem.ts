@@ -4,10 +4,12 @@ import {LinkIcon} from '@sanity/icons'
 const ROUTE_OPTIONS = [
   {title: 'Schedule', value: '/schedule'},
   {title: 'Speakers', value: '/speakers'},
+  {title: 'Sessions', value: '/sessions'},
   {title: 'Sponsors', value: '/sponsors'},
   {title: 'Venue', value: '/venue'},
   {title: 'Call for Papers', value: '/cfp'},
   {title: 'Announcements', value: '/announcements'},
+  {title: 'FAQ', value: '/faq'},
 ]
 
 export const navItem = defineType({

@@ -15,6 +15,13 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type ScoringCriterion = {
+  _type: "scoringCriterion";
+  name?: string;
+  description?: string;
+  weight?: number;
+};
+
 export type PageReference = {
   _ref: string;
   _type: "reference";
@@ -40,7 +47,7 @@ export type NavItem = {
   _type: "navItem";
   title?: string;
   linkType?: "route" | "page" | "external";
-  route?: "/schedule" | "/speakers" | "/sponsors" | "/venue" | "/cfp" | "/announcements";
+  route?: "/schedule" | "/speakers" | "/sessions" | "/sponsors" | "/venue" | "/cfp" | "/announcements" | "/faq";
   page?: PageReference | SessionReference | PersonReference;
   url?: string;
 };
@@ -678,7 +685,9 @@ export type Conference = {
     _type: "block";
     _key: string;
   }>;
-  scoringCriteria?: string;
+  scoringCriteria?: Array<{
+    _key: string;
+  } & ScoringCriterion>;
   registrationUrl?: string;
   registrationLabel?: string;
   socialLinks?: {
@@ -906,7 +915,7 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = PageReference | SessionReference | PersonReference | NavItem | FaqReference | FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerGrid | SanityImageAssetReference | RichText | Hero | Cta | ChatState | AgentConversation | Faq | Prompt | SubmissionReference | EmailLog | EmailTemplate | Slug | ConferenceReference | Submission | VenueReference | Announcement | Page | SanityImageCrop | SanityImageHotspot | Sponsor | RoomReference | ScheduleSlot | Room | TrackReference | Session | Track | Color | Person | Conference | Venue | SanityAgentContext | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes = ScoringCriterion | PageReference | SessionReference | PersonReference | NavItem | FaqReference | FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerGrid | SanityImageAssetReference | RichText | Hero | Cta | ChatState | AgentConversation | Faq | Prompt | SubmissionReference | EmailLog | EmailTemplate | Slug | ConferenceReference | Submission | VenueReference | Announcement | Page | SanityImageCrop | SanityImageHotspot | Sponsor | RoomReference | ScheduleSlot | Room | TrackReference | Session | Track | Color | Person | Conference | Venue | SanityAgentContext | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 
 // Source: ../../packages/sanity-queries/src/announcements.ts
 // Variable: ANNOUNCEMENTS_QUERY
@@ -1093,7 +1102,7 @@ export type NAV_QUERY_RESULT = {
       title: string | null;
       slug: string | null;
     } | null;
-    route: "/announcements" | "/cfp" | "/schedule" | "/speakers" | "/sponsors" | "/venue" | null;
+    route: "/announcements" | "/cfp" | "/faq" | "/schedule" | "/sessions" | "/speakers" | "/sponsors" | "/venue" | null;
     url: string | null;
   }> | null;
   footerNav: Array<{
@@ -1113,7 +1122,7 @@ export type NAV_QUERY_RESULT = {
       title: string | null;
       slug: string | null;
     } | null;
-    route: "/announcements" | "/cfp" | "/schedule" | "/speakers" | "/sponsors" | "/venue" | null;
+    route: "/announcements" | "/cfp" | "/faq" | "/schedule" | "/sessions" | "/speakers" | "/sponsors" | "/venue" | null;
     url: string | null;
   }> | null;
 } | null;

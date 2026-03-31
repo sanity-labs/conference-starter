@@ -3,10 +3,12 @@ import Link from 'next/link'
 const ROUTE_LABELS: Record<string, string> = {
   '/schedule': 'Schedule',
   '/speakers': 'Speakers',
+  '/sessions': 'Sessions',
   '/sponsors': 'Sponsors',
   '/venue': 'Venue',
   '/cfp': 'Call for Papers',
   '/announcements': 'Announcements',
+  '/faq': 'FAQ',
 }
 
 interface NavItemData {

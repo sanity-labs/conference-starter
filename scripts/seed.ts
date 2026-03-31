@@ -515,6 +515,21 @@ async function seed() {
     organizers: [keyedRef('person-knut')],
     cfpOpen: true,
     cfpDeadline: '2026-08-15T23:59:59-04:00',
+    headerNav: [
+      {_type: 'navItem', _key: 'nav-schedule', linkType: 'route', route: '/schedule'},
+      {_type: 'navItem', _key: 'nav-speakers', linkType: 'route', route: '/speakers'},
+      {_type: 'navItem', _key: 'nav-sessions', linkType: 'route', route: '/sessions'},
+      {_type: 'navItem', _key: 'nav-venue', linkType: 'route', route: '/venue'},
+      {_type: 'navItem', _key: 'nav-sponsors', linkType: 'route', route: '/sponsors'},
+    ],
+    footerNav: [
+      {_type: 'navItem', _key: 'fnav-schedule', linkType: 'route', route: '/schedule'},
+      {_type: 'navItem', _key: 'fnav-speakers', linkType: 'route', route: '/speakers'},
+      {_type: 'navItem', _key: 'fnav-faq', linkType: 'route', route: '/faq'},
+      {_type: 'navItem', _key: 'fnav-cfp', linkType: 'route', route: '/cfp'},
+      {_type: 'navItem', _key: 'fnav-announcements', linkType: 'route', route: '/announcements'},
+      {_type: 'navItem', _key: 'fnav-venue', linkType: 'route', route: '/venue'},
+    ],
     cfpGuidelines:
       'We are looking for talks that showcase real-world content operations — how structured content drives websites, emails, AI, and automation. Proposals should focus on concrete problems, specific solutions, and lessons learned. Case studies and live demos are strongly encouraged.',
     scoringCriteria: [

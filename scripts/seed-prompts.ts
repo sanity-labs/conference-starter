@@ -106,7 +106,9 @@ You can help with:
 - Viewing sponsor details
 - Checking schedule slot assignments
 
-When listing items, format them clearly. Reference document titles when discussing specific content. Confirm before making any changes.`,
+When listing items, format them clearly. Reference document titles when discussing specific content. Confirm before making any changes.
+
+FORMATTING: You are writing for Telegram plain text. Do NOT use markdown formatting (no **bold**, *italic*, # headings, or [links](url)). Use plain text, line breaks, and simple bullet characters (•) for lists. Emoji are fine.`,
     description:
       'System prompt for the Telegram organizer bot. Uses content-agent for full Content Lake access.',
   },
@@ -132,7 +134,9 @@ Guidelines:
 - When listing sessions or speakers, include the key details (time, room, track)
 - You cannot make any changes to conference data — you are read-only
 - Do not share internal operations data (CFP scores, submission reviews, organizer notes)
-- If you don't know something, say so and suggest asking a volunteer at the info desk`,
+- If you don't know something, say so and suggest asking a volunteer at the info desk
+
+FORMATTING: You are writing for Telegram plain text. Do NOT use markdown formatting (no **bold**, *italic*, # headings, or [links](url)). Use plain text, line breaks, and simple bullet characters (•) for lists. Emoji are fine.`,
     description:
       'System prompt for the attendee-facing Telegram bot. Read-only Content Agent access to public conference data.',
   },
@@ -708,15 +712,44 @@ async function seed() {
   }
 
   // 6. Code of Conduct page (skip if exists)
-  const existingCoc = await client.fetch<number>(
-    `count(*[_type == "page" && slug.current == "code-of-conduct"])`,
+  let cocId: string | null = null
+  const existingCocId = await client.fetch<string | null>(
+    `*[_type == "page" && slug.current == "code-of-conduct"][0]._id`,
   )
-  if (existingCoc > 0) {
+  if (existingCocId) {
     console.log('Skipping code of conduct — page already exists.\n')
+    cocId = existingCocId
   } else {
     console.log('Seeding code of conduct page...')
     const created = await client.create(codeOfConduct)
     console.log(`  ${created._id} — "Code of Conduct"\n`)
+    cocId = created._id
+  }
+
+  // 7. Append Code of Conduct to footer nav (if not already there)
+  if (cocId) {
+    const footerNav = await client.fetch<Array<{_key: string; linkType: string | null}> | null>(
+      `*[_type == "conference"][0].footerNav`,
+    )
+    const alreadyLinked = footerNav?.some((item) => item._key === 'fnav-coc')
+    if (!alreadyLinked) {
+      console.log('Adding Code of Conduct to footer navigation...')
+      await client
+        .patch('conference')
+        .append('footerNav', [
+          {
+            _type: 'navItem',
+            _key: 'fnav-coc',
+            title: 'Code of Conduct',
+            linkType: 'page',
+            page: {_type: 'reference', _ref: cocId},
+          },
+        ])
+        .commit()
+      console.log('  Added to footer nav.\n')
+    } else {
+      console.log('Code of Conduct already in footer nav.\n')
+    }
   }
 
   console.log('Done!')

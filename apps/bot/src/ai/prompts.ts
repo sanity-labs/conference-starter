@@ -1,5 +1,9 @@
 import {sanityClient} from '../sanity-client.js'
 
+const TELEGRAM_FORMAT_SUFFIX = `
+
+FORMATTING: You are writing for Telegram plain text. Do NOT use markdown formatting (no **bold**, *italic*, # headings, \`code\`, or [links](url)). Use plain text, line breaks, and simple bullet characters (•) for lists. Emoji are fine.`
+
 const cache = new Map<string, {instruction: string; fetchedAt: number}>()
 
 export async function fetchSystemPrompt(promptId: string): Promise<string> {
@@ -17,6 +21,7 @@ export async function fetchSystemPrompt(promptId: string): Promise<string> {
     throw new Error(`Prompt ${promptId} not found or empty`)
   }
 
-  cache.set(promptId, {instruction: doc.instruction, fetchedAt: Date.now()})
-  return doc.instruction
+  const instruction = doc.instruction + TELEGRAM_FORMAT_SUFFIX
+  cache.set(promptId, {instruction, fetchedAt: Date.now()})
+  return instruction
 }

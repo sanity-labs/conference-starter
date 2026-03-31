@@ -14,10 +14,18 @@ export function stripMarkdown(text: string): string {
       .replace(/\*{3}(.+?)\*{3}/g, '$1')
       // Bold: "**text**" → "text"
       .replace(/\*{2}(.+?)\*{2}/g, '$1')
+      // Italic: "*text*" → "text" (but not bullet "* item")
+      .replace(/(?<!\n)(?<=\s|^)\*(?!\s)(.+?)(?<!\s)\*/g, '$1')
+      // Inline code: "`code`" → "code"
+      .replace(/`([^`]+)`/g, '$1')
       // Links: "[text](url)" → "text (url)"
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1 ($2)')
+      // Bullet lists: "* item" or "- item" → "• item"
+      .replace(/^[\*\-]\s+/gm, '• ')
       // Horizontal rules
       .replace(/^---+$/gm, '')
+      // Collapse multiple blank lines
+      .replace(/\n{3,}/g, '\n\n')
   )
 }
 

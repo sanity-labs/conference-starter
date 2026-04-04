@@ -11,14 +11,14 @@ import {createMetadata} from '@/lib/metadata'
 export const metadata = createMetadata({
   title: 'Schedule',
   description:
-    'Full conference schedule for Everything NYC 2026 — times, rooms, and tracks for every session.',
+    `Full conference schedule — times, rooms, and tracks for every session.`,
   path: '/schedule',
 })
 
 export default function SchedulePage() {
   return (
     <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Schedule</h1>
+      <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Schedule</h1>
       <Suspense>
         <ScheduleDynamic />
       </Suspense>
@@ -91,7 +91,7 @@ async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
       <ol className="space-y-8" aria-label="Schedule by time">
         {Array.from(timeGroups.entries()).map(([time, groupSlots]) => (
           <li key={time}>
-            <time dateTime={time} className="text-sm font-semibold text-text-primary">
+            <time dateTime={time} className="text-sm font-semibold tabular-nums text-text-primary">
               {new Date(time).toLocaleTimeString('en-US', {
                 hour: 'numeric',
                 minute: '2-digit',

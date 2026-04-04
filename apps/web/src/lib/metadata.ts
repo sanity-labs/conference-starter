@@ -5,7 +5,7 @@ import {CONFERENCE_QUERY} from '@repo/sanity-queries'
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || 'https://everything-nyc.sanity.dev'
-export const SITE_NAME = 'Everything NYC 2026'
+export const SITE_NAME = 'ContentOps Conf'
 
 type ImageSource = {asset?: {_ref?: string; _type?: string} | null} | null | undefined
 

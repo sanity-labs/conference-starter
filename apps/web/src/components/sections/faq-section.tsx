@@ -47,7 +47,7 @@ export function FaqSection({heading, items}: FaqSectionProps) {
           }}
         />
       )}
-      {heading && <h2 className="text-2xl font-semibold tracking-tight">{heading}</h2>}
+      {heading && <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{heading}</h2>}
       <div className="mt-4 divide-y divide-border">
         {items.map((item) => (
           <details key={item._key} className="group py-4">

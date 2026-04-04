@@ -9,14 +9,14 @@ import {SessionFilters} from './session-filters'
 export const metadata = createMetadata({
   title: 'Sessions',
   description:
-    'Browse all sessions at Everything NYC 2026 — filter by track, type, or level to find the talks and workshops for you.',
+    'Browse all sessions — filter by track, type, or level to find the talks and workshops for you.',
   path: '/sessions',
 })
 
 export default function SessionsPage() {
   return (
     <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Sessions</h1>
+      <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Sessions</h1>
       <Suspense>
         <SessionsListDynamic />
       </Suspense>

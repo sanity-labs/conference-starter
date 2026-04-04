@@ -29,7 +29,7 @@ export async function SponsorBarSection({
 
   return (
     <section className="mx-auto max-w-content px-6 py-12">
-      {heading && <h2 className="text-2xl font-semibold tracking-tight">{heading}</h2>}
+      {heading && <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{heading}</h2>}
       <ul className="mt-6 flex flex-wrap items-center justify-center gap-8">
         {filtered.map((sponsor) => (
           <li key={sponsor._id}>

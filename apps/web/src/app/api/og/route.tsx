@@ -78,7 +78,7 @@ async function sessionCard(slug: string) {
         {/* Top row: conference name + track badge */}
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           <span style={{fontSize: 24, color: '#a1a1aa'}}>
-            {conference?.name ?? 'Everything NYC 2026'}
+            {conference?.name ?? 'ContentOps Conf'}
           </span>
           {session.track?.name && (
             <span
@@ -220,7 +220,7 @@ async function speakerCard(slug: string) {
           }}
         >
           <span style={{fontSize: 20, color: '#a1a1aa'}}>
-            {conference?.name ?? 'Everything NYC 2026'}
+            {conference?.name ?? 'ContentOps Conf'}
           </span>
           <span style={{fontSize: 48, fontWeight: 700, marginTop: 12, lineHeight: 1.2}}>
             {speaker.name}
@@ -277,7 +277,7 @@ async function defaultCard() {
         }}
       >
         <span style={{fontSize: 64, fontWeight: 700}}>
-          {conference?.name ?? 'Everything NYC 2026'}
+          {conference?.name ?? 'ContentOps Conf'}
         </span>
         {conference?.tagline && (
           <span style={{fontSize: 28, color: '#a1a1aa', marginTop: 16}}>

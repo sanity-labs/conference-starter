@@ -27,7 +27,7 @@ export function SpeakerGridSection({heading, limit, speakers}: SpeakerGridSectio
 
   return (
     <section className="mx-auto max-w-content px-6 py-12">
-      {heading && <h2 className="text-2xl font-semibold tracking-tight">{heading}</h2>}
+      {heading && <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{heading}</h2>}
       <ul className="mt-6 grid grid-cols-2 gap-6 sm:grid-cols-4">
         {displayed.map((speaker) => (
           <li key={speaker._id} className="group">

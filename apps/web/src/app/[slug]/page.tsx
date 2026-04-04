@@ -74,7 +74,7 @@ async function PageCached({
 
   return (
     <article>
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{page.title}</h1>
+      <h1 className="max-w-[30ch] text-3xl font-semibold tracking-tight sm:text-5xl">{page.title}</h1>
       <PageSections sections={page.sections} perspective={perspective} stega={stega} />
     </article>
   )

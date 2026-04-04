@@ -1,4 +1,5 @@
 import type {Metadata} from 'next'
+import {Inter} from 'next/font/google'
 import {Suspense} from 'react'
 import {draftMode} from 'next/headers'
 import {VisualEditing} from 'next-sanity/visual-editing'
@@ -11,6 +12,12 @@ import {JsonLd} from '@/components/json-ld'
 import type {WebSite} from 'schema-dts'
 import {SITE_URL, SITE_NAME, getDefaultOgImage} from '@/lib/metadata'
 import './globals.css'
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+})
 
 export async function generateMetadata(): Promise<Metadata> {
   const ogImage = await getDefaultOgImage()
@@ -40,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head>
         <JsonLd<WebSite>
           data={{

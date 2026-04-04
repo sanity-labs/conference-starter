@@ -24,14 +24,21 @@
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
 
-  /* Typography — system stack, users add their own */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
+  /* Typography — Inter via next/font, system stack fallback */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
     monospace;
 }
 
 @layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
   *:focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;

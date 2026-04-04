@@ -10,14 +10,14 @@ import {createMetadata} from '@/lib/metadata'
 export const metadata = createMetadata({
   title: 'Sponsors',
   description:
-    'The companies and communities making Everything NYC 2026 possible.',
+    'The companies and communities making this conference possible.',
   path: '/sponsors',
 })
 
 export default function SponsorsPage() {
   return (
     <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Sponsors</h1>
+      <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Sponsors</h1>
       <Suspense>
         <SponsorsListDynamic />
       </Suspense>
@@ -45,7 +45,7 @@ async function SponsorsListCached({perspective, stega}: DynamicFetchOptions) {
     <div className="mt-8 space-y-12">
       {tiers.map(({tier, label, sponsors: tierSponsors}) => (
         <section key={tier}>
-          <h2 className="text-2xl font-semibold tracking-tight">{label}</h2>
+          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{label}</h2>
           <ul className={`mt-4 ${tierGridClass(tier)}`}>
             {tierSponsors.map((sponsor) => (
               <li key={sponsor._id} id={sponsor.slug ?? undefined}>

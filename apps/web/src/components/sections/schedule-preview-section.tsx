@@ -44,12 +44,12 @@ export async function SchedulePreviewSection({
 
   return (
     <section className="mx-auto max-w-content px-6 py-12">
-      {heading && <h2 className="text-2xl font-semibold tracking-tight">{heading}</h2>}
+      {heading && <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{heading}</h2>}
       <ul className="mt-4 divide-y divide-border">
         {displayed.map((slot) => (
           <li key={slot._id} className="flex gap-4 py-3">
             {slot.startTime && (
-              <time dateTime={slot.startTime} className="w-20 shrink-0 text-sm font-medium text-text-muted">
+              <time dateTime={slot.startTime} className="w-20 shrink-0 text-sm font-medium tabular-nums text-text-muted">
                 {new Date(slot.startTime).toLocaleTimeString('en-US', {
                   hour: 'numeric',
                   minute: '2-digit',

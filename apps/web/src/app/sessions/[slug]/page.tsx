@@ -34,8 +34,8 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   // Auto-generate description from structured data if no manual override
   const speakerNames = session.speakers?.map((s) => s.name).filter(Boolean) ?? []
   const autoDescription = speakerNames.length > 0
-    ? `${session.title} — a ${session.sessionType ?? 'session'} by ${speakerNames.join(', ')} at Everything NYC 2026`
-    : `${session.title} at Everything NYC 2026`
+    ? `${session.title} — a ${session.sessionType ?? 'session'} by ${speakerNames.join(', ')}`
+    : `${session.title} — conference session`
 
   return createMetadata({
     title: session.seoTitle || session.title || 'Session',
@@ -143,7 +143,7 @@ async function SessionDetailCached({
               .join(' · ')}
           </span>
         </div>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{session.title}</h1>
+        <h1 className="mt-2 max-w-[30ch] text-3xl font-semibold tracking-tight sm:text-5xl">{session.title}</h1>
 
         {session.track && (
           <p className="mt-2 text-sm text-text-secondary">
@@ -236,7 +236,7 @@ function SpeakersList({
       <h2 className="text-lg font-semibold">
         {speakers.length === 1 ? 'Speaker' : 'Speakers'}
       </h2>
-      <ul className="mt-3 space-y-3">
+      <ul role="list" className="mt-3 space-y-3">
         {speakers.map((speaker) => (
           <li key={speaker._id} className="flex items-center gap-3">
             {speaker.photo && (

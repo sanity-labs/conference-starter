@@ -118,7 +118,7 @@ async function AnnouncementDetailCached({
         }}
       />
       <header>
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{announcement.title}</h1>
+        <h1 className="max-w-[30ch] text-3xl font-semibold tracking-tight sm:text-5xl">{announcement.title}</h1>
         {announcement.publishedAt && (
           <time dateTime={announcement.publishedAt} className="mt-2 block text-text-muted">
             {new Date(announcement.publishedAt).toLocaleDateString('en-US', {

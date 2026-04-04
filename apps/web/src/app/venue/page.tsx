@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: venue.name ?? 'Venue',
     description: venue.address
       ? `Join us at ${venue.name}, ${venue.address}`
-      : 'Venue for Everything NYC 2026',
+      : 'Conference venue details and directions',
     path: '/venue',
   })
 }
@@ -54,7 +54,7 @@ async function VenueCached({perspective, stega}: DynamicFetchOptions) {
   if (!venue) {
     return (
       <>
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Venue</h1>
+        <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Venue</h1>
         <p className="mt-4 text-text-muted">Venue details coming soon.</p>
       </>
     )
@@ -89,7 +89,7 @@ async function VenueCached({perspective, stega}: DynamicFetchOptions) {
 function VenueHeader({venue}: {venue: NonNullable<VENUE_QUERY_RESULT>}) {
   return (
     <header>
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{venue.name}</h1>
+      <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">{venue.name}</h1>
       {venue.address && (
         <address className="mt-2 text-lg text-text-muted not-italic">{venue.address}</address>
       )}
@@ -114,8 +114,8 @@ function RoomsList({rooms}: {rooms: NonNullable<VENUE_QUERY_RESULT>['rooms']}) {
 
   return (
     <section className="mt-12">
-      <h2 className="text-2xl font-semibold tracking-tight">Rooms</h2>
-      <ul className="mt-4 space-y-4">
+      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Rooms</h2>
+      <ul role="list" className="mt-4 space-y-4">
         {rooms.map((room) => (
           <li key={room._id} id={`room-${room.slug}`} className="rounded-md border-l-4 border-border-strong pl-4 py-3">
             <p className="font-medium">{room.name}</p>
@@ -183,7 +183,7 @@ function TransitSection({
 }) {
   return (
     <section className="mt-12">
-      <h2 className="text-2xl font-semibold tracking-tight">Getting Here</h2>
+      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Getting Here</h2>
       <div className="prose mt-4 max-w-none">
         <PortableText value={transitInfo} />
       </div>
@@ -198,7 +198,7 @@ function WifiSection({
 }) {
   return (
     <section className="mt-12">
-      <h2 className="text-2xl font-semibold tracking-tight">WiFi</h2>
+      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">WiFi</h2>
       <dl className="mt-4 rounded-md border border-border p-4">
         {wifiInfo.network && (
           <>

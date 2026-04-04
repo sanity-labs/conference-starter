@@ -8,14 +8,14 @@ import {createMetadata} from '@/lib/metadata'
 export const metadata = createMetadata({
   title: 'Announcements',
   description:
-    'Latest news and updates from Everything NYC 2026.',
+    'Latest news and updates from the conference.',
   path: '/announcements',
 })
 
 export default function AnnouncementsPage() {
   return (
     <main id="main-content" className="mx-auto max-w-content px-6 py-16 sm:py-24">
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Announcements</h1>
+      <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Announcements</h1>
       <Suspense>
         <AnnouncementsListDynamic />
       </Suspense>

@@ -11,14 +11,14 @@ import {createMetadata} from '@/lib/metadata'
 export const metadata = createMetadata({
   title: 'FAQ',
   description:
-    'Frequently asked questions about Everything NYC 2026 — venue, schedule, registration, accessibility, and more.',
+    'Frequently asked questions — venue, schedule, registration, accessibility, and more.',
   path: '/faq',
 })
 
 export default function FaqPage() {
   return (
     <main id="main-content" className="mx-auto max-w-content px-6 py-16 sm:py-24">
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+      <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
         Frequently Asked Questions
       </h1>
       <Suspense>
@@ -67,7 +67,7 @@ async function FaqCached({perspective, stega}: DynamicFetchOptions) {
       <div className="mt-8 space-y-10">
         {grouped.map(([category, items]) => (
           <section key={category}>
-            <h2 className="text-xl font-semibold tracking-tight">
+            <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
               {categoryLabel(category)}
             </h2>
             <div className="mt-3 divide-y divide-border">

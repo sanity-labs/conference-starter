@@ -34,8 +34,8 @@ export function HeroSection({heading, subheading, backgroundImage, cta}: HeroSec
         </div>
       )}
       <div className="mx-auto max-w-content px-6">
-        {heading && <h2 className="text-2xl font-semibold tracking-tight">{heading}</h2>}
-        {subheading && <p className="mt-3 text-lg text-text-secondary">{subheading}</p>}
+        {heading && <h2 className="max-w-[40ch] text-2xl font-semibold tracking-tight sm:text-3xl">{heading}</h2>}
+        {subheading && <p className="mt-3 max-w-[48ch] text-lg text-pretty text-text-secondary">{subheading}</p>}
         {cta && (
           <div className="mt-6">
             <CtaLink cta={cta} />

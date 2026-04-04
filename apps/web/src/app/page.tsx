@@ -83,9 +83,9 @@ async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
 
   if (!conference) {
     return (
-      <section className="mx-auto max-w-content px-6 py-16 sm:py-24">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Everything NYC 2026</h1>
-        <p className="mt-4 text-text-muted">No conference data found.</p>
+      <section className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
+        <h1 className="max-w-[30ch] text-3xl font-semibold tracking-tight sm:text-5xl">ContentOps Conf</h1>
+        <p className="mt-4 text-pretty text-text-muted">No conference data found.</p>
       </section>
     )
   }
@@ -96,7 +96,7 @@ async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
         data={{
           '@context': 'https://schema.org',
           '@type': 'Event',
-          name: conference.name ?? 'Everything NYC 2026',
+          name: conference.name ?? 'ContentOps Conf',
           ...(conference.description && {description: conference.description}),
           ...(conference.startDate && {startDate: conference.startDate}),
           ...(conference.endDate && {endDate: conference.endDate}),
@@ -137,13 +137,13 @@ async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
 
 function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RESULT>}) {
   return (
-    <section className="mx-auto max-w-content px-6 py-16 sm:py-24">
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{conference.name}</h1>
+    <section className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
+      <h1 className="max-w-[30ch] text-3xl font-semibold tracking-tight sm:text-5xl">{conference.name}</h1>
       {conference.tagline && (
-        <p className="mt-4 text-xl text-text-secondary">{conference.tagline}</p>
+        <p className="mt-4 max-w-[40ch] text-xl text-pretty text-text-secondary">{conference.tagline}</p>
       )}
       {conference.description && (
-        <p className="mt-6 text-text-secondary">{conference.description}</p>
+        <p className="mt-6 max-w-[56ch] text-pretty text-text-secondary">{conference.description}</p>
       )}
       {conference.startDate && (
         <p className="mt-4 text-sm text-text-muted">
@@ -216,9 +216,9 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
   const featured = speakers.slice(0, 8)
 
   return (
-    <section className="mx-auto max-w-content px-6 py-12">
-      <h2 className="text-2xl font-semibold tracking-tight">Speakers</h2>
-      <ul className="mt-6 grid grid-cols-2 gap-6 sm:grid-cols-4">
+    <section className="mx-auto max-w-content-wide px-6 py-12">
+      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Speakers</h2>
+      <ul role="list" className="mt-6 grid grid-cols-2 gap-6 sm:grid-cols-4">
         {featured.map((speaker) => (
           <li key={speaker._id} className="group">
             <Link href={`/speakers/${speaker.slug}`}>
@@ -254,9 +254,9 @@ function SessionsPreview({sessions}: {sessions: FEATURED_SESSIONS_QUERY_RESULT})
   if (!sessions || sessions.length === 0) return null
 
   return (
-    <section className="mx-auto max-w-content px-6 py-12">
-      <h2 className="text-2xl font-semibold tracking-tight">Sessions</h2>
-      <ul className="mt-6 space-y-4">
+    <section className="mx-auto max-w-content-wide px-6 py-12">
+      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Sessions</h2>
+      <ul role="list" className="mt-6 space-y-4">
         {sessions.map((session) => (
           <li key={session._id} className="rounded-md border border-border p-4 transition-colors hover:border-border-strong">
             <div className="flex flex-wrap items-center gap-2">
@@ -311,9 +311,9 @@ function SponsorsBar({sponsors}: {sponsors: SPONSORS_QUERY_RESULT}) {
   if (topSponsors.length === 0) return null
 
   return (
-    <section className="mx-auto max-w-content px-6 py-12">
-      <h2 className="text-2xl font-semibold tracking-tight">Sponsors</h2>
-      <ul className="mt-6 flex flex-wrap items-center gap-8">
+    <section className="mx-auto max-w-content-wide px-6 py-12">
+      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Sponsors</h2>
+      <ul role="list" className="mt-6 flex flex-wrap items-center gap-8">
         {topSponsors.map((sponsor) => (
           <li key={sponsor._id}>
             {sponsor.logo ? (
@@ -357,8 +357,8 @@ function VenueSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RE
   if (!conference.venue) return null
 
   return (
-    <section className="mx-auto max-w-content px-6 py-12">
-      <h2 className="text-2xl font-semibold tracking-tight">Venue</h2>
+    <section className="mx-auto max-w-content-wide px-6 py-12">
+      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Venue</h2>
       <div className="mt-4 rounded-lg border border-border p-6">
         <p className="text-lg font-medium">{conference.venue.name}</p>
         <address className="mt-1 text-text-muted not-italic">{conference.venue.address}</address>

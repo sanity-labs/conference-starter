@@ -10,14 +10,14 @@ import {createMetadata} from '@/lib/metadata'
 export const metadata = createMetadata({
   title: 'Call for Papers',
   description:
-    'Submit your talk proposal for Everything NYC 2026. We welcome talks on web development, AI, design, and more.',
+    'Submit your talk proposal. We welcome talks on structured content, AI, and developer experience.',
   path: '/cfp',
 })
 
 export default function CfpPage() {
   return (
     <main id="main-content" className="mx-auto max-w-content px-6 py-16 sm:py-24">
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Call for Papers</h1>
+      <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Call for Papers</h1>
       <Suspense>
         <CfpContentDynamic />
       </Suspense>

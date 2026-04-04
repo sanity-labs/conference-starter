@@ -9,14 +9,14 @@ import {createMetadata} from '@/lib/metadata'
 export const metadata = createMetadata({
   title: 'Speakers',
   description:
-    'Meet the speakers at Everything NYC 2026 — developers, designers, and creative thinkers shaping digital experiences.',
+    'Meet the speakers — practitioners and thinkers shaping the future of structured content.',
   path: '/speakers',
 })
 
 export default function SpeakersPage() {
   return (
     <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Speakers</h1>
+      <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Speakers</h1>
       <Suspense>
         <SpeakersListDynamic />
       </Suspense>
@@ -39,7 +39,7 @@ async function SpeakersListCached({perspective, stega}: DynamicFetchOptions) {
   }
 
   return (
-    <ul className="mt-8 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
+    <ul role="list" className="mt-8 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
       {speakers.map((speaker) => (
         <li key={speaker._id} className="group">
           <Link href={`/speakers/${speaker.slug}`}>

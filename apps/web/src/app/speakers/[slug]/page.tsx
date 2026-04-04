@@ -33,7 +33,7 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   // Auto-generate description from structured data
   const sessionTitles = speaker.sessions?.map((s) => s.title).filter(Boolean) ?? []
   const autoDescription = sessionTitles.length > 0
-    ? `${speaker.name} is speaking about ${sessionTitles.join(', ')} at Everything NYC 2026`
+    ? `${speaker.name} is speaking about ${sessionTitles.join(', ')}`
     : [speaker.role, speaker.company].filter(Boolean).join(' at ')
 
   return createMetadata({
@@ -126,7 +126,7 @@ async function SpeakerDetailCached({
           />
         )}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{speaker.name}</h1>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">{speaker.name}</h1>
           {speaker.role && <p className="mt-1 text-lg text-text-secondary">{speaker.role}</p>}
           {speaker.company && <p className="text-text-muted">{speaker.company}</p>}
           <SocialLinks speaker={speaker} />
@@ -187,8 +187,8 @@ function SpeakerSessions({
 
   return (
     <section className="mt-12">
-      <h2 className="text-2xl font-semibold tracking-tight">Sessions</h2>
-      <ul className="mt-4 space-y-4">
+      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Sessions</h2>
+      <ul role="list" className="mt-4 space-y-4">
         {sessions.map((session) => (
           <li key={session._id} className="rounded-md border border-border p-4 transition-colors hover:border-border-strong">
             <Link href={`/sessions/${session.slug}`} className="font-medium hover:underline">

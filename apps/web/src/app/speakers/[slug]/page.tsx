@@ -190,7 +190,7 @@ function SpeakerSessions({
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Sessions</h2>
       <ul role="list" className="mt-4 space-y-4">
         {sessions.map((session) => (
-          <li key={session._id} className="rounded-md border border-border p-4 transition-colors hover:border-border-strong">
+          <li key={session._id} className="card">
             <Link href={`/sessions/${session.slug}`} className="font-medium hover:underline">
               {session.title}
             </Link>

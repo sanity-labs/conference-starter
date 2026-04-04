@@ -18,6 +18,7 @@ import type {
   SPONSORS_QUERY_RESULT,
 } from '@repo/sanity-queries'
 import {SanityImage} from '@/components/sanity-image'
+import {TrackBadge} from '@/components/track-badge'
 import {JsonLd} from '@/components/json-ld'
 import type {Event} from 'schema-dts'
 import {SITE_URL, ogImageUrl} from '@/lib/metadata'
@@ -178,32 +179,21 @@ function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RES
           <ul className="flex flex-wrap gap-2">
             {conference.tracks.map((track) => (
               <li key={track._id}>
-                <Link
-                  href={`/sessions?track=${track.slug}`}
-                  className="inline-block rounded-full border border-border px-3 py-1 text-sm text-text-secondary transition-colors hover:border-border-strong hover:text-text-primary"
-                >
-                  {track.name}
-                </Link>
+                <TrackBadge name={track.name} slug={track.slug} color={track.color} />
               </li>
             ))}
           </ul>
         </nav>
       )}
       <nav className="mt-8 flex flex-wrap gap-3">
-        <Link href="/schedule" className="btn btn-secondary">
-          Schedule
+        <Link href="/schedule" className="btn btn-primary">
+          View Schedule
         </Link>
         <Link href="/sessions" className="btn btn-secondary">
-          Sessions
+          Browse Sessions
         </Link>
         <Link href="/speakers" className="btn btn-secondary">
-          Speakers
-        </Link>
-        <Link href="/sponsors" className="btn btn-secondary">
-          Sponsors
-        </Link>
-        <Link href="/venue" className="btn btn-secondary">
-          Venue
+          Meet Speakers
         </Link>
       </nav>
     </section>
@@ -258,36 +248,39 @@ function SessionsPreview({sessions}: {sessions: FEATURED_SESSIONS_QUERY_RESULT})
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Sessions</h2>
       <ul role="list" className="mt-6 space-y-4">
         {sessions.map((session) => (
-          <li key={session._id} className="rounded-md border border-border p-4 transition-colors hover:border-border-strong">
+          <li key={session._id} className="card">
             <div className="flex flex-wrap items-center gap-2">
               <Link href={`/sessions/${session.slug}`} className="font-medium hover:underline">
                 {session.title}
               </Link>
               {session.sessionType && (
-                <span className="rounded-full bg-surface-muted px-2.5 py-0.5 text-xs font-medium text-text-muted">
+                <span className="inline-flex items-center rounded-full border border-border bg-surface-muted px-2.5 py-0.5 text-xs font-medium text-text-muted">
                   {session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)}
                 </span>
               )}
               {session.track && (
-                <Link
-                  href={`/sessions?track=${session.track.slug}`}
-                  className="rounded-full bg-surface-muted px-2.5 py-0.5 text-xs font-medium text-text-muted hover:text-text-primary"
-                >
-                  {session.track.name}
-                </Link>
+                <TrackBadge name={session.track.name} slug={session.track.slug} color={session.track.color} />
               )}
             </div>
             {session.speakers && session.speakers.length > 0 && (
-              <p className="mt-1.5 text-sm text-text-muted">
-                {session.speakers.map((s, i) => (
-                  <span key={s._id}>
-                    {i > 0 && ', '}
-                    <Link href={`/speakers/${s.slug}`} className="hover:underline">
+              <ul className="mt-2 flex flex-wrap gap-3">
+                {session.speakers.map((s) => (
+                  <li key={s._id} className="flex items-center gap-2 text-sm">
+                    {s.photo && (
+                      <SanityImage
+                        value={s.photo}
+                        className="size-6 rounded-full object-cover"
+                        width={48}
+                        height={48}
+                        sizes="24px"
+                      />
+                    )}
+                    <Link href={`/speakers/${s.slug}`} className="text-text-muted hover:text-text-primary hover:underline">
                       {s.name}
                     </Link>
-                  </span>
+                  </li>
                 ))}
-              </p>
+              </ul>
             )}
           </li>
         ))}
@@ -359,7 +352,7 @@ function VenueSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RE
   return (
     <section className="mx-auto max-w-content-wide px-6 py-12">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Venue</h2>
-      <div className="mt-4 rounded-lg border border-border p-6">
+      <div className="card mt-4">
         <p className="text-lg font-medium">{conference.venue.name}</p>
         <address className="mt-1 text-text-muted not-italic">{conference.venue.address}</address>
         <p className="mt-4">

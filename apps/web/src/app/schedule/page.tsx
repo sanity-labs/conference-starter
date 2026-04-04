@@ -6,6 +6,7 @@ import {CONFERENCE_QUERY, SCHEDULE_DAY_QUERY} from '@repo/sanity-queries'
 import type {SCHEDULE_DAY_QUERY_RESULT} from '@repo/sanity-queries'
 import {stegaClean} from '@sanity/client/stega'
 import {SanityImage} from '@/components/sanity-image'
+import {TrackBadge} from '@/components/track-badge'
 import {createMetadata} from '@/lib/metadata'
 
 export const metadata = createMetadata({
@@ -119,10 +120,10 @@ function SlotCard({slot}: {slot: SCHEDULE_DAY_QUERY_RESULT[number]}) {
 
   return (
     <li
-      className={`rounded-md p-4 ${
+      className={`${
         isBreak
-          ? 'bg-surface-muted text-text-muted'
-          : 'border border-border transition-colors hover:border-border-strong'
+          ? 'rounded-lg bg-surface-muted p-4 text-text-muted'
+          : 'card'
       } ${slot.isPlenary ? 'sm:col-span-2 lg:col-span-3' : ''}`}
     >
       {isBreak ? (
@@ -133,24 +134,16 @@ function SlotCard({slot}: {slot: SCHEDULE_DAY_QUERY_RESULT[number]}) {
         </Link>
       )}
 
-      <p className="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-text-muted">
+      <div className="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-text-muted">
         {session.sessionType && (
-          <span className="rounded-full bg-surface-muted px-2.5 py-0.5 text-xs font-medium">
+          <span className="inline-flex items-center rounded-full border border-border bg-surface-muted px-2.5 py-0.5 text-xs font-medium">
             {session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)}
           </span>
         )}
-        {session.level}
-        {session.track?.name && (
-          <>
-            {session.level && ' · '}
-            <Link
-              href={`/sessions?track=${session.track.slug}`}
-              className="hover:text-text-primary hover:underline"
-            >
-              {session.track.name}
-            </Link>
-          </>
+        {session.track && (
+          <TrackBadge name={session.track.name} slug={session.track.slug} color={session.track.color} />
         )}
+        {session.level && <span>{session.level}</span>}
         {slot.room?.name && (
           <>
             {(session.level || session.track?.name) && ' · '}
@@ -162,7 +155,7 @@ function SlotCard({slot}: {slot: SCHEDULE_DAY_QUERY_RESULT[number]}) {
             </Link>
           </>
         )}
-      </p>
+      </div>
 
       {session.speakers && session.speakers.length > 0 && (
         <ul className="mt-2 flex flex-wrap gap-3">

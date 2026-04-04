@@ -59,11 +59,12 @@ export const FEATURED_SESSIONS_QUERY = defineQuery(
     title,
     "slug": slug.current,
     sessionType,
-    track->{ _id, name, "slug": slug.current },
+    track->{ _id, name, "slug": slug.current, color },
     speakers[]->{
       _id,
       name,
-      "slug": slug.current
+      "slug": slug.current,
+      photo { ..., alt }
     }
   }`,
 )

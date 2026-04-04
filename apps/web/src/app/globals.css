@@ -121,6 +121,17 @@
     cursor: not-allowed;
   }
 
+  .card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    transition: border-color 0.15s;
+  }
+
+  .card:hover {
+    border-color: var(--color-border-strong);
+  }
+
   .btn {
     display: inline-flex;
     align-items: center;

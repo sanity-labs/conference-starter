@@ -3,6 +3,7 @@ import {defineQuery} from 'groq'
 export const NAV_QUERY = defineQuery(
   `*[_type == "conference"][0]{
     name,
+    tagline,
     logo { ..., alt },
     registrationUrl,
     registrationLabel,

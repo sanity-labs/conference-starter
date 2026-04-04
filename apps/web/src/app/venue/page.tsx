@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function VenuePage() {
   return (
-    <main id="main-content" className="mx-auto max-w-content px-6 py-16 sm:py-24">
+    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
       <Suspense>
         <VenueDynamic />
       </Suspense>

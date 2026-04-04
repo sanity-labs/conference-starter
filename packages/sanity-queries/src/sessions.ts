@@ -96,11 +96,9 @@ export const RELATED_SESSIONS_QUERY = defineQuery(
     && defined(slug.current)
     && !(sessionType in ["break", "social"])
     && slug.current != $slug
-    && (
-      track._ref == $trackId
-      || count(speakers[_ref in $speakerIds]) > 0
-    )
-  ] | order(title asc) [0...4] {
+  ]
+  | score(text::semanticSimilarity($searchText))
+  | order(_score desc) [0...4] {
     _id,
     title,
     "slug": slug.current,

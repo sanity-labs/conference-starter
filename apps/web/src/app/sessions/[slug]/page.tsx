@@ -93,14 +93,13 @@ async function SessionDetailCached({
 
   const sessionType = stegaClean(session.sessionType)
 
-  // Fetch related sessions (same track or shared speakers)
-  const speakerIds = session.speakers?.map((s) => s._id) ?? []
+  // Fetch related sessions via semantic similarity (dataset embeddings)
+  const searchText = stegaClean(session.title) ?? ''
   const {data: relatedSessions} = await sanityFetch({
     query: RELATED_SESSIONS_QUERY,
     params: {
       slug,
-      trackId: session.track?._id ?? '',
-      speakerIds,
+      searchText,
     },
     perspective,
     stega,

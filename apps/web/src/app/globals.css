@@ -15,10 +15,15 @@
   --color-focus: #2563eb;
   --color-error: #dc2626;
 
-  /* Content widths */
+  /* Content widths — used via w-content / max-w-content etc. */
   --width-content: 48rem;
   --width-content-wide: 64rem;
   --width-content-max: 80rem;
+
+  /* Max-width utilities — Tailwind v4 uses --max-width-* for max-w-* */
+  --max-width-content: 48rem;
+  --max-width-content-wide: 64rem;
+  --max-width-content-max: 80rem;
 
   /* Border radius */
   --radius-sm: 0.25rem;

@@ -13,6 +13,7 @@ import {JsonLd} from '@/components/json-ld'
 import type {Person} from 'schema-dts'
 import {SITE_URL, ogImageUrl, createMetadata} from '@/lib/metadata'
 import {BreadcrumbJsonLd} from '@/components/breadcrumb-json-ld'
+import {Breadcrumbs} from '@/components/breadcrumbs'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -103,6 +104,12 @@ async function SpeakerDetailCached({
           {name: speaker.name ?? 'Speaker', path: `/speakers/${slug}`},
         ]}
       />
+      <Breadcrumbs
+        items={[
+          {name: 'Speakers', path: '/speakers'},
+          {name: speaker.name ?? 'Speaker', path: `/speakers/${slug}`},
+        ]}
+      />
       <JsonLd<Person>
         data={{
           '@context': 'https://schema.org',
@@ -140,12 +147,6 @@ async function SpeakerDetailCached({
       )}
 
       <SpeakerSessions sessions={speaker.sessions} />
-
-      <p className="mt-12">
-        <Link href="/speakers" className="text-sm text-text-muted transition-colors hover:text-text-primary">
-          &larr; All speakers
-        </Link>
-      </p>
     </article>
   )
 }

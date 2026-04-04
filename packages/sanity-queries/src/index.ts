@@ -15,6 +15,7 @@ export {
   SESSIONS_LISTING_QUERY,
   SESSIONS_SUMMARY_QUERY,
   SESSION_SLUGS_QUERY,
+  RELATED_SESSIONS_QUERY,
 } from './sessions'
 export {SPONSORS_QUERY} from './sponsors'
 export {VENUE_QUERY} from './venue'

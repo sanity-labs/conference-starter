@@ -1847,6 +1847,43 @@ export type SESSIONS_LISTING_QUERY_RESULT = Array<{
 }>;
 
 // Source: ../../packages/sanity-queries/src/sessions.ts
+// Variable: RELATED_SESSIONS_QUERY
+// Query: *[_type == "session"    && defined(slug.current)    && !(sessionType in ["break", "social"])    && slug.current != $slug    && (      track._ref == $trackId      || count(speakers[_ref in $speakerIds]) > 0    )  ] | order(title asc) [0...4] {    _id,    title,    "slug": slug.current,    sessionType,    track->{ _id, name, "slug": slug.current, color },    speakers[]->{      _id,      name,      "slug": slug.current,      photo { ..., alt }    }  }
+export type RELATED_SESSIONS_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: string | null;
+  sessionType:
+    | "break"
+    | "keynote"
+    | "lightning"
+    | "panel"
+    | "social"
+    | "talk"
+    | "workshop"
+    | null;
+  track: {
+    _id: string;
+    name: string | null;
+    slug: string | null;
+    color: Color | null;
+  } | null;
+  speakers: Array<{
+    _id: string;
+    name: string | null;
+    slug: string | null;
+    photo: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt: string | null;
+      _type: "image";
+    } | null;
+  }> | null;
+}>;
+
+// Source: ../../packages/sanity-queries/src/sessions.ts
 // Variable: SESSION_SLUGS_QUERY
 // Query: *[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current }
 export type SESSION_SLUGS_QUERY_RESULT = Array<{
@@ -2014,6 +2051,7 @@ declare module "@sanity/client" {
     '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])] | order(title asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType\n  }': SESSIONS_SUMMARY_QUERY_RESULT;
     '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]\n    | order(select(sessionType == "keynote" => 0, sessionType == "talk" => 1, 2) asc, title asc)\n    [0...4] {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType,\n    track->{ _id, name, "slug": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt }\n    }\n  }': FEATURED_SESSIONS_QUERY_RESULT;
     '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])] | order(title asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType,\n    level,\n    duration,\n    track->{ _id, name, "slug": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt }\n    },\n    "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {\n      startTime,\n      room->{ name, "slug": slug.current }\n    }\n  }': SESSIONS_LISTING_QUERY_RESULT;
+    '*[_type == "session"\n    && defined(slug.current)\n    && !(sessionType in ["break", "social"])\n    && slug.current != $slug\n    && (\n      track._ref == $trackId\n      || count(speakers[_ref in $speakerIds]) > 0\n    )\n  ] | order(title asc) [0...4] {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType,\n    track->{ _id, name, "slug": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt }\n    }\n  }': RELATED_SESSIONS_QUERY_RESULT;
     '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current }': SESSION_SLUGS_QUERY_RESULT;
     '*[_type == "sponsor"] | order(\n    select(\n      tier == "platinum" => 0,\n      tier == "gold" => 1,\n      tier == "silver" => 2,\n      tier == "bronze" => 3,\n      tier == "community" => 4,\n      5\n    ) asc,\n    order asc,\n    name asc\n  ) {\n    _id,\n    name,\n    "slug": slug.current,\n    tier,\n    logo { ..., alt },\n    description,\n    website\n  }': SPONSORS_QUERY_RESULT;
     '*[_type == "conference"][0].venue->{\n    _id,\n    name,\n    "slug": slug.current,\n    address,\n    description,\n    mapUrl,\n    transitInfo,\n    wifiInfo,\n    image { ..., alt },\n    "rooms": *[_type == "room" && venue._ref == ^._id] | order(order asc, name asc) {\n      _id,\n      name,\n      "slug": slug.current,\n      floor,\n      capacity,\n      amenities,\n      "schedule": *[_type == "scheduleSlot" && room._ref == ^._id] | order(startTime asc) {\n        _id,\n        startTime,\n        endTime,\n        session->{\n          title,\n          "slug": slug.current,\n          sessionType\n        }\n      }\n    }\n  }': VENUE_QUERY_RESULT;

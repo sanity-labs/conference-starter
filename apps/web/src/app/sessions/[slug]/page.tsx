@@ -5,15 +5,17 @@ import type {Metadata} from 'next'
 import {getDynamicFetchOptions, sanityFetch} from '@/sanity/live'
 import type {DynamicFetchOptions} from '@/sanity/live'
 import {client} from '@/sanity/client'
-import {SESSION_DETAIL_QUERY, SESSION_SLUGS_QUERY} from '@repo/sanity-queries'
-import type {SESSION_DETAIL_QUERY_RESULT} from '@repo/sanity-queries'
+import {SESSION_DETAIL_QUERY, SESSION_SLUGS_QUERY, RELATED_SESSIONS_QUERY} from '@repo/sanity-queries'
+import type {SESSION_DETAIL_QUERY_RESULT, RELATED_SESSIONS_QUERY_RESULT} from '@repo/sanity-queries'
 import {stegaClean} from '@sanity/client/stega'
 import {SanityImage} from '@/components/sanity-image'
 import {PortableText} from '@/components/portable-text'
 import {JsonLd} from '@/components/json-ld'
 import type {Event as EventSchema} from 'schema-dts'
 import {SITE_URL, ogImageUrl, createMetadata} from '@/lib/metadata'
+import {TrackBadge} from '@/components/track-badge'
 import {BreadcrumbJsonLd} from '@/components/breadcrumb-json-ld'
+import {Breadcrumbs} from '@/components/breadcrumbs'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -91,9 +93,28 @@ async function SessionDetailCached({
 
   const sessionType = stegaClean(session.sessionType)
 
+  // Fetch related sessions (same track or shared speakers)
+  const speakerIds = session.speakers?.map((s) => s._id) ?? []
+  const {data: relatedSessions} = await sanityFetch({
+    query: RELATED_SESSIONS_QUERY,
+    params: {
+      slug,
+      trackId: session.track?._id ?? '',
+      speakerIds,
+    },
+    perspective,
+    stega,
+  })
+
   return (
     <article>
       <BreadcrumbJsonLd
+        items={[
+          {name: 'Sessions', path: '/sessions'},
+          {name: session.title ?? 'Session', path: `/sessions/${slug}`},
+        ]}
+      />
+      <Breadcrumbs
         items={[
           {name: 'Sessions', path: '/sessions'},
           {name: session.title ?? 'Session', path: `/sessions/${slug}`},
@@ -212,12 +233,7 @@ async function SessionDetailCached({
 
       <WorkshopDetails session={session} />
       <MediaLinks session={session} />
-
-      <p className="mt-12">
-        <Link href="/sessions" className="text-sm text-text-muted transition-colors hover:text-text-primary">
-          &larr; All sessions
-        </Link>
-      </p>
+      <RelatedSessions sessions={relatedSessions} />
     </article>
   )
 }
@@ -350,6 +366,55 @@ function MediaLinks({session}: {session: NonNullable<SESSION_DETAIL_QUERY_RESULT
             </a>
           </li>
         )}
+      </ul>
+    </section>
+  )
+}
+
+function RelatedSessions({sessions}: {sessions: RELATED_SESSIONS_QUERY_RESULT | null}) {
+  if (!sessions || sessions.length === 0) return null
+
+  return (
+    <section className="mt-12 border-t border-border pt-8">
+      <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Related Sessions</h2>
+      <ul role="list" className="mt-4 space-y-4">
+        {sessions.map((session) => (
+          <li key={session._id} className="card">
+            <div className="flex flex-wrap items-center gap-2">
+              <Link href={`/sessions/${session.slug}`} className="font-medium hover:underline">
+                {session.title}
+              </Link>
+              {session.sessionType && (
+                <span className="inline-flex items-center rounded-full border border-border bg-surface-muted px-2.5 py-0.5 text-xs font-medium text-text-muted">
+                  {session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)}
+                </span>
+              )}
+              {session.track && (
+                <TrackBadge name={session.track.name} slug={session.track.slug} color={session.track.color} />
+              )}
+            </div>
+            {session.speakers && session.speakers.length > 0 && (
+              <ul className="mt-2 flex flex-wrap gap-3">
+                {session.speakers.map((s) => (
+                  <li key={s._id} className="flex items-center gap-2 text-sm">
+                    {s.photo && (
+                      <SanityImage
+                        value={s.photo}
+                        className="size-6 rounded-full object-cover"
+                        width={48}
+                        height={48}
+                        sizes="24px"
+                      />
+                    )}
+                    <Link href={`/speakers/${s.slug}`} className="text-text-muted hover:text-text-primary hover:underline">
+                      {s.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
       </ul>
     </section>
   )

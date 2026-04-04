@@ -91,6 +91,30 @@ export const SESSIONS_LISTING_QUERY = defineQuery(
   }`,
 )
 
+export const RELATED_SESSIONS_QUERY = defineQuery(
+  `*[_type == "session"
+    && defined(slug.current)
+    && !(sessionType in ["break", "social"])
+    && slug.current != $slug
+    && (
+      track._ref == $trackId
+      || count(speakers[_ref in $speakerIds]) > 0
+    )
+  ] | order(title asc) [0...4] {
+    _id,
+    title,
+    "slug": slug.current,
+    sessionType,
+    track->{ _id, name, "slug": slug.current, color },
+    speakers[]->{
+      _id,
+      name,
+      "slug": slug.current,
+      photo { ..., alt }
+    }
+  }`,
+)
+
 export const SESSION_SLUGS_QUERY = defineQuery(
   `*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current }`,
 )

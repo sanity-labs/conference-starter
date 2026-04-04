@@ -9,6 +9,7 @@ import {ANNOUNCEMENT_DETAIL_QUERY, ANNOUNCEMENT_SLUGS_QUERY} from '@repo/sanity-
 import {JsonLd} from '@/components/json-ld'
 import type {NewsArticle} from 'schema-dts'
 import {SITE_URL, createMetadata} from '@/lib/metadata'
+import {Breadcrumbs} from '@/components/breadcrumbs'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -97,6 +98,12 @@ async function AnnouncementDetailCached({
 
   return (
     <article>
+      <Breadcrumbs
+        items={[
+          {name: 'Announcements', path: '/announcements'},
+          {name: announcement.title ?? 'Announcement', path: `/announcements/${slug}`},
+        ]}
+      />
       <JsonLd<NewsArticle>
         data={{
           '@context': 'https://schema.org',

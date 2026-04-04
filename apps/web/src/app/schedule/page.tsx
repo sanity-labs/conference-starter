@@ -7,6 +7,7 @@ import type {SCHEDULE_DAY_QUERY_RESULT} from '@repo/sanity-queries'
 import {stegaClean} from '@sanity/client/stega'
 import {SanityImage} from '@/components/sanity-image'
 import {TrackBadge} from '@/components/track-badge'
+import {ScheduleDayNav} from './schedule-day-nav'
 import {createMetadata} from '@/lib/metadata'
 
 export const metadata = createMetadata({
@@ -16,26 +17,28 @@ export const metadata = createMetadata({
   path: '/schedule',
 })
 
-export default function SchedulePage() {
+type Props = {searchParams: Promise<{day?: string}>}
+
+export default async function SchedulePage({searchParams}: Props) {
+  const {day} = await searchParams
   return (
     <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Schedule</h1>
       <Suspense>
-        <ScheduleDynamic />
+        <ScheduleDynamic selectedDay={day} />
       </Suspense>
     </main>
   )
 }
 
-async function ScheduleDynamic() {
+async function ScheduleDynamic({selectedDay}: {selectedDay?: string}) {
   const opts = await getDynamicFetchOptions()
-  return <ScheduleCached {...opts} />
+  return <ScheduleCached selectedDay={selectedDay} {...opts} />
 }
 
-async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
+async function ScheduleCached({selectedDay, perspective, stega}: {selectedDay?: string} & DynamicFetchOptions) {
   'use cache'
 
-  // First fetch conference to get the start date and ID
   const {data: conference} = await sanityFetch({
     query: CONFERENCE_QUERY,
     perspective,
@@ -46,11 +49,18 @@ async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
     return <p className="mt-8 text-text-muted">Schedule not available yet.</p>
   }
 
-  // Compute day boundaries for Day 1 in NYC timezone
-  const startDate = new Date(conference.startDate)
-  const dateStr = conference.startDate.slice(0, 10) // "2026-10-15"
-  const dayStartStr = `${dateStr}T00:00:00-04:00`
-  const dayEndStr = `${dateStr}T23:59:59-04:00`
+  // Compute all conference days
+  const days = computeConferenceDays(conference.startDate, conference.endDate)
+  const activeDay = selectedDay && days.some((d) => d.date === selectedDay)
+    ? selectedDay
+    : days[0]?.date
+
+  if (!activeDay) {
+    return <p className="mt-8 text-text-muted">No schedule dates available.</p>
+  }
+
+  const dayStartStr = `${activeDay}T00:00:00-04:00`
+  const dayEndStr = `${activeDay}T23:59:59-04:00`
 
   const {data: slots} = await sanityFetch({
     query: SCHEDULE_DAY_QUERY,
@@ -63,52 +73,71 @@ async function ScheduleCached({perspective, stega}: DynamicFetchOptions) {
     stega,
   })
 
-  if (!slots || slots.length === 0) {
-    return <p className="mt-8 text-text-muted">No sessions scheduled yet.</p>
-  }
-
   // Group slots by start time
   const timeGroups = new Map<string, SCHEDULE_DAY_QUERY_RESULT>()
-  for (const slot of slots) {
-    const time = slot.startTime
-    if (!time) continue
-    if (!timeGroups.has(time)) {
-      timeGroups.set(time, [])
+  if (slots) {
+    for (const slot of slots) {
+      const time = slot.startTime
+      if (!time) continue
+      if (!timeGroups.has(time)) {
+        timeGroups.set(time, [])
+      }
+      timeGroups.get(time)!.push(slot)
     }
-    timeGroups.get(time)!.push(slot)
   }
 
   return (
-    <section className="mt-8">
-      <p className="mb-6 text-sm text-text-muted">
-        {startDate.toLocaleDateString('en-US', {
-          weekday: 'long',
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric',
-          timeZone: 'America/New_York',
-        })}
-      </p>
-      <ol className="space-y-8" aria-label="Schedule by time">
-        {Array.from(timeGroups.entries()).map(([time, groupSlots]) => (
-          <li key={time}>
-            <time dateTime={time} className="text-sm font-semibold tabular-nums text-text-primary">
-              {new Date(time).toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-                timeZone: 'America/New_York',
-              })}
-            </time>
-            <ul className="mt-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {groupSlots.map((slot) => (
-                <SlotCard key={slot._id} slot={slot} />
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ol>
-    </section>
+    <>
+      <ScheduleDayNav days={days} />
+      <section className="mt-8">
+        {timeGroups.size === 0 ? (
+          <p className="text-text-muted">No sessions scheduled for this day.</p>
+        ) : (
+          <ol className="space-y-8" aria-label="Schedule by time">
+            {Array.from(timeGroups.entries()).map(([time, groupSlots]) => (
+              <li key={time}>
+                <time dateTime={time} className="text-sm font-semibold tabular-nums text-text-primary">
+                  {new Date(time).toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    timeZone: 'America/New_York',
+                  })}
+                </time>
+                <ul className="mt-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {groupSlots.map((slot) => (
+                    <SlotCard key={slot._id} slot={slot} />
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+    </>
   )
+}
+
+function computeConferenceDays(startDate: string, endDate: string | null): Array<{date: string; label: string}> {
+  const start = new Date(startDate)
+  const end = endDate ? new Date(endDate) : start
+  const days: Array<{date: string; label: string}> = []
+
+  const current = new Date(start)
+  let dayNum = 1
+  while (current <= end) {
+    const dateStr = current.toISOString().slice(0, 10)
+    const label = `Day ${dayNum} — ${current.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      timeZone: 'UTC',
+    })}`
+    days.push({date: dateStr, label})
+    current.setDate(current.getDate() + 1)
+    dayNum++
+  }
+
+  return days
 }
 
 function SlotCard({slot}: {slot: SCHEDULE_DAY_QUERY_RESULT[number]}) {
@@ -164,7 +193,7 @@ function SlotCard({slot}: {slot: SCHEDULE_DAY_QUERY_RESULT[number]}) {
               {speaker.photo && (
                 <SanityImage
                   value={speaker.photo}
-                  className="h-6 w-6 rounded-full object-cover"
+                  className="size-6 rounded-full object-cover"
                   width={48}
                   height={48}
                   sizes="24px"

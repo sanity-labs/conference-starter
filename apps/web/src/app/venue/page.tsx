@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function VenuePage() {
   return (
-    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
+    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 lg:px-8 sm:py-24">
       <Suspense>
         <VenueDynamic />
       </Suspense>
@@ -73,7 +73,7 @@ async function VenueCached({perspective, stega}: DynamicFetchOptions) {
         />
       )}
       {venue.description && (
-        <section className="prose mt-8 max-w-none">
+        <section className="prose mt-8 max-w-prose">
           <PortableText value={venue.description} />
         </section>
       )}
@@ -184,7 +184,7 @@ function TransitSection({
   return (
     <section className="mt-12">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Getting Here</h2>
-      <div className="prose mt-4 max-w-none">
+      <div className="prose mt-4 max-w-prose">
         <PortableText value={transitInfo} />
       </div>
     </section>

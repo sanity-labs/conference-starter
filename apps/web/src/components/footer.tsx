@@ -23,7 +23,7 @@ export function Footer({data}: {data: NavData}) {
 
   return (
     <footer className="border-t border-border bg-surface-alt">
-      <div className="mx-auto grid max-w-content-max gap-8 px-6 py-12 sm:grid-cols-3">
+      <div className="mx-auto grid max-w-content-max gap-8 px-6 lg:px-8 py-12 sm:grid-cols-3">
         {/* Brand column */}
         <div>
           <Link href="/" aria-label="Homepage" className="inline-flex items-center gap-2">
@@ -73,7 +73,7 @@ export function Footer({data}: {data: NavData}) {
           </div>
         )}
       </div>
-      <div className="mx-auto max-w-content-max border-t border-border px-6 py-6">
+      <div className="mx-auto max-w-content-max border-t border-border px-6 py-6 lg:px-8">
         <p className="text-sm text-text-muted">
           &copy; {year} {data.name ?? 'Conference'}. All rights reserved.
         </p>

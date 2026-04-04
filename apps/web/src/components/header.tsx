@@ -13,7 +13,7 @@ export function Header({data}: {data: NavData}) {
     <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur-sm">
       <nav
         aria-label="Main navigation"
-        className="relative mx-auto flex max-w-content-max items-center justify-between px-6 py-3"
+        className="relative mx-auto flex max-w-content-max items-center justify-between px-6 py-3 lg:px-8"
       >
         <Link
           href="/"

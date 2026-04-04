@@ -30,15 +30,31 @@ export function stripMarkdown(text: string): string {
 }
 
 /**
- * Async iterable that strips markdown from each chunk.
+ * Async iterable that strips markdown from a streaming response.
  *
- * Imperfect for split tokens (e.g. `**` across chunks) but LLMs
- * typically emit markdown markers as single tokens.
+ * Buffers partial lines so markdown markers split across chunks
+ * (e.g. `**` in one chunk, `bold text**` in the next) are handled
+ * correctly. Flushes on newlines where markdown is line-complete.
  */
 export async function* cleanMarkdownStream(
   stream: AsyncIterable<string>,
 ): AsyncIterable<string> {
+  let buffer = ''
+
   for await (const chunk of stream) {
-    yield stripMarkdown(chunk)
+    buffer += chunk
+
+    // Flush all complete lines, keep the partial trailing line buffered
+    const lastNewline = buffer.lastIndexOf('\n')
+    if (lastNewline !== -1) {
+      const complete = buffer.slice(0, lastNewline + 1)
+      buffer = buffer.slice(lastNewline + 1)
+      yield stripMarkdown(complete)
+    }
+  }
+
+  // Flush remaining buffer
+  if (buffer) {
+    yield stripMarkdown(buffer)
   }
 }

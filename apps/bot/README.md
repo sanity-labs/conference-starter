@@ -23,10 +23,10 @@ The preflight checks will tell you if anything is misconfigured.
 │   Telegram   │◄───────►│  Chat SDK         │
 │   (users)    │         │  ┌─────────────┐  │
 └──────────────┘         │  │ Telegram     │  │
-                         │  │ Adapter      │  │
+                         │              │ Adapter      │                   │
                          │  └─────────────┘  │
                          │  ┌─────────────┐  │
-                         │  │ Sanity State │  │
+                         │              │ Sanity State │                   │
                          │  │ Adapter      │──┼──► Content Lake (locks, subscriptions)
                          │  └─────────────┘  │
                          └────────┬──────────┘
@@ -38,10 +38,10 @@ The preflight checks will tell you if anything is misconfigured.
            │  (organizers)     │     │  (public)           │
            │  ┌─────────────┐  │     │  ┌───────────────┐  │
            │  │ Content     │  │     │  │ Anthropic     │  │
-           │  │ Agent (AI)  │──┼──►  │  │ Sonnet 4.6   │  │
+           │  │ Agent (AI)  │──┼──►  │  │ Sonnet 4.6    │ │
            │  └─────────────┘  │     │  └───────────────┘  │
            └───────────────────┘     │  ┌───────────────┐  │
-                                     │  │ Agent Context │  │
+                                     │                   │ Agent Context │                    │
                                      │  │ MCP (tools)  │──┼──► Sanity MCP
                                      │  └───────────────┘  │
                                      └─────────────────────┘

@@ -84,7 +84,7 @@ async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
 
   if (!conference) {
     return (
-      <section className="mx-auto max-w-content-max px-6 py-16 sm:py-24">
+      <section className="mx-auto max-w-content-max px-6 py-16 lg:px-8 sm:py-24">
         <h1 className="max-w-[30ch] text-3xl font-semibold tracking-tight sm:text-5xl">ContentOps Conf</h1>
         <p className="mt-4 text-pretty text-text-muted">No conference data found.</p>
       </section>
@@ -144,7 +144,7 @@ function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RES
 
   return (
     <section className="border-b border-border bg-surface-alt">
-      <div className="mx-auto max-w-content-max px-6 py-20 sm:py-32">
+      <div className="mx-auto max-w-content-max px-6 py-20 lg:px-8 sm:py-32">
         {/* Date & location badge */}
         {(dateLabel || venueLabel) && (
           <p className="text-sm font-medium tabular-nums text-text-muted">
@@ -221,7 +221,7 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
   const featured = speakers.slice(0, 8)
 
   return (
-    <section className="mx-auto max-w-content-max px-6 py-16 sm:py-20">
+    <section className="mx-auto max-w-content-max px-6 py-16 lg:px-8 sm:py-20">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Speakers</h2>
       <ul role="list" className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
         {featured.map((speaker) => (
@@ -261,7 +261,7 @@ function SessionsPreview({sessions}: {sessions: FEATURED_SESSIONS_QUERY_RESULT})
   if (!sessions || sessions.length === 0) return null
 
   return (
-    <section className="mx-auto max-w-content-max px-6 py-16 sm:py-20">
+    <section className="mx-auto max-w-content-max px-6 py-16 lg:px-8 sm:py-20">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Sessions</h2>
       <ul role="list" className="mt-6 space-y-4">
         {sessions.map((session) => (
@@ -322,7 +322,7 @@ function SponsorsBar({sponsors}: {sponsors: SPONSORS_QUERY_RESULT}) {
 
   return (
     <section className="border-t border-border py-16 sm:py-20">
-      <div className="mx-auto max-w-content-max px-6">
+      <div className="mx-auto max-w-content-max px-6 lg:px-8">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Sponsors</h2>
       <ul role="list" className="mt-6 flex flex-wrap items-center gap-8">
         {topSponsors.map((sponsor) => (
@@ -369,7 +369,7 @@ function VenueSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RE
   if (!conference.venue) return null
 
   return (
-    <section className="mx-auto max-w-content-max px-6 py-16 sm:py-20">
+    <section className="mx-auto max-w-content-max px-6 py-16 lg:px-8 sm:py-20">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Venue</h2>
       <div className="card mt-4">
         <p className="text-lg font-medium">{conference.venue.name}</p>

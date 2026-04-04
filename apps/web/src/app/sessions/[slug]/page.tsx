@@ -62,7 +62,7 @@ async function fetchSessionForMetadata(slug: string) {
 export default async function SessionPage({params}: Props) {
   const {slug} = await params
   return (
-    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
+    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 lg:px-8 sm:py-24">
       <Suspense>
         <SessionDetailDynamic slug={slug} />
       </Suspense>
@@ -225,7 +225,7 @@ async function SessionDetailCached({
       <SpeakersList speakers={session.speakers} moderator={session.moderator} />
 
       {session.abstract && (
-        <section className="prose mt-8 max-w-none">
+        <section className="prose mt-8 max-w-prose">
           <h2>About this session</h2>
           <PortableText value={session.abstract} />
         </section>

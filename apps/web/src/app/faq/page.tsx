@@ -17,7 +17,7 @@ export const metadata = createMetadata({
 
 export default function FaqPage() {
   return (
-    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
+    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 lg:px-8 sm:py-24">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
         Frequently Asked Questions
       </h1>

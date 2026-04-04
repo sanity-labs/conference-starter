@@ -137,67 +137,82 @@ async function HomePageCached({perspective, stega}: DynamicFetchOptions) {
 }
 
 function HeroSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RESULT>}) {
+  const dateLabel = conference.startDate
+    ? formatDateRange(conference.startDate, conference.endDate)
+    : null
+  const venueLabel = conference.venue?.name
+
   return (
-    <section className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
-      <h1 className="max-w-[30ch] text-3xl font-semibold tracking-tight sm:text-5xl">{conference.name}</h1>
-      {conference.tagline && (
-        <p className="mt-4 max-w-[40ch] text-xl text-pretty text-text-secondary">{conference.tagline}</p>
-      )}
-      {conference.description && (
-        <p className="mt-6 max-w-[56ch] text-pretty text-text-secondary">{conference.description}</p>
-      )}
-      {conference.startDate && (
-        <p className="mt-4 text-sm text-text-muted">
-          <time dateTime={conference.startDate}>
-            {new Date(conference.startDate).toLocaleDateString('en-US', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
-              timeZone: 'America/New_York',
-            })}
-          </time>
-          {conference.endDate && (
-            <>
-              {' — '}
-              <time dateTime={conference.endDate}>
-                {new Date(conference.endDate).toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                  timeZone: 'America/New_York',
-                })}
-              </time>
-            </>
-          )}
-        </p>
-      )}
-      {conference.tracks && conference.tracks.length > 0 && (
-        <nav className="mt-6">
-          <h2 className="sr-only">Tracks</h2>
-          <ul className="flex flex-wrap gap-2">
-            {conference.tracks.map((track) => (
-              <li key={track._id}>
-                <TrackBadge name={track.name} slug={track.slug} color={track.color} />
-              </li>
-            ))}
-          </ul>
+    <section className="border-b border-border bg-surface-alt">
+      <div className="mx-auto max-w-content-wide px-6 py-20 sm:py-32">
+        {/* Date & location badge */}
+        {(dateLabel || venueLabel) && (
+          <p className="text-sm font-medium tabular-nums text-text-muted">
+            {dateLabel}
+            {dateLabel && venueLabel && ' · '}
+            {venueLabel && (
+              <Link href="/venue" className="hover:text-text-primary hover:underline">
+                {venueLabel}
+              </Link>
+            )}
+          </p>
+        )}
+
+        <h1 className="mt-4 max-w-[24ch] text-4xl font-semibold tracking-tight sm:text-6xl">
+          {conference.name}
+        </h1>
+
+        {conference.tagline && (
+          <p className="mt-6 max-w-[48ch] text-lg text-pretty text-text-secondary sm:text-xl">
+            {conference.tagline}
+          </p>
+        )}
+
+        {conference.tracks && conference.tracks.length > 0 && (
+          <nav className="mt-8">
+            <h2 className="sr-only">Tracks</h2>
+            <ul className="flex flex-wrap gap-2">
+              {conference.tracks.map((track) => (
+                <li key={track._id}>
+                  <TrackBadge name={track.name} slug={track.slug} color={track.color} />
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+
+        <nav className="mt-8 flex flex-wrap gap-3">
+          <Link href="/schedule" className="btn btn-primary">
+            View Schedule
+          </Link>
+          <Link href="/sessions" className="btn btn-secondary">
+            Browse Sessions
+          </Link>
+          <Link href="/speakers" className="btn btn-secondary">
+            Meet Speakers
+          </Link>
         </nav>
-      )}
-      <nav className="mt-8 flex flex-wrap gap-3">
-        <Link href="/schedule" className="btn btn-primary">
-          View Schedule
-        </Link>
-        <Link href="/sessions" className="btn btn-secondary">
-          Browse Sessions
-        </Link>
-        <Link href="/speakers" className="btn btn-secondary">
-          Meet Speakers
-        </Link>
-      </nav>
+      </div>
     </section>
   )
+}
+
+function formatDateRange(start: string, end: string | null): string {
+  const opts: Intl.DateTimeFormatOptions = {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'America/New_York',
+  }
+  const startStr = new Date(start).toLocaleDateString('en-US', opts)
+  if (!end) return startStr
+  // Same month? Shorten to "October 15–16, 2026"
+  const s = new Date(start)
+  const e = new Date(end)
+  if (s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) {
+    return `${s.toLocaleDateString('en-US', {month: 'long', timeZone: 'America/New_York'})} ${s.getDate()}–${e.getDate()}, ${s.getFullYear()}`
+  }
+  return `${startStr} — ${new Date(end).toLocaleDateString('en-US', opts)}`
 }
 
 function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
@@ -206,7 +221,7 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
   const featured = speakers.slice(0, 8)
 
   return (
-    <section className="mx-auto max-w-content-wide px-6 py-12">
+    <section className="mx-auto max-w-content-wide px-6 py-16 sm:py-20">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Speakers</h2>
       <ul role="list" className="mt-6 grid grid-cols-2 gap-6 sm:grid-cols-4">
         {featured.map((speaker) => (
@@ -222,8 +237,10 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
                 />
               )}
               <p className="mt-2 font-medium">{speaker.name}</p>
-              {speaker.role && (
-                <p className="text-sm text-text-muted">{speaker.role}</p>
+              {(speaker.role || speaker.company) && (
+                <p className="text-sm text-text-muted">
+                  {[speaker.role, speaker.company].filter(Boolean).join(', ')}
+                </p>
               )}
             </Link>
           </li>
@@ -244,7 +261,7 @@ function SessionsPreview({sessions}: {sessions: FEATURED_SESSIONS_QUERY_RESULT})
   if (!sessions || sessions.length === 0) return null
 
   return (
-    <section className="mx-auto max-w-content-wide px-6 py-12">
+    <section className="mx-auto max-w-content-wide px-6 py-16 sm:py-20">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Sessions</h2>
       <ul role="list" className="mt-6 space-y-4">
         {sessions.map((session) => (
@@ -304,7 +321,8 @@ function SponsorsBar({sponsors}: {sponsors: SPONSORS_QUERY_RESULT}) {
   if (topSponsors.length === 0) return null
 
   return (
-    <section className="mx-auto max-w-content-wide px-6 py-12">
+    <section className="border-t border-border py-16 sm:py-20">
+      <div className="mx-auto max-w-content-wide px-6">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Sponsors</h2>
       <ul role="list" className="mt-6 flex flex-wrap items-center gap-8">
         {topSponsors.map((sponsor) => (
@@ -342,6 +360,7 @@ function SponsorsBar({sponsors}: {sponsors: SPONSORS_QUERY_RESULT}) {
           View all sponsors &rarr;
         </Link>
       </p>
+      </div>
     </section>
   )
 }
@@ -350,7 +369,7 @@ function VenueSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RE
   if (!conference.venue) return null
 
   return (
-    <section className="mx-auto max-w-content-wide px-6 py-12">
+    <section className="mx-auto max-w-content-wide px-6 py-16 sm:py-20">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Venue</h2>
       <div className="card mt-4">
         <p className="text-lg font-medium">{conference.venue.name}</p>

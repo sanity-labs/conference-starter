@@ -47,15 +47,7 @@ export type NavItem = {
   _type: "navItem";
   title?: string;
   linkType: "route" | "page" | "external";
-  route?:
-    | "/schedule"
-    | "/speakers"
-    | "/sessions"
-    | "/sponsors"
-    | "/venue"
-    | "/cfp"
-    | "/announcements"
-    | "/faq";
+  route?: "/schedule" | "/speakers" | "/sessions" | "/sponsors" | "/venue" | "/cfp" | "/announcements" | "/faq";
   page?: PageReference | SessionReference | PersonReference;
   url?: string;
 };
@@ -70,11 +62,9 @@ export type FaqReference = {
 export type FaqSection = {
   _type: "faqSection";
   heading?: string;
-  items?: Array<
-    {
-      _key: string;
-    } & FaqReference
-  >;
+  items?: Array<{
+    _key: string;
+  } & FaqReference>;
 };
 
 export type CtaBlock = {
@@ -100,11 +90,9 @@ export type SponsorBar = {
 export type SpeakerGrid = {
   _type: "speakerGrid";
   heading?: string;
-  speakers?: Array<
-    {
-      _key: string;
-    } & PersonReference
-  >;
+  speakers?: Array<{
+    _key: string;
+  } & PersonReference>;
   limit?: number;
 };
 
@@ -118,42 +106,31 @@ export type SanityImageAssetReference = {
 export type RichText = {
   _type: "richText";
   heading?: string;
-  content: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>;
-          text?: string;
-          _type: "span";
-          _key: string;
-        }>;
-        style?:
-          | "normal"
-          | "h1"
-          | "h2"
-          | "h3"
-          | "h4"
-          | "h5"
-          | "h6"
-          | "blockquote";
-        listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
-        level?: number;
-        _type: "block";
-        _key: string;
-      }
-    | {
-        asset?: SanityImageAssetReference;
-        media?: unknown;
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        _type: "image";
-        _key: string;
-      }
-  >;
+  content: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  } | {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
 };
 
 export type Hero = {
@@ -239,14 +216,7 @@ export type Faq = {
     _type: "block";
     _key: string;
   }>;
-  category?:
-    | "general"
-    | "venue"
-    | "schedule"
-    | "registration"
-    | "accessibility"
-    | "conduct"
-    | "speakers";
+  category?: "general" | "venue" | "schedule" | "registration" | "accessibility" | "conduct" | "speakers";
 };
 
 export type Prompt = {
@@ -292,19 +262,16 @@ export type EmailTemplate = {
   slug: Slug;
   subject: string;
   body: Array<{
-    children?: Array<
-      | {
-          marks?: Array<string>;
-          text?: string;
-          _type: "span";
-          _key: string;
-        }
-      | {
-          variableKey: string;
-          _type: "pteInterpolationVariable";
-          _key: string;
-        }
-    >;
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    } | {
+      variableKey: string;
+      _type: "pteInterpolationVariable";
+      _key: string;
+    }>;
     style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
     listItem?: "bullet" | "number";
     markDefs?: Array<{
@@ -317,13 +284,7 @@ export type EmailTemplate = {
     _key: string;
   }>;
   audience?: "all-attendees" | "speakers" | "sponsors" | "submitters";
-  trigger?:
-    | "manual"
-    | "on-submission-received"
-    | "on-submission-accepted"
-    | "on-submission-rejected"
-    | "on-speaker-confirmed"
-    | "scheduled";
+  trigger?: "manual" | "on-submission-received" | "on-submission-accepted" | "on-submission-rejected" | "on-speaker-confirmed" | "scheduled";
   status?: "draft" | "active" | "archived";
 };
 
@@ -355,14 +316,7 @@ export type Submission = {
   submitterEmail: string;
   company?: string;
   bio: string;
-  status?:
-    | "submitted"
-    | "screening"
-    | "scored"
-    | "in-review"
-    | "accepted"
-    | "rejected"
-    | "withdrawn";
+  status?: "submitted" | "screening" | "scored" | "in-review" | "accepted" | "rejected" | "withdrawn";
   submittedAt?: string;
   aiScreening?: {
     score?: number;
@@ -389,20 +343,17 @@ export type Announcement = {
   title: string;
   slug: Slug;
   body: string;
-  links?: Array<
-    | {
-        label: string;
-        url: string;
-        _type: "externalLink";
-        _key: string;
-      }
-    | {
-        label: string;
-        reference: SessionReference | PersonReference | VenueReference;
-        _type: "internalLink";
-        _key: string;
-      }
-  >;
+  links?: Array<{
+    label: string;
+    url: string;
+    _type: "externalLink";
+    _key: string;
+  } | {
+    label: string;
+    reference: SessionReference | PersonReference | VenueReference;
+    _type: "internalLink";
+    _key: string;
+  }>;
   status?: "draft" | "ready" | "published";
   publishedAt?: string;
   distributionLog?: Array<{
@@ -423,29 +374,21 @@ export type Page = {
   _rev: string;
   title: string;
   slug: Slug;
-  sections?: Array<
-    | ({
-        _key: string;
-      } & Hero)
-    | ({
-        _key: string;
-      } & RichText)
-    | ({
-        _key: string;
-      } & SpeakerGrid)
-    | ({
-        _key: string;
-      } & SponsorBar)
-    | ({
-        _key: string;
-      } & SchedulePreview)
-    | ({
-        _key: string;
-      } & CtaBlock)
-    | ({
-        _key: string;
-      } & FaqSection)
-  >;
+  sections?: Array<{
+    _key: string;
+  } & Hero | {
+    _key: string;
+  } & RichText | {
+    _key: string;
+  } & SpeakerGrid | {
+    _key: string;
+  } & SponsorBar | {
+    _key: string;
+  } & SchedulePreview | {
+    _key: string;
+  } & CtaBlock | {
+    _key: string;
+  } & FaqSection>;
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: {
@@ -563,14 +506,7 @@ export type Session = {
   _rev: string;
   title: string;
   slug: Slug;
-  sessionType:
-    | "keynote"
-    | "talk"
-    | "panel"
-    | "workshop"
-    | "lightning"
-    | "break"
-    | "social";
+  sessionType: "keynote" | "talk" | "panel" | "workshop" | "lightning" | "break" | "social";
   abstract?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -592,11 +528,9 @@ export type Session = {
   track?: TrackReference;
   level?: "beginner" | "intermediate" | "advanced";
   duration: number;
-  speakers?: Array<
-    {
-      _key: string;
-    } & PersonReference
-  >;
+  speakers?: Array<{
+    _key: string;
+  } & PersonReference>;
   moderator?: PersonReference;
   capacity?: number;
   prerequisites?: string;
@@ -710,16 +644,12 @@ export type Conference = {
   startDate: string;
   endDate: string;
   venue?: VenueReference;
-  tracks?: Array<
-    {
-      _key: string;
-    } & TrackReference
-  >;
-  organizers?: Array<
-    {
-      _key: string;
-    } & PersonReference
-  >;
+  tracks?: Array<{
+    _key: string;
+  } & TrackReference>;
+  organizers?: Array<{
+    _key: string;
+  } & PersonReference>;
   logo?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -755,11 +685,9 @@ export type Conference = {
     _type: "block";
     _key: string;
   }>;
-  scoringCriteria?: Array<
-    {
-      _key: string;
-    } & ScoringCriterion
-  >;
+  scoringCriteria?: Array<{
+    _key: string;
+  } & ScoringCriterion>;
   registrationUrl?: string;
   registrationLabel?: string;
   socialLinks?: {
@@ -769,16 +697,12 @@ export type Conference = {
     instagram?: string;
     mastodon?: string;
   };
-  headerNav?: Array<
-    {
-      _key: string;
-    } & NavItem
-  >;
-  footerNav?: Array<
-    {
-      _key: string;
-    } & NavItem
-  >;
+  headerNav?: Array<{
+    _key: string;
+  } & NavItem>;
+  footerNav?: Array<{
+    _key: string;
+  } & NavItem>;
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: {
@@ -799,42 +723,31 @@ export type Venue = {
   name: string;
   slug: Slug;
   address: string;
-  description?: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>;
-          text?: string;
-          _type: "span";
-          _key: string;
-        }>;
-        style?:
-          | "normal"
-          | "h1"
-          | "h2"
-          | "h3"
-          | "h4"
-          | "h5"
-          | "h6"
-          | "blockquote";
-        listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
-        level?: number;
-        _type: "block";
-        _key: string;
-      }
-    | {
-        asset?: SanityImageAssetReference;
-        media?: unknown;
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        _type: "image";
-        _key: string;
-      }
-  >;
+  description?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  } | {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
   mapUrl?: string;
   transitInfo?: Array<{
     children?: Array<{
@@ -1002,60 +915,7 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes =
-  | ScoringCriterion
-  | PageReference
-  | SessionReference
-  | PersonReference
-  | NavItem
-  | FaqReference
-  | FaqSection
-  | CtaBlock
-  | SchedulePreview
-  | SponsorBar
-  | SpeakerGrid
-  | SanityImageAssetReference
-  | RichText
-  | Hero
-  | Cta
-  | ChatState
-  | AgentConversation
-  | Faq
-  | Prompt
-  | SubmissionReference
-  | EmailLog
-  | EmailTemplate
-  | Slug
-  | ConferenceReference
-  | Submission
-  | VenueReference
-  | Announcement
-  | Page
-  | SanityImageCrop
-  | SanityImageHotspot
-  | Sponsor
-  | RoomReference
-  | ScheduleSlot
-  | Room
-  | TrackReference
-  | Session
-  | Track
-  | Color
-  | Person
-  | Conference
-  | Venue
-  | SanityAgentContext
-  | RgbaColor
-  | HsvaColor
-  | HslaColor
-  | SanityImagePaletteSwatch
-  | SanityImagePalette
-  | SanityImageDimensions
-  | SanityImageMetadata
-  | SanityFileAsset
-  | SanityAssetSourceData
-  | SanityImageAsset
-  | Geopoint;
+export type AllSanitySchemaTypes = ScoringCriterion | PageReference | SessionReference | PersonReference | NavItem | FaqReference | FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerGrid | SanityImageAssetReference | RichText | Hero | Cta | ChatState | AgentConversation | Faq | Prompt | SubmissionReference | EmailLog | EmailTemplate | Slug | ConferenceReference | Submission | VenueReference | Announcement | Page | SanityImageCrop | SanityImageHotspot | Sponsor | RoomReference | ScheduleSlot | Room | TrackReference | Session | Track | Color | Person | Conference | Venue | SanityAgentContext | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 
 // Source: ../../packages/sanity-queries/src/announcements.ts
 // Variable: ANNOUNCEMENTS_QUERY
@@ -1077,35 +937,29 @@ export type ANNOUNCEMENT_DETAIL_QUERY_RESULT = {
   slug: string;
   publishedAt: string | null;
   body: string;
-  links: Array<
-    | {
-        _type: "externalLink";
-        label: string;
-        url: string;
-        reference: null;
-      }
-    | {
-        _type: "internalLink";
-        label: string;
-        url: null;
-        reference:
-          | {
-              _type: "person";
-              slug: string;
-              name: string;
-            }
-          | {
-              _type: "session";
-              slug: string;
-              name: string;
-            }
-          | {
-              _type: "venue";
-              slug: string;
-              name: string;
-            };
-      }
-  > | null;
+  links: Array<{
+    _type: "externalLink";
+    label: string;
+    url: string;
+    reference: null;
+  } | {
+    _type: "internalLink";
+    label: string;
+    url: null;
+    reference: {
+      _type: "person";
+      slug: string;
+      name: string;
+    } | {
+      _type: "session";
+      slug: string;
+      name: string;
+    } | {
+      _type: "venue";
+      slug: string;
+      name: string;
+    };
+  }> | null;
 } | null;
 
 // Source: ../../packages/sanity-queries/src/announcements.ts
@@ -1207,15 +1061,7 @@ export type FAQ_QUERY_RESULT = Array<{
     _type: "block";
     _key: string;
   }>;
-  category:
-    | "accessibility"
-    | "conduct"
-    | "general"
-    | "registration"
-    | "schedule"
-    | "speakers"
-    | "venue"
-    | null;
+  category: "accessibility" | "conduct" | "general" | "registration" | "schedule" | "speakers" | "venue" | null;
 }>;
 
 // Source: ../../packages/sanity-queries/src/navigation.ts
@@ -1245,66 +1091,40 @@ export type NAV_QUERY_RESULT = {
     _key: string;
     title: string | null;
     linkType: "external" | "page" | "route";
-    page:
-      | {
-          _type: "page";
-          title: string;
-          slug: string;
-        }
-      | {
-          _type: "person";
-          title: null;
-          slug: string;
-        }
-      | {
-          _type: "session";
-          title: string;
-          slug: string;
-        }
-      | null;
-    route:
-      | "/announcements"
-      | "/cfp"
-      | "/faq"
-      | "/schedule"
-      | "/sessions"
-      | "/speakers"
-      | "/sponsors"
-      | "/venue"
-      | null;
+    page: {
+      _type: "page";
+      title: string;
+      slug: string;
+    } | {
+      _type: "person";
+      title: null;
+      slug: string;
+    } | {
+      _type: "session";
+      title: string;
+      slug: string;
+    } | null;
+    route: "/announcements" | "/cfp" | "/faq" | "/schedule" | "/sessions" | "/speakers" | "/sponsors" | "/venue" | null;
     url: string | null;
   }> | null;
   footerNav: Array<{
     _key: string;
     title: string | null;
     linkType: "external" | "page" | "route";
-    page:
-      | {
-          _type: "page";
-          title: string;
-          slug: string;
-        }
-      | {
-          _type: "person";
-          title: null;
-          slug: string;
-        }
-      | {
-          _type: "session";
-          title: string;
-          slug: string;
-        }
-      | null;
-    route:
-      | "/announcements"
-      | "/cfp"
-      | "/faq"
-      | "/schedule"
-      | "/sessions"
-      | "/speakers"
-      | "/sponsors"
-      | "/venue"
-      | null;
+    page: {
+      _type: "page";
+      title: string;
+      slug: string;
+    } | {
+      _type: "person";
+      title: null;
+      slug: string;
+    } | {
+      _type: "session";
+      title: string;
+      slug: string;
+    } | null;
+    route: "/announcements" | "/cfp" | "/faq" | "/schedule" | "/sessions" | "/speakers" | "/sponsors" | "/venue" | null;
     url: string | null;
   }> | null;
 } | null;
@@ -1316,152 +1136,125 @@ export type PAGE_QUERY_RESULT = {
   _id: string;
   title: string;
   slug: string;
-  sections: Array<
-    | {
+  sections: Array<{
+    _key: string;
+    _type: "ctaBlock";
+    heading: string;
+    body: string | null;
+    cta: {
+      label: string;
+      linkType: "external" | "internal" | null;
+      style: "ghost" | "primary" | "secondary" | null;
+      externalUrl: string | null;
+      internalLink: {
+        _type: "page";
+        slug: string;
+      } | {
+        _type: "person";
+        slug: string;
+      } | {
+        _type: "session";
+        slug: string;
+      } | null;
+    };
+  } | {
+    _key: string;
+    _type: "faqSection";
+    heading: string | null;
+    items: Array<{
+      _key: string;
+      question: null;
+      answer: null;
+    }> | null;
+  } | {
+    _key: string;
+    _type: "hero";
+    heading: string;
+    subheading: string | null;
+    backgroundImage: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+      alt: null;
+    } | null;
+    cta: {
+      label: string;
+      linkType: "external" | "internal" | null;
+      style: "ghost" | "primary" | "secondary" | null;
+      externalUrl: string | null;
+      internalLink: {
+        _type: "page";
+        slug: string;
+      } | {
+        _type: "person";
+        slug: string;
+      } | {
+        _type: "session";
+        slug: string;
+      } | null;
+    } | null;
+  } | {
+    _key: string;
+    _type: "richText";
+    heading: string | null;
+    content: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
         _key: string;
-        _type: "ctaBlock";
-        heading: string;
-        body: string | null;
-        cta: {
-          label: string;
-          linkType: "external" | "internal" | null;
-          style: "ghost" | "primary" | "secondary" | null;
-          externalUrl: string | null;
-          internalLink:
-            | {
-                _type: "page";
-                slug: string;
-              }
-            | {
-                _type: "person";
-                slug: string;
-              }
-            | {
-                _type: "session";
-                slug: string;
-              }
-            | null;
-        };
-      }
-    | {
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
         _key: string;
-        _type: "faqSection";
-        heading: string | null;
-        items: Array<{
-          _key: string;
-          question: null;
-          answer: null;
-        }> | null;
-      }
-    | {
-        _key: string;
-        _type: "hero";
-        heading: string;
-        subheading: string | null;
-        backgroundImage: {
-          asset?: SanityImageAssetReference;
-          media?: unknown;
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
-          alt: null;
-        } | null;
-        cta: {
-          label: string;
-          linkType: "external" | "internal" | null;
-          style: "ghost" | "primary" | "secondary" | null;
-          externalUrl: string | null;
-          internalLink:
-            | {
-                _type: "page";
-                slug: string;
-              }
-            | {
-                _type: "person";
-                slug: string;
-              }
-            | {
-                _type: "session";
-                slug: string;
-              }
-            | null;
-        } | null;
-      }
-    | {
-        _key: string;
-        _type: "richText";
-        heading: string | null;
-        content: Array<
-          | {
-              children?: Array<{
-                marks?: Array<string>;
-                text?: string;
-                _type: "span";
-                _key: string;
-              }>;
-              style?:
-                | "blockquote"
-                | "h1"
-                | "h2"
-                | "h3"
-                | "h4"
-                | "h5"
-                | "h6"
-                | "normal";
-              listItem?: "bullet" | "number";
-              markDefs?: Array<{
-                href?: string;
-                _type: "link";
-                _key: string;
-              }>;
-              level?: number;
-              _type: "block";
-              _key: string;
-            }
-          | {
-              asset?: SanityImageAssetReference;
-              media?: unknown;
-              hotspot?: SanityImageHotspot;
-              crop?: SanityImageCrop;
-              _type: "image";
-              _key: string;
-            }
-        >;
-      }
-    | {
-        _key: string;
-        _type: "schedulePreview";
-        heading: string | null;
-        day: string | null;
-        maxSlots: number | null;
-      }
-    | {
-        _key: string;
-        _type: "speakerGrid";
-        heading: string | null;
-        limit: number | null;
-        speakers: Array<{
-          _id: string;
-          name: string;
-          slug: string;
-          role: string;
-          photo: {
-            asset?: SanityImageAssetReference;
-            media?: unknown;
-            hotspot?: SanityImageHotspot;
-            crop?: SanityImageCrop;
-            alt: string;
-            _type: "image";
-          };
-        }> | null;
-      }
-    | {
-        _key: string;
-        _type: "sponsorBar";
-        heading: string | null;
-        tiers: Array<string> | null;
-      }
-  > | null;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    } | {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+      _key: string;
+    }>;
+  } | {
+    _key: string;
+    _type: "schedulePreview";
+    heading: string | null;
+    day: string | null;
+    maxSlots: number | null;
+  } | {
+    _key: string;
+    _type: "speakerGrid";
+    heading: string | null;
+    limit: number | null;
+    speakers: Array<{
+      _id: string;
+      name: string;
+      slug: string;
+      role: string;
+      photo: {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt: string;
+        _type: "image";
+      };
+    }> | null;
+  } | {
+    _key: string;
+    _type: "sponsorBar";
+    heading: string | null;
+    tiers: Array<string> | null;
+  }> | null;
   seoTitle: string | null;
   seoDescription: string | null;
   ogImage: {
@@ -1553,14 +1346,7 @@ export type SPEAKER_DETAIL_QUERY_RESULT = {
     _id: string;
     title: string;
     slug: string;
-    sessionType:
-      | "break"
-      | "keynote"
-      | "lightning"
-      | "panel"
-      | "social"
-      | "talk"
-      | "workshop";
+    sessionType: "break" | "keynote" | "lightning" | "panel" | "social" | "talk" | "workshop";
     level: "advanced" | "beginner" | "intermediate" | null;
     track: {
       name: string;
@@ -1605,14 +1391,7 @@ export type SCHEDULE_DAY_QUERY_RESULT = Array<{
     _id: string;
     title: string;
     slug: string;
-    sessionType:
-      | "break"
-      | "keynote"
-      | "lightning"
-      | "panel"
-      | "social"
-      | "talk"
-      | "workshop";
+    sessionType: "break" | "keynote" | "lightning" | "panel" | "social" | "talk" | "workshop";
     level: "advanced" | "beginner" | "intermediate" | null;
     duration: number;
     track: {
@@ -1651,14 +1430,7 @@ export type SESSION_DETAIL_QUERY_RESULT = {
   _id: string;
   title: string;
   slug: string;
-  sessionType:
-    | "break"
-    | "keynote"
-    | "lightning"
-    | "panel"
-    | "social"
-    | "talk"
-    | "workshop";
+  sessionType: "break" | "keynote" | "lightning" | "panel" | "social" | "talk" | "workshop";
   level: "advanced" | "beginner" | "intermediate" | null;
   duration: number;
   abstract: Array<{
@@ -1751,14 +1523,7 @@ export type SESSIONS_SUMMARY_QUERY_RESULT = Array<{
   _id: string;
   title: string;
   slug: string;
-  sessionType:
-    | "break"
-    | "keynote"
-    | "lightning"
-    | "panel"
-    | "social"
-    | "talk"
-    | "workshop";
+  sessionType: "break" | "keynote" | "lightning" | "panel" | "social" | "talk" | "workshop";
 }>;
 
 // Source: ../../packages/sanity-queries/src/sessions.ts
@@ -1768,14 +1533,7 @@ export type FEATURED_SESSIONS_QUERY_RESULT = Array<{
   _id: string;
   title: string;
   slug: string;
-  sessionType:
-    | "break"
-    | "keynote"
-    | "lightning"
-    | "panel"
-    | "social"
-    | "talk"
-    | "workshop";
+  sessionType: "break" | "keynote" | "lightning" | "panel" | "social" | "talk" | "workshop";
   track: {
     _id: string;
     name: string;
@@ -1804,14 +1562,7 @@ export type SESSIONS_LISTING_QUERY_RESULT = Array<{
   _id: string;
   title: string;
   slug: string;
-  sessionType:
-    | "break"
-    | "keynote"
-    | "lightning"
-    | "panel"
-    | "social"
-    | "talk"
-    | "workshop";
+  sessionType: "break" | "keynote" | "lightning" | "panel" | "social" | "talk" | "workshop";
   level: "advanced" | "beginner" | "intermediate" | null;
   duration: number;
   track: {
@@ -1849,14 +1600,7 @@ export type RELATED_SESSIONS_QUERY_RESULT = Array<{
   _id: string;
   title: string;
   slug: string;
-  sessionType:
-    | "break"
-    | "keynote"
-    | "lightning"
-    | "panel"
-    | "social"
-    | "talk"
-    | "workshop";
+  sessionType: "break" | "keynote" | "lightning" | "panel" | "social" | "talk" | "workshop";
   track: {
     _id: string;
     name: string;
@@ -1931,42 +1675,31 @@ export type VENUE_QUERY_RESULT = {
   name: string;
   slug: string;
   address: string;
-  description: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>;
-          text?: string;
-          _type: "span";
-          _key: string;
-        }>;
-        style?:
-          | "blockquote"
-          | "h1"
-          | "h2"
-          | "h3"
-          | "h4"
-          | "h5"
-          | "h6"
-          | "normal";
-        listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
-        level?: number;
-        _type: "block";
-        _key: string;
-      }
-    | {
-        asset?: SanityImageAssetReference;
-        media?: unknown;
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        _type: "image";
-        _key: string;
-      }
-  > | null;
+  description: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  } | {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }> | null;
   mapUrl: string | null;
   transitInfo: Array<{
     children?: Array<{
@@ -2012,14 +1745,7 @@ export type VENUE_QUERY_RESULT = {
       session: {
         title: string;
         slug: string;
-        sessionType:
-          | "break"
-          | "keynote"
-          | "lightning"
-          | "panel"
-          | "social"
-          | "talk"
-          | "workshop";
+        sessionType: "break" | "keynote" | "lightning" | "panel" | "social" | "talk" | "workshop";
       };
     }>;
   }>;
@@ -2029,26 +1755,27 @@ export type VENUE_QUERY_RESULT = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '*[_type == "announcement" && status == "published"] | order(publishedAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    publishedAt,\n    body\n  }': ANNOUNCEMENTS_QUERY_RESULT;
-    '*[_type == "announcement" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    publishedAt,\n    body,\n    links[] {\n      _type,\n      label,\n      url,\n      reference-> {\n        _type,\n        "slug": slug.current,\n        "name": coalesce(title, name)\n      }\n    }\n  }': ANNOUNCEMENT_DETAIL_QUERY_RESULT;
-    '*[_type == "announcement" && status == "published" && defined(slug.current)]{ "slug": slug.current, _updatedAt }': ANNOUNCEMENT_SLUGS_QUERY_RESULT;
-    '*[_type == "conference"][0]{\n    _id,\n    name,\n    cfpOpen,\n    cfpDeadline,\n    cfpGuidelines\n  }': CFP_CONFIG_QUERY_RESULT;
-    '*[_type == "conference"][0]{\n    _id,\n    name,\n    "slug": slug.current,\n    tagline,\n    description,\n    startDate,\n    endDate,\n    venue->{\n      _id,\n      name,\n      address\n    },\n    tracks[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      color\n    },\n    logo { ..., alt },\n    socialCard\n  }': CONFERENCE_QUERY_RESULT;
-    '*[_type == "faq"] | order(category asc, question asc) {\n    _id,\n    question,\n    answer,\n    category\n  }': FAQ_QUERY_RESULT;
-    '*[_type == "conference"][0]{\n    name,\n    tagline,\n    logo { ..., alt },\n    registrationUrl,\n    registrationLabel,\n    socialLinks,\n    headerNav[] {\n      _key, title, linkType,\n      page->{ _type, title, "slug": slug.current },\n      route, url\n    },\n    footerNav[] {\n      _key, title, linkType,\n      page->{ _type, title, "slug": slug.current },\n      route, url\n    }\n  }': NAV_QUERY_RESULT;
-    '*[_type == "page" && slug.current == $slug][0]{\n    _id,\n    title,\n    "slug": slug.current,\n    sections[] {\n      _key,\n      _type,\n      _type == "hero" => {\n        heading,\n        subheading,\n        backgroundImage { ..., alt },\n        cta { label, linkType, style, externalUrl, internalLink->{ _type, "slug": slug.current } }\n      },\n      _type == "richText" => {\n        heading,\n        content[] { ... }\n      },\n      _type == "speakerGrid" => {\n        heading,\n        limit,\n        speakers[]->{ _id, name, "slug": slug.current, role, photo { ..., alt } }\n      },\n      _type == "sponsorBar" => {\n        heading,\n        tiers\n      },\n      _type == "schedulePreview" => {\n        heading,\n        day,\n        maxSlots\n      },\n      _type == "ctaBlock" => {\n        heading,\n        body,\n        cta { label, linkType, style, externalUrl, internalLink->{ _type, "slug": slug.current } }\n      },\n      _type == "faqSection" => {\n        heading,\n        items[] { _key, question, answer }\n      }\n    },\n    seoTitle,\n    seoDescription,\n    ogImage\n  }': PAGE_QUERY_RESULT;
-    '*[_type == "page" && defined(slug.current)]{ "slug": slug.current, _updatedAt }': PAGE_SLUGS_QUERY_RESULT;
-    '*[_type == "person"] | order(name asc) {\n    _id,\n    name,\n    "slug": slug.current,\n    photo { ..., alt },\n    role,\n    company,\n    "sessionCount": count(*[_type == "session" && references(^._id)])\n  }': SPEAKERS_QUERY_RESULT;
-    '*[_type == "person" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    photo { ..., alt },\n    role,\n    company,\n    bio,\n    twitter,\n    github,\n    linkedin,\n    website,\n    seoTitle,\n    seoDescription,\n    ogImage,\n    "sessions": *[_type == "session" && references(^._id)] {\n      _id,\n      title,\n      "slug": slug.current,\n      sessionType,\n      level,\n      track->{ name, "slug": slug.current, color },\n      "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {\n        startTime,\n        endTime,\n        room->{ name, "slug": slug.current }\n      }\n    }\n  }': SPEAKER_DETAIL_QUERY_RESULT;
-    '*[_type == "person" && defined(slug.current)]{ "slug": slug.current, _updatedAt }': SPEAKER_SLUGS_QUERY_RESULT;
-    '*[_type == "scheduleSlot"\n    && conference._ref == $conferenceId\n    && startTime >= $dayStart\n    && startTime < $dayEnd\n  ] | order(startTime asc) {\n    _id,\n    startTime,\n    endTime,\n    isPlenary,\n    room->{\n      _id,\n      name,\n      "slug": slug.current,\n      capacity,\n      floor\n    },\n    session->{\n      _id,\n      title,\n      "slug": slug.current,\n      sessionType,\n      level,\n      duration,\n      track->{\n        _id,\n        name,\n        "slug": slug.current,\n        color\n      },\n      speakers[]->{\n        _id,\n        name,\n        "slug": slug.current,\n        photo { ..., alt },\n        role,\n        company\n      },\n      moderator->{\n        _id,\n        name,\n        "slug": slug.current\n      }\n    }\n  }': SCHEDULE_DAY_QUERY_RESULT;
-    '*[_type == "session" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType,\n    level,\n    duration,\n    abstract,\n    track->{ _id, name, "slug": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt },\n      role,\n      company\n    },\n    moderator->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt },\n      role,\n      company\n    },\n    capacity,\n    prerequisites,\n    materials[] { title, url, type },\n    slidesUrl,\n    recordingUrl,\n    seoTitle,\n    seoDescription,\n    ogImage,\n    "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {\n      startTime,\n      endTime,\n      room->{ name, "slug": slug.current, floor }\n    }\n  }': SESSION_DETAIL_QUERY_RESULT;
-    '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])] | order(title asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType\n  }': SESSIONS_SUMMARY_QUERY_RESULT;
-    '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]\n    | order(select(sessionType == "keynote" => 0, sessionType == "talk" => 1, 2) asc, title asc)\n    [0...4] {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType,\n    track->{ _id, name, "slug": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt }\n    }\n  }': FEATURED_SESSIONS_QUERY_RESULT;
-    '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])] | order(title asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType,\n    level,\n    duration,\n    track->{ _id, name, "slug": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt }\n    },\n    "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {\n      startTime,\n      room->{ name, "slug": slug.current }\n    }\n  }': SESSIONS_LISTING_QUERY_RESULT;
-    '*[_type == "session"\n    && defined(slug.current)\n    && !(sessionType in ["break", "social"])\n    && slug.current != $slug\n  ]\n  | score(text::semanticSimilarity($searchText))\n  | order(_score desc) [0...4] {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType,\n    track->{ _id, name, "slug": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt }\n    }\n  }': RELATED_SESSIONS_QUERY_RESULT;
-    '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current, _updatedAt }': SESSION_SLUGS_QUERY_RESULT;
-    '*[_type == "sponsor"] | order(\n    select(\n      tier == "platinum" => 0,\n      tier == "gold" => 1,\n      tier == "silver" => 2,\n      tier == "bronze" => 3,\n      tier == "community" => 4,\n      5\n    ) asc,\n    order asc,\n    name asc\n  ) {\n    _id,\n    name,\n    "slug": slug.current,\n    tier,\n    logo { ..., alt },\n    description,\n    website\n  }': SPONSORS_QUERY_RESULT;
-    '*[_type == "conference"][0].venue->{\n    _id,\n    name,\n    "slug": slug.current,\n    address,\n    description,\n    mapUrl,\n    transitInfo,\n    wifiInfo,\n    image { ..., alt },\n    "rooms": *[_type == "room" && venue._ref == ^._id] | order(order asc, name asc) {\n      _id,\n      name,\n      "slug": slug.current,\n      floor,\n      capacity,\n      amenities,\n      "schedule": *[_type == "scheduleSlot" && room._ref == ^._id] | order(startTime asc) {\n        _id,\n        startTime,\n        endTime,\n        session->{\n          title,\n          "slug": slug.current,\n          sessionType\n        }\n      }\n    }\n  }': VENUE_QUERY_RESULT;
+    "*[_type == \"announcement\" && status == \"published\"] | order(publishedAt desc) {\n    _id,\n    title,\n    \"slug\": slug.current,\n    publishedAt,\n    body\n  }": ANNOUNCEMENTS_QUERY_RESULT;
+    "*[_type == \"announcement\" && slug.current == $slug][0] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    publishedAt,\n    body,\n    links[] {\n      _type,\n      label,\n      url,\n      reference-> {\n        _type,\n        \"slug\": slug.current,\n        \"name\": coalesce(title, name)\n      }\n    }\n  }": ANNOUNCEMENT_DETAIL_QUERY_RESULT;
+    "*[_type == \"announcement\" && status == \"published\" && defined(slug.current)]{ \"slug\": slug.current, _updatedAt }": ANNOUNCEMENT_SLUGS_QUERY_RESULT;
+    "*[_type == \"conference\"][0]{\n    _id,\n    name,\n    cfpOpen,\n    cfpDeadline,\n    cfpGuidelines\n  }": CFP_CONFIG_QUERY_RESULT;
+    "*[_type == \"conference\"][0]{\n    _id,\n    name,\n    \"slug\": slug.current,\n    tagline,\n    description,\n    startDate,\n    endDate,\n    venue->{\n      _id,\n      name,\n      address\n    },\n    tracks[]->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      color\n    },\n    logo { ..., alt },\n    socialCard\n  }": CONFERENCE_QUERY_RESULT;
+    "*[_type == \"faq\"] | order(category asc, question asc) {\n    _id,\n    question,\n    answer,\n    category\n  }": FAQ_QUERY_RESULT;
+    "*[_type == \"conference\"][0]{\n    name,\n    tagline,\n    logo { ..., alt },\n    registrationUrl,\n    registrationLabel,\n    socialLinks,\n    headerNav[] {\n      _key, title, linkType,\n      page->{ _type, title, \"slug\": slug.current },\n      route, url\n    },\n    footerNav[] {\n      _key, title, linkType,\n      page->{ _type, title, \"slug\": slug.current },\n      route, url\n    }\n  }": NAV_QUERY_RESULT;
+    "*[_type == \"page\" && slug.current == $slug][0]{\n    _id,\n    title,\n    \"slug\": slug.current,\n    sections[] {\n      _key,\n      _type,\n      _type == \"hero\" => {\n        heading,\n        subheading,\n        backgroundImage { ..., alt },\n        cta { label, linkType, style, externalUrl, internalLink->{ _type, \"slug\": slug.current } }\n      },\n      _type == \"richText\" => {\n        heading,\n        content[] { ... }\n      },\n      _type == \"speakerGrid\" => {\n        heading,\n        limit,\n        speakers[]->{ _id, name, \"slug\": slug.current, role, photo { ..., alt } }\n      },\n      _type == \"sponsorBar\" => {\n        heading,\n        tiers\n      },\n      _type == \"schedulePreview\" => {\n        heading,\n        day,\n        maxSlots\n      },\n      _type == \"ctaBlock\" => {\n        heading,\n        body,\n        cta { label, linkType, style, externalUrl, internalLink->{ _type, \"slug\": slug.current } }\n      },\n      _type == \"faqSection\" => {\n        heading,\n        items[] { _key, question, answer }\n      }\n    },\n    seoTitle,\n    seoDescription,\n    ogImage\n  }": PAGE_QUERY_RESULT;
+    "*[_type == \"page\" && defined(slug.current)]{ \"slug\": slug.current, _updatedAt }": PAGE_SLUGS_QUERY_RESULT;
+    "*[_type == \"person\"] | order(name asc) {\n    _id,\n    name,\n    \"slug\": slug.current,\n    photo { ..., alt },\n    role,\n    company,\n    \"sessionCount\": count(*[_type == \"session\" && references(^._id)])\n  }": SPEAKERS_QUERY_RESULT;
+    "*[_type == \"person\" && slug.current == $slug][0] {\n    _id,\n    name,\n    \"slug\": slug.current,\n    photo { ..., alt },\n    role,\n    company,\n    bio,\n    twitter,\n    github,\n    linkedin,\n    website,\n    seoTitle,\n    seoDescription,\n    ogImage,\n    \"sessions\": *[_type == \"session\" && references(^._id)] {\n      _id,\n      title,\n      \"slug\": slug.current,\n      sessionType,\n      level,\n      track->{ name, \"slug\": slug.current, color },\n      \"slot\": *[_type == \"scheduleSlot\" && session._ref == ^._id][0] {\n        startTime,\n        endTime,\n        room->{ name, \"slug\": slug.current }\n      }\n    }\n  }": SPEAKER_DETAIL_QUERY_RESULT;
+    "*[_type == \"person\" && defined(slug.current)]{ \"slug\": slug.current, _updatedAt }": SPEAKER_SLUGS_QUERY_RESULT;
+    "*[_type == \"scheduleSlot\"\n    && conference._ref == $conferenceId\n    && startTime >= $dayStart\n    && startTime < $dayEnd\n  ] | order(startTime asc) {\n    _id,\n    startTime,\n    endTime,\n    isPlenary,\n    room->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      capacity,\n      floor\n    },\n    session->{\n      _id,\n      title,\n      \"slug\": slug.current,\n      sessionType,\n      level,\n      duration,\n      track->{\n        _id,\n        name,\n        \"slug\": slug.current,\n        color\n      },\n      speakers[]->{\n        _id,\n        name,\n        \"slug\": slug.current,\n        photo { ..., alt },\n        role,\n        company\n      },\n      moderator->{\n        _id,\n        name,\n        \"slug\": slug.current\n      }\n    }\n  }": SCHEDULE_DAY_QUERY_RESULT;
+    "*[_type == \"session\" && slug.current == $slug][0] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    sessionType,\n    level,\n    duration,\n    abstract,\n    track->{ _id, name, \"slug\": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      photo { ..., alt },\n      role,\n      company\n    },\n    moderator->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      photo { ..., alt },\n      role,\n      company\n    },\n    capacity,\n    prerequisites,\n    materials[] { title, url, type },\n    slidesUrl,\n    recordingUrl,\n    seoTitle,\n    seoDescription,\n    ogImage,\n    \"slot\": *[_type == \"scheduleSlot\" && session._ref == ^._id][0] {\n      startTime,\n      endTime,\n      room->{ name, \"slug\": slug.current, floor }\n    }\n  }": SESSION_DETAIL_QUERY_RESULT;
+    "*[_type == \"session\" && defined(slug.current) && !(sessionType in [\"break\", \"social\"])] | order(title asc) {\n    _id,\n    title,\n    \"slug\": slug.current,\n    sessionType\n  }": SESSIONS_SUMMARY_QUERY_RESULT;
+    "*[_type == \"session\" && defined(slug.current) && !(sessionType in [\"break\", \"social\"])]\n    | order(select(sessionType == \"keynote\" => 0, sessionType == \"talk\" => 1, 2) asc, title asc)\n    [0...4] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    sessionType,\n    track->{ _id, name, \"slug\": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      photo { ..., alt }\n    }\n  }": FEATURED_SESSIONS_QUERY_RESULT;
+    "*[_type == \"session\" && defined(slug.current) && !(sessionType in [\"break\", \"social\"])] | order(title asc) {\n    _id,\n    title,\n    \"slug\": slug.current,\n    sessionType,\n    level,\n    duration,\n    track->{ _id, name, \"slug\": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      photo { ..., alt }\n    },\n    \"slot\": *[_type == \"scheduleSlot\" && session._ref == ^._id][0] {\n      startTime,\n      room->{ name, \"slug\": slug.current }\n    }\n  }": SESSIONS_LISTING_QUERY_RESULT;
+    "*[_type == \"session\"\n    && defined(slug.current)\n    && !(sessionType in [\"break\", \"social\"])\n    && slug.current != $slug\n  ]\n  | score(text::semanticSimilarity($searchText))\n  | order(_score desc) [0...4] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    sessionType,\n    track->{ _id, name, \"slug\": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      \"slug\": slug.current,\n      photo { ..., alt }\n    }\n  }": RELATED_SESSIONS_QUERY_RESULT;
+    "*[_type == \"session\" && defined(slug.current) && !(sessionType in [\"break\", \"social\"])]{ \"slug\": slug.current, _updatedAt }": SESSION_SLUGS_QUERY_RESULT;
+    "*[_type == \"sponsor\"] | order(\n    select(\n      tier == \"platinum\" => 0,\n      tier == \"gold\" => 1,\n      tier == \"silver\" => 2,\n      tier == \"bronze\" => 3,\n      tier == \"community\" => 4,\n      5\n    ) asc,\n    order asc,\n    name asc\n  ) {\n    _id,\n    name,\n    \"slug\": slug.current,\n    tier,\n    logo { ..., alt },\n    description,\n    website\n  }": SPONSORS_QUERY_RESULT;
+    "*[_type == \"conference\"][0].venue->{\n    _id,\n    name,\n    \"slug\": slug.current,\n    address,\n    description,\n    mapUrl,\n    transitInfo,\n    wifiInfo,\n    image { ..., alt },\n    \"rooms\": *[_type == \"room\" && venue._ref == ^._id] | order(order asc, name asc) {\n      _id,\n      name,\n      \"slug\": slug.current,\n      floor,\n      capacity,\n      amenities,\n      \"schedule\": *[_type == \"scheduleSlot\" && room._ref == ^._id] | order(startTime asc) {\n        _id,\n        startTime,\n        endTime,\n        session->{\n          title,\n          \"slug\": slug.current,\n          sessionType\n        }\n      }\n    }\n  }": VENUE_QUERY_RESULT;
   }
 }
+

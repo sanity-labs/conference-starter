@@ -66,6 +66,13 @@ Stega by default. Use `createDataAttribute` only for non-text elements (images, 
 ### Metadata
 Always use `perspective: 'published'` and `stega: false` for `generateMetadata`.
 
+### Markdown Routes (Portable Text Serialization)
+Every content route is available as `.md` via internal `/md/...` route handlers + Next.js rewrites. Portable Text is converted to markdown using `@portabletext/markdown` (`portableTextToMarkdown`) in `src/lib/portable-text-markdown.ts`. If you add custom PT block types or annotations to the schema, you must add matching serializers in both:
+1. `src/components/portable-text.tsx` — React rendering (HTML)
+2. `src/lib/portable-text-markdown.ts` — Markdown rendering (AI agents)
+
+Keep these two in sync. The markdown routes use `stega: false` and published perspective only.
+
 ### AI Concierge
 Content Agent Headless API proxied through Next.js API route. GROQ filter as server-side data boundary (not prompt-level). Locked to `published` perspective. `useChat()` from Vercel AI SDK on frontend.
 

@@ -14,6 +14,24 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        // Content negotiation: Accept: text/markdown → serve markdown
+        {
+          source: '/:path*',
+          has: [{type: 'header', key: 'accept', value: '(.*text/markdown.*)'}],
+          destination: '/md/:path*',
+        },
+      ],
+      afterFiles: [
+        // .md suffix URLs → internal /md/ route handlers
+        {source: '/sitemap.md', destination: '/md/sitemap'},
+        {source: '/:section.md', destination: '/md/:section'},
+        {source: '/:section/:slug.md', destination: '/md/:section/:slug'},
+      ],
+    }
+  },
 }
 
 export default nextConfig

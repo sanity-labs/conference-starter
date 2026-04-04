@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@portabletext/markdown": "^1.2.0",
     "@portabletext/react": "^6.0.3",
     "@portabletext/types": "^4.0.2",
     "@react-email/render": "^2.0.4",

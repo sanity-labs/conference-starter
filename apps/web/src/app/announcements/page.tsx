@@ -14,7 +14,7 @@ export const metadata = createMetadata({
 
 export default function AnnouncementsPage() {
   return (
-    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 lg:px-8 sm:py-24">
+    <main id="main-content" className="mx-auto max-w-content px-6 py-16 lg:px-8 sm:py-24">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Announcements</h1>
       <Suspense>
         <AnnouncementsListDynamic />
@@ -42,7 +42,7 @@ async function AnnouncementsListCached({perspective, stega}: DynamicFetchOptions
   }
 
   return (
-    <ul className="mt-8 max-w-content divide-y divide-border" aria-label="Announcements">
+    <ul className="mt-8 divide-y divide-border" aria-label="Announcements">
       {announcements.map((item) => (
         <li key={item._id} className="py-6 first:pt-0">
           <article>

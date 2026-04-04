@@ -43,7 +43,7 @@ async function fetchPageForMetadata(slug: string) {
 export default async function PageRoute({params}: Props) {
   const {slug} = await params
   return (
-    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 lg:px-8 sm:py-24">
+    <main id="main-content" className="mx-auto max-w-content px-6 py-16 lg:px-8 sm:py-24">
       <Suspense>
         <PageDynamic slug={slug} />
       </Suspense>
@@ -73,7 +73,7 @@ async function PageCached({
   if (!page) notFound()
 
   return (
-    <article className="max-w-content">
+    <article>
       <h1 className="max-w-[30ch] text-3xl font-semibold tracking-tight sm:text-5xl">{page.title}</h1>
       <PageSections sections={page.sections} perspective={perspective} stega={stega} />
     </article>

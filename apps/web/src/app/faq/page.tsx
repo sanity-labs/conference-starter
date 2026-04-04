@@ -17,7 +17,7 @@ export const metadata = createMetadata({
 
 export default function FaqPage() {
   return (
-    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 lg:px-8 sm:py-24">
+    <main id="main-content" className="mx-auto max-w-content px-6 py-16 lg:px-8 sm:py-24">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
         Frequently Asked Questions
       </h1>
@@ -64,7 +64,7 @@ async function FaqCached({perspective, stega}: DynamicFetchOptions) {
           }}
         />
       )}
-      <div className="mt-8 max-w-content space-y-10">
+      <div className="mt-8 space-y-10">
         {grouped.map(([category, items]) => (
           <section key={category}>
             <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">

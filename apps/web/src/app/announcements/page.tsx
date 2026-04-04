@@ -14,11 +14,13 @@ export const metadata = createMetadata({
 
 export default function AnnouncementsPage() {
   return (
-    <main id="main-content" className="mx-auto max-w-content px-6 py-16 lg:px-8 sm:py-24">
-      <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Announcements</h1>
-      <Suspense>
-        <AnnouncementsListDynamic />
-      </Suspense>
+    <main id="main-content" className="mx-auto max-w-content-max px-6 py-16 lg:px-8 sm:py-24">
+      <div className="max-w-content">
+        <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Announcements</h1>
+        <Suspense>
+          <AnnouncementsListDynamic />
+        </Suspense>
+      </div>
     </main>
   )
 }

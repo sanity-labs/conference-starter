@@ -43,10 +43,12 @@ async function fetchPageForMetadata(slug: string) {
 export default async function PageRoute({params}: Props) {
   const {slug} = await params
   return (
-    <main id="main-content" className="mx-auto max-w-content px-6 py-16 lg:px-8 sm:py-24">
-      <Suspense>
-        <PageDynamic slug={slug} />
-      </Suspense>
+    <main id="main-content" className="mx-auto max-w-content-max px-6 py-16 lg:px-8 sm:py-24">
+      <div className="max-w-content">
+        <Suspense>
+          <PageDynamic slug={slug} />
+        </Suspense>
+      </div>
     </main>
   )
 }

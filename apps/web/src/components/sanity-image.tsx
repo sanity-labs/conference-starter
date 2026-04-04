@@ -23,7 +23,7 @@ export function SanityImage({
   sizes,
   priority,
 }: SanityImageProps) {
-  const url = urlForImage(value)?.width(width).height(height).url()
+  const url = urlForImage(value)?.width(width).height(height).fit('crop').auto('format').url()
   if (!url) return null
 
   return (

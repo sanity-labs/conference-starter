@@ -127,8 +127,8 @@ async function SpeakerDetailCached({
           <SanityImage
             value={{...speaker.photo, alt: speaker.photo.alt || speaker.name}}
             className="h-32 w-32 rounded-lg object-cover"
-            width={256}
-            height={256}
+            width={384}
+            height={384}
             sizes="128px"
           />
         )}

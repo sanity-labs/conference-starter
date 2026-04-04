@@ -35,8 +35,8 @@ export function SpeakerGridSection({heading, limit, speakers}: SpeakerGridSectio
               {speaker.photo && (
                 <SanityImage
                   value={{...speaker.photo, alt: speaker.photo.alt || speaker.name}}
-                  width={200}
-                  height={200}
+                  width={400}
+                  height={400}
                   className="aspect-square w-full rounded-lg object-cover transition-opacity group-hover:opacity-90"
                   sizes="(min-width: 640px) 25vw, 50vw"
                 />

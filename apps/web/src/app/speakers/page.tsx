@@ -47,9 +47,9 @@ async function SpeakersListCached({perspective, stega}: DynamicFetchOptions) {
               <SanityImage
                 value={speaker.photo}
                 className="aspect-square w-full rounded-lg object-cover transition-opacity group-hover:opacity-90"
-                width={300}
-                height={300}
-                sizes="(min-width: 640px) 33vw, 50vw"
+                width={400}
+                height={400}
+                sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
               />
             )}
             <p className="mt-2 font-medium">{speaker.name}</p>

@@ -231,9 +231,9 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
                 <SanityImage
                   value={speaker.photo}
                   className="aspect-square w-full rounded-lg object-cover transition-opacity group-hover:opacity-90"
-                  width={200}
-                  height={200}
-                  sizes="(min-width: 640px) 25vw, 50vw"
+                  width={400}
+                  height={400}
+                  sizes="(min-width: 1024px) 15vw, (min-width: 640px) 25vw, 50vw"
                 />
               )}
               <p className="mt-2 font-medium">{speaker.name}</p>

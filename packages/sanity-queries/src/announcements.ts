@@ -31,5 +31,5 @@ export const ANNOUNCEMENT_DETAIL_QUERY = defineQuery(
 )
 
 export const ANNOUNCEMENT_SLUGS_QUERY = defineQuery(
-  `*[_type == "announcement" && status == "published" && defined(slug.current)]{ "slug": slug.current }`,
+  `*[_type == "announcement" && status == "published" && defined(slug.current)]{ "slug": slug.current, _updatedAt }`,
 )

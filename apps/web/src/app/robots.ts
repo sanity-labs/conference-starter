@@ -1,6 +1,6 @@
 import type {MetadataRoute} from 'next'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://everything-nyc.sanity.dev'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://contentops-conf.sanity.dev'
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -10,27 +10,37 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/api/', '/studio/'],
       },
-      // AI crawlers — uncomment to allow or block AI training crawlers.
-      // Allowing these crawlers improves visibility in AI search results (AEO).
-      // Blocking them prevents your content from being used for model training.
-      // Decide based on your content strategy and licensing preferences.
-      //
-      // {
-      //   userAgent: 'GPTBot',
-      //   allow: '/',
-      // },
-      // {
-      //   userAgent: 'ClaudeBot',
-      //   allow: '/',
-      // },
-      // {
-      //   userAgent: 'PerplexityBot',
-      //   allow: '/',
-      // },
-      // {
-      //   userAgent: 'Google-Extended',
-      //   allow: '/',
-      // },
+      // AI crawlers — allowed for AEO (Answer Engine Optimization)
+      {
+        userAgent: 'GPTBot',
+        allow: '/',
+        disallow: ['/api/', '/studio/'],
+      },
+      {
+        userAgent: 'ClaudeBot',
+        allow: '/',
+        disallow: ['/api/', '/studio/'],
+      },
+      {
+        userAgent: 'PerplexityBot',
+        allow: '/',
+        disallow: ['/api/', '/studio/'],
+      },
+      {
+        userAgent: 'Google-Extended',
+        allow: '/',
+        disallow: ['/api/', '/studio/'],
+      },
+      {
+        userAgent: 'Applebot-Extended',
+        allow: '/',
+        disallow: ['/api/', '/studio/'],
+      },
+      {
+        userAgent: 'cohere-ai',
+        allow: '/',
+        disallow: ['/api/', '/studio/'],
+      },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
   }

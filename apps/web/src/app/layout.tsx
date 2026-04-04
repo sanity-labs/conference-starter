@@ -49,6 +49,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <head>
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title={`${SITE_NAME} — Announcements`}
+          href={`${SITE_URL}/announcements/feed.xml`}
+        />
         <JsonLd<WebSite>
           data={{
             '@context': 'https://schema.org',

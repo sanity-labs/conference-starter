@@ -30,24 +30,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const speakerPages: MetadataRoute.Sitemap = speakers.map((s) => ({
     url: `${SITE_URL}/speakers/${s.slug}`,
+    lastModified: s._updatedAt ? new Date(s._updatedAt) : undefined,
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }))
 
   const sessionPages: MetadataRoute.Sitemap = sessions.map((s) => ({
     url: `${SITE_URL}/sessions/${s.slug}`,
+    lastModified: s._updatedAt ? new Date(s._updatedAt) : undefined,
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }))
 
   const dynamicPages: MetadataRoute.Sitemap = pages.map((p) => ({
     url: `${SITE_URL}/${p.slug}`,
+    lastModified: p._updatedAt ? new Date(p._updatedAt) : undefined,
     changeFrequency: 'monthly' as const,
     priority: 0.6,
   }))
 
   const announcementPages: MetadataRoute.Sitemap = announcements.map((a) => ({
     url: `${SITE_URL}/announcements/${a.slug}`,
+    lastModified: a._updatedAt ? new Date(a._updatedAt) : undefined,
     changeFrequency: 'monthly' as const,
     priority: 0.5,
   }))

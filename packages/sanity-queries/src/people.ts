@@ -45,5 +45,5 @@ export const SPEAKER_DETAIL_QUERY = defineQuery(
 )
 
 export const SPEAKER_SLUGS_QUERY = defineQuery(
-  `*[_type == "person" && defined(slug.current)]{ "slug": slug.current }`,
+  `*[_type == "person" && defined(slug.current)]{ "slug": slug.current, _updatedAt }`,
 )

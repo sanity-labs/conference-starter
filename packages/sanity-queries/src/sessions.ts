@@ -116,5 +116,5 @@ export const RELATED_SESSIONS_QUERY = defineQuery(
 )
 
 export const SESSION_SLUGS_QUERY = defineQuery(
-  `*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current }`,
+  `*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current, _updatedAt }`,
 )

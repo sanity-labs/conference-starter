@@ -1111,9 +1111,10 @@ export type ANNOUNCEMENT_DETAIL_QUERY_RESULT = {
 
 // Source: ../../packages/sanity-queries/src/announcements.ts
 // Variable: ANNOUNCEMENT_SLUGS_QUERY
-// Query: *[_type == "announcement" && status == "published" && defined(slug.current)]{ "slug": slug.current }
+// Query: *[_type == "announcement" && status == "published" && defined(slug.current)]{ "slug": slug.current, _updatedAt }
 export type ANNOUNCEMENT_SLUGS_QUERY_RESULT = Array<{
   slug: string | null;
+  _updatedAt: string;
 }>;
 
 // Source: ../../packages/sanity-queries/src/conference.ts
@@ -1475,9 +1476,10 @@ export type PAGE_QUERY_RESULT = {
 
 // Source: ../../packages/sanity-queries/src/pages.ts
 // Variable: PAGE_SLUGS_QUERY
-// Query: *[_type == "page" && defined(slug.current)]{ "slug": slug.current }
+// Query: *[_type == "page" && defined(slug.current)]{ "slug": slug.current, _updatedAt }
 export type PAGE_SLUGS_QUERY_RESULT = Array<{
   slug: string | null;
+  _updatedAt: string;
 }>;
 
 // Source: ../../packages/sanity-queries/src/people.ts
@@ -1580,9 +1582,10 @@ export type SPEAKER_DETAIL_QUERY_RESULT = {
 
 // Source: ../../packages/sanity-queries/src/people.ts
 // Variable: SPEAKER_SLUGS_QUERY
-// Query: *[_type == "person" && defined(slug.current)]{ "slug": slug.current }
+// Query: *[_type == "person" && defined(slug.current)]{ "slug": slug.current, _updatedAt }
 export type SPEAKER_SLUGS_QUERY_RESULT = Array<{
   slug: string | null;
+  _updatedAt: string;
 }>;
 
 // Source: ../../packages/sanity-queries/src/schedule.ts
@@ -1885,9 +1888,10 @@ export type RELATED_SESSIONS_QUERY_RESULT = Array<{
 
 // Source: ../../packages/sanity-queries/src/sessions.ts
 // Variable: SESSION_SLUGS_QUERY
-// Query: *[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current }
+// Query: *[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current, _updatedAt }
 export type SESSION_SLUGS_QUERY_RESULT = Array<{
   slug: string | null;
+  _updatedAt: string;
 }>;
 
 // Source: ../../packages/sanity-queries/src/sponsors.ts
@@ -2036,23 +2040,23 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '*[_type == "announcement" && status == "published"] | order(publishedAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    publishedAt,\n    body\n  }': ANNOUNCEMENTS_QUERY_RESULT;
     '*[_type == "announcement" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    publishedAt,\n    body,\n    links[] {\n      _type,\n      label,\n      url,\n      reference-> {\n        _type,\n        "slug": slug.current,\n        "name": coalesce(title, name)\n      }\n    }\n  }': ANNOUNCEMENT_DETAIL_QUERY_RESULT;
-    '*[_type == "announcement" && status == "published" && defined(slug.current)]{ "slug": slug.current }': ANNOUNCEMENT_SLUGS_QUERY_RESULT;
+    '*[_type == "announcement" && status == "published" && defined(slug.current)]{ "slug": slug.current, _updatedAt }': ANNOUNCEMENT_SLUGS_QUERY_RESULT;
     '*[_type == "conference"][0]{\n    _id,\n    name,\n    cfpOpen,\n    cfpDeadline,\n    cfpGuidelines\n  }': CFP_CONFIG_QUERY_RESULT;
     '*[_type == "conference"][0]{\n    _id,\n    name,\n    "slug": slug.current,\n    tagline,\n    description,\n    startDate,\n    endDate,\n    venue->{\n      _id,\n      name,\n      address\n    },\n    tracks[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      color\n    },\n    logo { ..., alt },\n    socialCard\n  }': CONFERENCE_QUERY_RESULT;
     '*[_type == "faq"] | order(category asc, question asc) {\n    _id,\n    question,\n    answer,\n    category\n  }': FAQ_QUERY_RESULT;
     '*[_type == "conference"][0]{\n    name,\n    tagline,\n    logo { ..., alt },\n    registrationUrl,\n    registrationLabel,\n    socialLinks,\n    headerNav[] {\n      _key, title, linkType,\n      page->{ _type, title, "slug": slug.current },\n      route, url\n    },\n    footerNav[] {\n      _key, title, linkType,\n      page->{ _type, title, "slug": slug.current },\n      route, url\n    }\n  }': NAV_QUERY_RESULT;
     '*[_type == "page" && slug.current == $slug][0]{\n    _id,\n    title,\n    "slug": slug.current,\n    sections[] {\n      _key,\n      _type,\n      _type == "hero" => {\n        heading,\n        subheading,\n        backgroundImage { ..., alt },\n        cta { label, linkType, style, externalUrl, internalLink->{ _type, "slug": slug.current } }\n      },\n      _type == "richText" => {\n        heading,\n        content[] { ... }\n      },\n      _type == "speakerGrid" => {\n        heading,\n        limit,\n        speakers[]->{ _id, name, "slug": slug.current, role, photo { ..., alt } }\n      },\n      _type == "sponsorBar" => {\n        heading,\n        tiers\n      },\n      _type == "schedulePreview" => {\n        heading,\n        day,\n        maxSlots\n      },\n      _type == "ctaBlock" => {\n        heading,\n        body,\n        cta { label, linkType, style, externalUrl, internalLink->{ _type, "slug": slug.current } }\n      },\n      _type == "faqSection" => {\n        heading,\n        items[] { _key, question, answer }\n      }\n    },\n    seoTitle,\n    seoDescription,\n    ogImage\n  }': PAGE_QUERY_RESULT;
-    '*[_type == "page" && defined(slug.current)]{ "slug": slug.current }': PAGE_SLUGS_QUERY_RESULT;
+    '*[_type == "page" && defined(slug.current)]{ "slug": slug.current, _updatedAt }': PAGE_SLUGS_QUERY_RESULT;
     '*[_type == "person"] | order(name asc) {\n    _id,\n    name,\n    "slug": slug.current,\n    photo { ..., alt },\n    role,\n    company,\n    "sessionCount": count(*[_type == "session" && references(^._id)])\n  }': SPEAKERS_QUERY_RESULT;
     '*[_type == "person" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    photo { ..., alt },\n    role,\n    company,\n    bio,\n    twitter,\n    github,\n    linkedin,\n    website,\n    seoTitle,\n    seoDescription,\n    ogImage,\n    "sessions": *[_type == "session" && references(^._id)] {\n      _id,\n      title,\n      "slug": slug.current,\n      sessionType,\n      level,\n      track->{ name, "slug": slug.current, color },\n      "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {\n        startTime,\n        endTime,\n        room->{ name, "slug": slug.current }\n      }\n    }\n  }': SPEAKER_DETAIL_QUERY_RESULT;
-    '*[_type == "person" && defined(slug.current)]{ "slug": slug.current }': SPEAKER_SLUGS_QUERY_RESULT;
+    '*[_type == "person" && defined(slug.current)]{ "slug": slug.current, _updatedAt }': SPEAKER_SLUGS_QUERY_RESULT;
     '*[_type == "scheduleSlot"\n    && conference._ref == $conferenceId\n    && startTime >= $dayStart\n    && startTime < $dayEnd\n  ] | order(startTime asc) {\n    _id,\n    startTime,\n    endTime,\n    isPlenary,\n    room->{\n      _id,\n      name,\n      "slug": slug.current,\n      capacity,\n      floor\n    },\n    session->{\n      _id,\n      title,\n      "slug": slug.current,\n      sessionType,\n      level,\n      duration,\n      track->{\n        _id,\n        name,\n        "slug": slug.current,\n        color\n      },\n      speakers[]->{\n        _id,\n        name,\n        "slug": slug.current,\n        photo { ..., alt },\n        role,\n        company\n      },\n      moderator->{\n        _id,\n        name,\n        "slug": slug.current\n      }\n    }\n  }': SCHEDULE_DAY_QUERY_RESULT;
     '*[_type == "session" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType,\n    level,\n    duration,\n    abstract,\n    track->{ _id, name, "slug": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt },\n      role,\n      company\n    },\n    moderator->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt },\n      role,\n      company\n    },\n    capacity,\n    prerequisites,\n    materials[] { title, url, type },\n    slidesUrl,\n    recordingUrl,\n    seoTitle,\n    seoDescription,\n    ogImage,\n    "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {\n      startTime,\n      endTime,\n      room->{ name, "slug": slug.current, floor }\n    }\n  }': SESSION_DETAIL_QUERY_RESULT;
     '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])] | order(title asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType\n  }': SESSIONS_SUMMARY_QUERY_RESULT;
     '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]\n    | order(select(sessionType == "keynote" => 0, sessionType == "talk" => 1, 2) asc, title asc)\n    [0...4] {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType,\n    track->{ _id, name, "slug": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt }\n    }\n  }': FEATURED_SESSIONS_QUERY_RESULT;
     '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])] | order(title asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType,\n    level,\n    duration,\n    track->{ _id, name, "slug": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt }\n    },\n    "slot": *[_type == "scheduleSlot" && session._ref == ^._id][0] {\n      startTime,\n      room->{ name, "slug": slug.current }\n    }\n  }': SESSIONS_LISTING_QUERY_RESULT;
     '*[_type == "session"\n    && defined(slug.current)\n    && !(sessionType in ["break", "social"])\n    && slug.current != $slug\n    && (\n      track._ref == $trackId\n      || count(speakers[_ref in $speakerIds]) > 0\n    )\n  ] | order(title asc) [0...4] {\n    _id,\n    title,\n    "slug": slug.current,\n    sessionType,\n    track->{ _id, name, "slug": slug.current, color },\n    speakers[]->{\n      _id,\n      name,\n      "slug": slug.current,\n      photo { ..., alt }\n    }\n  }': RELATED_SESSIONS_QUERY_RESULT;
-    '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current }': SESSION_SLUGS_QUERY_RESULT;
+    '*[_type == "session" && defined(slug.current) && !(sessionType in ["break", "social"])]{ "slug": slug.current, _updatedAt }': SESSION_SLUGS_QUERY_RESULT;
     '*[_type == "sponsor"] | order(\n    select(\n      tier == "platinum" => 0,\n      tier == "gold" => 1,\n      tier == "silver" => 2,\n      tier == "bronze" => 3,\n      tier == "community" => 4,\n      5\n    ) asc,\n    order asc,\n    name asc\n  ) {\n    _id,\n    name,\n    "slug": slug.current,\n    tier,\n    logo { ..., alt },\n    description,\n    website\n  }': SPONSORS_QUERY_RESULT;
     '*[_type == "conference"][0].venue->{\n    _id,\n    name,\n    "slug": slug.current,\n    address,\n    description,\n    mapUrl,\n    transitInfo,\n    wifiInfo,\n    image { ..., alt },\n    "rooms": *[_type == "room" && venue._ref == ^._id] | order(order asc, name asc) {\n      _id,\n      name,\n      "slug": slug.current,\n      floor,\n      capacity,\n      amenities,\n      "schedule": *[_type == "scheduleSlot" && room._ref == ^._id] | order(startTime asc) {\n        _id,\n        startTime,\n        endTime,\n        session->{\n          title,\n          "slug": slug.current,\n          sessionType\n        }\n      }\n    }\n  }': VENUE_QUERY_RESULT;
   }

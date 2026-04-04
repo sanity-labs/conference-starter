@@ -45,7 +45,7 @@ A conference operations platform built on [Sanity](https://www.sanity.io) as a r
 
 ```
 apps/
-  web/                     → Next.js 16 conference website (13 pages, 7 API routes)
+  web/                     → Next.js 16 conference website (13 pages, 7 API routes, 12 markdown routes)
   studio/                  → Sanity Studio + Functions + schedule builder
   bot/                     → Telegram bot — dual-mode (ops + attendee)
 
@@ -326,6 +326,51 @@ Docs: [Agent Actions patterns](https://www.sanity.io/docs/agent-actions/agent-ac
 | `/announcements` | Announcement listing |
 | `/announcements/[slug]` | Announcement detail |
 | `/[slug]` | Dynamic catch-all for CMS-managed pages |
+
+## Markdown Routes
+
+Every content page is also available as markdown for AI agents, LLMs, and tools. Append `.md` to any URL or send `Accept: text/markdown` to get clean markdown with YAML frontmatter.
+
+```bash
+# Explicit .md suffix
+curl https://your-site.com/sessions.md
+curl https://your-site.com/sessions/opening-keynote.md
+
+# Content negotiation
+curl -H "Accept: text/markdown" https://your-site.com/speakers
+```
+
+Every response includes YAML frontmatter with conference metadata:
+
+```yaml
+---
+title: "Opening Keynote: Content Is Infrastructure"
+conference: ContentOps Conf
+dates: October 15–16, 2026
+venue: The Glasshouse, NYC
+url: https://your-site.com/sessions/opening-keynote
+sitemap: https://your-site.com/sitemap.md
+---
+```
+
+| Route | Content |
+|-------|---------|
+| `/sitemap.md` | Discovery file — links to all `.md` routes |
+| `/sessions.md` | All sessions with type, level, speakers, track |
+| `/sessions/[slug].md` | Full session detail with abstract, schedule, speakers |
+| `/speakers.md` | All speakers with role and session count |
+| `/speakers/[slug].md` | Speaker bio, social links, sessions |
+| `/schedule.md` | Full multi-day schedule with time slots |
+| `/announcements.md` | All announcements |
+| `/announcements/[slug].md` | Announcement detail |
+| `/faq.md` | FAQs grouped by category |
+| `/venue.md` | Venue info, rooms, per-room schedules |
+| `/sponsors.md` | Sponsors grouped by tier |
+| `/[slug].md` | Custom CMS pages |
+
+Internal links use `.md` URLs so agents can follow them and keep getting markdown. `/llms.txt` redirects (301) to `/sitemap.md`.
+
+Implemented following the [Markdown Routes with Next.js](https://www.sanity.io/learn/course/markdown-routes-with-nextjs) pattern from Sanity Learn: internal `/md/` route handlers with Next.js rewrites. Portable Text is converted via `@portabletext/markdown`.
 
 ## API Routes
 

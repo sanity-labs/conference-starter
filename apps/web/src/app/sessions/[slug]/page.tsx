@@ -107,7 +107,7 @@ async function SessionDetailCached({
   })
 
   return (
-    <article>
+    <article className="max-w-content">
       <BreadcrumbJsonLd
         items={[
           {name: 'Sessions', path: '/sessions'},

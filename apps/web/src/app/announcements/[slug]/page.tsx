@@ -97,7 +97,7 @@ async function AnnouncementDetailCached({
   if (!announcement) notFound()
 
   return (
-    <article>
+    <article className="max-w-content">
       <Breadcrumbs
         items={[
           {name: 'Announcements', path: '/announcements'},

@@ -73,7 +73,7 @@ async function PageCached({
   if (!page) notFound()
 
   return (
-    <article>
+    <article className="max-w-content">
       <h1 className="max-w-[30ch] text-3xl font-semibold tracking-tight sm:text-5xl">{page.title}</h1>
       <PageSections sections={page.sections} perspective={perspective} stega={stega} />
     </article>

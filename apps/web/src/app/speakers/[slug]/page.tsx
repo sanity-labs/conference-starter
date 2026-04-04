@@ -97,7 +97,7 @@ async function SpeakerDetailCached({
   ].filter(Boolean) as string[]
 
   return (
-    <article>
+    <article className="max-w-content">
       <BreadcrumbJsonLd
         items={[
           {name: 'Speakers', path: '/speakers'},

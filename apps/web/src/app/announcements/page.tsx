@@ -42,7 +42,7 @@ async function AnnouncementsListCached({perspective, stega}: DynamicFetchOptions
   }
 
   return (
-    <ul className="mt-8 divide-y divide-border" aria-label="Announcements">
+    <ul className="mt-8 max-w-content divide-y divide-border" aria-label="Announcements">
       {announcements.map((item) => (
         <li key={item._id} className="py-6 first:pt-0">
           <article>

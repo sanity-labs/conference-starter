@@ -61,7 +61,7 @@ async function VenueCached({perspective, stega}: DynamicFetchOptions) {
   }
 
   return (
-    <article>
+    <article className="max-w-content">
       <VenueHeader venue={venue} />
       {venue.image && (
         <SanityImage

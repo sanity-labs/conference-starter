@@ -64,7 +64,7 @@ async function FaqCached({perspective, stega}: DynamicFetchOptions) {
           }}
         />
       )}
-      <div className="mt-8 space-y-10">
+      <div className="mt-8 max-w-content space-y-10">
         {grouped.map(([category, items]) => (
           <section key={category}>
             <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">

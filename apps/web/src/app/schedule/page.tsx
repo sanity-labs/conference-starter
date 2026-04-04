@@ -22,7 +22,7 @@ type Props = {searchParams: Promise<{day?: string}>}
 export default async function SchedulePage({searchParams}: Props) {
   const {day} = await searchParams
   return (
-    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
+    <main id="main-content" className="mx-auto max-w-content-max px-6 py-16 sm:py-24">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Schedule</h1>
       <Suspense>
         <ScheduleDynamic selectedDay={day} />

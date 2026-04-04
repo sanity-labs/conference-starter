@@ -13,7 +13,7 @@ export function Header({data}: {data: NavData}) {
     <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur-sm">
       <nav
         aria-label="Main navigation"
-        className="relative mx-auto flex max-w-content-wide items-center justify-between px-6 py-3"
+        className="relative mx-auto flex max-w-content-max items-center justify-between px-6 py-3"
       >
         <Link
           href="/"
@@ -27,17 +27,16 @@ export function Header({data}: {data: NavData}) {
           )}
         </Link>
 
-        {navItems && (
-          <ul className="hidden items-center gap-1 sm:flex">
-            {navItems.map((item) => (
-              <li key={item._key}>
-                <NavLink item={item} />
-              </li>
-            ))}
-          </ul>
-        )}
-
         <div className="flex items-center gap-3">
+          {navItems && (
+            <ul className="hidden items-center gap-1 sm:flex">
+              {navItems.map((item) => (
+                <li key={item._key}>
+                  <NavLink item={item} />
+                </li>
+              ))}
+            </ul>
+          )}
           {data.registrationUrl && (
             <a
               href={data.registrationUrl}

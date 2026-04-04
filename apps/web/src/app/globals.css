@@ -18,6 +18,7 @@
   /* Content widths */
   --width-content: 48rem;
   --width-content-wide: 64rem;
+  --width-content-max: 80rem;
 
   /* Border radius */
   --radius-sm: 0.25rem;

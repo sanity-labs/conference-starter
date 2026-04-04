@@ -15,7 +15,7 @@ export const metadata = createMetadata({
 
 export default function SpeakersPage() {
   return (
-    <main id="main-content" className="mx-auto max-w-content-wide px-6 py-16 sm:py-24">
+    <main id="main-content" className="mx-auto max-w-content-max px-6 py-16 sm:py-24">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Speakers</h1>
       <Suspense>
         <SpeakersListDynamic />
@@ -46,21 +46,21 @@ async function SpeakersListCached({perspective, stega}: DynamicFetchOptions) {
             {speaker.photo && (
               <SanityImage
                 value={speaker.photo}
-                className="aspect-square w-full rounded-lg object-cover transition-opacity group-hover:opacity-90"
+                className="aspect-square w-full rounded-lg object-cover outline-1 -outline-offset-1 outline-black/5 transition-opacity group-hover:opacity-90"
                 width={400}
                 height={400}
-                sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+                sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
               />
             )}
             <p className="mt-2 font-medium">{speaker.name}</p>
             {speaker.role && (
-              <p className="text-sm text-text-muted">{speaker.role}</p>
+              <p className="text-base text-text-muted sm:text-sm">{speaker.role}</p>
             )}
             {speaker.company && (
-              <p className="text-sm text-text-muted">{speaker.company}</p>
+              <p className="text-base text-text-muted sm:text-sm">{speaker.company}</p>
             )}
             {speaker.sessionCount > 0 && (
-              <p className="mt-1 text-xs text-text-muted">
+              <p className="mt-1 text-sm text-text-muted sm:text-xs">
                 {speaker.sessionCount} session{speaker.sessionCount !== 1 ? 's' : ''}
               </p>
             )}

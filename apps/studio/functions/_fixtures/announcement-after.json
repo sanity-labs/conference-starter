@@ -1,0 +1,10 @@
+{
+  "_id": "test-announcement-001",
+  "_type": "announcement",
+  "title": "Test Announcement",
+  "slug": "test-announcement",
+  "body": "This is a test announcement for local function testing.",
+  "status": "published",
+  "links": [],
+  "distributionLog": []
+}

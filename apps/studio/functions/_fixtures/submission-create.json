@@ -1,0 +1,14 @@
+{
+  "_id": "test-submission-001",
+  "_type": "submission",
+  "sessionTitle": "Testing Content Pipelines with Fixtures",
+  "sessionType": "talk",
+  "abstract": "A practical guide to testing content automation pipelines using fixture data and local function testing.",
+  "level": "intermediate",
+  "topics": ["testing", "automation", "content-ops"],
+  "submitterName": "Test Speaker",
+  "submitterEmail": "delivered@resend.dev",
+  "bio": "A test speaker for local function testing.",
+  "status": "submitted",
+  "conference": { "_type": "reference", "_ref": "conference" }
+}

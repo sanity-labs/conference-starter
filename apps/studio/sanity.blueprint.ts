@@ -1,4 +1,4 @@
-import {defineBlueprint, defineDocumentFunction} from '@sanity/blueprints'
+import {defineBlueprint, defineDocumentFunction, defineScheduleFunction} from '@sanity/blueprints'
 
 export default defineBlueprint({
   resources: [
@@ -79,6 +79,29 @@ export default defineBlueprint({
         resource: {type: 'dataset', id: 'yjorde43.production'},
       },
       timeout: 30,
+    }),
+    // ─── Scheduled Functions ──────────────────────────────────────────────
+    defineScheduleFunction({
+      name: 'daily-digest',
+      event: {
+        minute: '0',
+        hour: '7',
+        dayOfWeek: '*',
+        month: '*',
+        dayOfMonth: '*',
+      },
+      timezone: 'America/New_York',
+    }),
+    defineScheduleFunction({
+      name: 'reminder-cron',
+      event: {
+        minute: '0',
+        hour: '8',
+        dayOfWeek: '*',
+        month: '*',
+        dayOfMonth: '*',
+      },
+      timezone: 'America/New_York',
     }),
   ],
 })

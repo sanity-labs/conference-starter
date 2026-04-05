@@ -6,7 +6,10 @@ export const emailVariables = [
   {id: 'submitterName', name: 'Submitter Name', description: "CFP submitter's full name"},
   {id: 'sessionTitle', name: 'Session Title', description: 'Talk or session title'},
   {id: 'speakerName', name: 'Speaker Name', description: "Accepted speaker's name"},
-  {id: 'conferenceName', name: 'Conference Name', description: 'e.g. Everything NYC 2026'},
+  {id: 'conferenceName', name: 'Conference Name', description: 'e.g. ContentOps Conf'},
+  {id: 'scheduleDate', name: 'Schedule Date', description: 'Formatted date, e.g. "Monday, June 15"'},
+  {id: 'cfpDeadlineDate', name: 'CFP Deadline Date', description: 'Formatted deadline, e.g. "March 30, 2026"'},
+  {id: 'daysUntilEvent', name: 'Days Until Event', description: '"tomorrow", "2 days", "1 week"'},
 ]
 
 export const emailTemplate = defineType({
@@ -74,6 +77,8 @@ export const emailTemplate = defineType({
           {title: 'On Submission Accepted', value: 'on-submission-accepted'},
           {title: 'On Submission Rejected', value: 'on-submission-rejected'},
           {title: 'On Speaker Confirmed', value: 'on-speaker-confirmed'},
+          {title: 'Daily Digest (scheduled)', value: 'daily-digest'},
+          {title: 'Reminder (scheduled)', value: 'reminder'},
           {title: 'Scheduled', value: 'scheduled'},
         ],
       },

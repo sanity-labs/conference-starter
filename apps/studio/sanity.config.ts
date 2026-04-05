@@ -16,7 +16,7 @@ import { scheduleBuilder } from "./tools/schedule-builder";
 
 export default defineConfig({
   name: "default",
-  title: "Everything NYC 2026",
+  title: "ContentOps Conf",
 
   projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
   dataset: process.env.SANITY_STUDIO_DATASET!,

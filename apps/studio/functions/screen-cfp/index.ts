@@ -80,7 +80,7 @@ export const handler = documentEventHandler<SubmissionEvent>(async ({context, ev
     const score = aiScreening?.score
     const summary = aiScreening?.summary
 
-    if (typeof score !== 'number' || !summary) {
+    if (typeof score !== 'number' || !Number.isFinite(score) || !summary) {
       throw new Error(
         `AI evaluation returned invalid results: score=${score}, summary=${summary ? 'present' : 'missing'}`,
       )

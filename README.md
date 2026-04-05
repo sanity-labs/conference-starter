@@ -271,7 +271,7 @@ Docs: [Content Agent API](https://www.sanity.io/docs/apis-and-sdks/content-agent
 
 ### Attendee Bot — Agent Context + BYO LLM (read-only)
 
-![Conference concierge — attendee Q&A via Agent Context](conference-consierge.png)
+![Conference concierge — attendee Q&A via Agent Context](conference-concierge.png)
 
 The attendee-facing bot uses a different pattern: **bring your own LLM** (Anthropic Sonnet) with content access provided by [Agent Context](https://www.sanity.io/docs/ai) through the [Model Context Protocol (MCP)](https://www.sanity.io/docs/ai/mcp-server). The `@sanity/agent-context` Studio plugin creates an MCP endpoint that exposes your content as tools (`initial_context`, `groq_query`, `schema_explorer`), which any MCP-compatible LLM can call.
 

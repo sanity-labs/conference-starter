@@ -1,6 +1,7 @@
 import {NextResponse} from 'next/server'
 import {createClient} from 'next-sanity'
 import {z} from 'zod'
+import {client} from '@/sanity/client'
 
 const writeClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
     const {_gotcha: _, ...data} = result.data
 
     // Check if CFP is open
-    const conference = await writeClient.fetch(
+    const conference = await client.fetch(
       `*[_type == "conference"][0]{ _id, cfpOpen, cfpDeadline }`,
     )
 

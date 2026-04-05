@@ -30,6 +30,7 @@ export async function handleAttendeeMessage(
     readToken: config.readToken,
   })
 
+  let finalText = ''
   try {
     const result = streamText({
       model: anthropic('claude-sonnet-4-6'),
@@ -40,17 +41,16 @@ export async function handleAttendeeMessage(
     })
 
     await thread.post(cleanMarkdownStream(result.textStream))
-
-    const finalText = stripMarkdown(await result.text)
-
-    const allMessages = [
-      ...history,
-      {role: 'user', content: message.text},
-      {role: 'assistant', content: finalText},
-    ]
-
-    saveConversation({chatId, messages: allMessages}).catch(console.error)
+    finalText = stripMarkdown(await result.text)
   } finally {
+    if (finalText) {
+      const allMessages = [
+        ...history,
+        {role: 'user', content: message.text},
+        {role: 'assistant', content: finalText},
+      ]
+      await saveConversation({chatId, messages: allMessages}).catch(console.error)
+    }
     await mcpClient.close()
   }
 }

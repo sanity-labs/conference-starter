@@ -10,6 +10,10 @@
   - changed-files:
       - any-glob-to-any-file: "apps/bot/**"
 
+"area:functions":
+  - changed-files:
+      - any-glob-to-any-file: "apps/functions/**"
+
 "area:schema":
   - changed-files:
       - any-glob-to-any-file: "packages/sanity-schema/**"

@@ -4,6 +4,7 @@ export default defineBlueprint({
   resources: [
     defineDocumentFunction({
       name: 'screen-cfp',
+      src: './screen-cfp',
       event: {
         on: ['create'],
         filter: '_type == "submission" && status == "submitted"',
@@ -15,6 +16,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'send-cfp-confirmation',
+      src: './send-cfp-confirmation',
       event: {
         on: ['create'],
         filter: '_type == "submission"',
@@ -25,6 +27,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'send-status-email',
+      src: './send-status-email',
       event: {
         on: ['update'],
         filter: '_type == "submission" && delta::changedAny(status)',
@@ -35,6 +38,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'rescreen-cfp',
+      src: './rescreen-cfp',
       event: {
         on: ['update'],
         filter:
@@ -47,6 +51,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'classify-conversation',
+      src: './classify-conversation',
       event: {
         on: ['create', 'update'],
         filter:
@@ -58,6 +63,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'send-announcement-email',
+      src: './send-announcement-email',
       event: {
         on: ['update'],
         filter:
@@ -70,6 +76,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'push-announcement-telegram',
+      src: './push-announcement-telegram',
       event: {
         on: ['update'],
         filter:
@@ -83,6 +90,7 @@ export default defineBlueprint({
     // ─── Scheduled Functions ──────────────────────────────────────────────
     defineScheduleFunction({
       name: 'daily-digest',
+      src: './daily-digest',
       event: {
         minute: '0',
         hour: '7',
@@ -94,6 +102,7 @@ export default defineBlueprint({
     }),
     defineScheduleFunction({
       name: 'reminder-cron',
+      src: './reminder-cron',
       event: {
         minute: '0',
         hour: '8',

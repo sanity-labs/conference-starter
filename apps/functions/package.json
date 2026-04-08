@@ -1,0 +1,21 @@
+{
+  "name": "@repo/functions",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@portabletext/to-html": "^5.0.2",
+    "@sanity/blueprints": "^0.15.0",
+    "@sanity/client": "^7.17.0",
+    "@sanity/functions": "^1.2.1",
+    "resend": "^6.9.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.2"
+  }
+}

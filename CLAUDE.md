@@ -27,8 +27,7 @@ Sprints 0–4 are complete. The platform has a working Studio, content model, we
 ```
 apps/web/                        # Next.js conference website
 apps/studio/                     # Sanity Studio
-apps/studio/functions/           # Sanity Functions (Blueprints)
-apps/studio/sanity.blueprint.ts  # Blueprint manifest
+apps/functions/                  # Sanity Functions (Blueprints) + sanity.blueprint.ts
 packages/sanity-schema/          # Content model + TypeScript types
 packages/sanity-queries/         # GROQ queries (colocated, not scattered in pages)
 packages/email/                  # React Email templates + Resend integration

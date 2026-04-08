@@ -46,7 +46,8 @@ A conference operations platform built on [Sanity](https://www.sanity.io) as a r
 ```
 apps/
   web/                     → Next.js 16 conference website (13 pages, 7 API routes, 12 markdown routes)
-  studio/                  → Sanity Studio + Functions + schedule builder
+  studio/                  → Sanity Studio + schedule builder
+  functions/               → Sanity Functions (Blueprints) + sanity.blueprint.ts
   bot/                     → Telegram bot — dual-mode (ops + attendee)
 
 packages/
@@ -413,6 +414,7 @@ Implemented following the [Markdown Routes with Next.js](https://www.sanity.io/l
 | [Web](apps/web/) | 3000 | [apps/web/README.md](apps/web/README.md) |
 | [Studio](apps/studio/) | 3333 | [apps/studio/README.md](apps/studio/README.md) |
 | [Bot](apps/bot/) | — | [apps/bot/README.md](apps/bot/README.md) |
+| [Functions](apps/functions/) | — | Sanity Functions (deployed via Blueprints) |
 
 ## Packages
 

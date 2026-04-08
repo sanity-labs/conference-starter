@@ -1,4 +1,5 @@
 import {createClient} from 'next-sanity'
+import {token} from './token'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET
@@ -14,6 +15,7 @@ export const client = createClient({
   dataset: dataset || 'production',
   apiVersion: '2026-03-15',
   useCdn: true,
+  token,
   stega: {
     studioUrl: process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'http://localhost:3333',
   },

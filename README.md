@@ -84,6 +84,28 @@ cp apps/bot/.env.example apps/bot/.env
 
 See each app's README for details on required variables.
 
+### Dataset Privacy
+
+The Sanity dataset is **private** — all API queries require authentication. This protects sensitive data stored alongside public content:
+
+- **Speaker PII** — email addresses, Telegram IDs, travel status, internal notes (dietary requirements, AV needs)
+- **CFP submissions** — submitter contact info, AI screening scores, internal review notes
+- **Email logs** — recipient addresses, delivery status
+- **Bot state** — Chat SDK operational data (subscriptions, locks, cache)
+- **AI prompts** — internal instructions for CFP screening and bot behavior
+
+The web app fetches all data server-side using `SANITY_API_READ_TOKEN` (a server-only env var, not exposed to browsers). Visual Editing and draft preview still work — `next-sanity` handles token injection and perspective switching automatically. The `browserToken` is only sent during draft mode via the Studio Presentation Tool.
+
+#### Using a public dataset instead
+
+If your content model doesn't contain sensitive data, you can use a public dataset:
+
+1. Change dataset visibility in [sanity.io/manage](https://sanity.io/manage) → Project → Dataset → Settings
+2. Optionally remove `token` from `createClient` in `apps/web/src/sanity/client.ts` (tokens work on public datasets too — they're just not required)
+3. Be aware that **all documents become queryable by anyone** without authentication
+
+On public datasets, documents with dots in their `_id` (e.g., `chat.state.*`, `prompt.*`) still require authentication — this project uses that convention for operational documents. But document types like `submission`, `emailLog`, and sensitive fields on `person` would be exposed. Consider using GROQ projections to exclude sensitive fields from your queries if you go this route.
+
 ### Development
 
 ```bash

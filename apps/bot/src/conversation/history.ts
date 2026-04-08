@@ -1,4 +1,4 @@
-import {sanityClient} from '../sanity-client.js'
+import {sanityClient} from '../sanity-client'
 
 export async function loadConversationHistory(
   chatId: string,

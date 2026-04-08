@@ -1,12 +1,12 @@
 import {stepCountIs, streamText} from 'ai'
 import {createAnthropic} from '@ai-sdk/anthropic'
-import {createAgentContextClient} from './ai/agent-context.js'
-import {fetchSystemPrompt} from './ai/prompts.js'
-import {saveConversation} from './conversation/save.js'
-import {loadConversationHistory} from './conversation/history.js'
-import {cleanMarkdownStream, stripMarkdown} from './format-telegram.js'
-import {sanitizeDocumentId} from './utils/sanitize.js'
-import {config} from './config.js'
+import {createAgentContextClient} from './ai/agent-context'
+import {fetchSystemPrompt} from './ai/prompts'
+import {saveConversation} from './conversation/save'
+import {loadConversationHistory} from './conversation/history'
+import {cleanMarkdownStream, stripMarkdown} from './format-telegram'
+import {sanitizeDocumentId} from './utils/sanitize'
+import {config} from './config'
 
 const MAX_HISTORY_MESSAGES = 10
 

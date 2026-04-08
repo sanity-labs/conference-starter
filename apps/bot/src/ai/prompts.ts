@@ -1,4 +1,4 @@
-import {sanityClient} from '../sanity-client.js'
+import {sanityClient} from '../sanity-client'
 
 const TELEGRAM_FORMAT_SUFFIX = `
 

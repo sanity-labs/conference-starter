@@ -17,7 +17,7 @@ import type {StateAdapter, Lock} from 'chat'
 const MAX_RETRIES = 3
 const RETRY_DELAYS = [50, 100, 200]
 
-import {sanitizeDocumentId as sanitize} from '../utils/sanitize.js'
+import {sanitizeDocumentId as sanitize} from '../utils/sanitize'
 
 function subId(threadId: string): string {
   return `chat.state.sub.${sanitize(threadId)}`

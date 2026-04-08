@@ -1,6 +1,6 @@
 import {createContentAgent} from 'content-agent'
 import type {LanguageModelV3} from '@ai-sdk/provider'
-import {config} from '../config.js'
+import {config} from '../config'
 
 const contentAgent = createContentAgent({
   organizationId: config.sanityOrgId,

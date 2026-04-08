@@ -1,1 +1,1 @@
-export {createSanityState} from './sanity-state-adapter.js'
+export {createSanityState} from './sanity-state-adapter'

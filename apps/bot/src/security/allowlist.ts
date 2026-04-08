@@ -1,4 +1,4 @@
-import {sanityClient} from '../sanity-client.js'
+import {sanityClient} from '../sanity-client'
 
 let allowedIds: Set<string> | null = null
 let lastFetched = 0

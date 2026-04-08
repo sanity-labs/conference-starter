@@ -1,5 +1,5 @@
-import {bot} from './bot.js'
-import {runPreflight} from './preflight.js'
+import {bot} from './bot'
+import {runPreflight} from './preflight'
 
 const isServerless = !!process.env.VERCEL
 

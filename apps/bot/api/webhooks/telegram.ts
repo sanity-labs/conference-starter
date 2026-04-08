@@ -1,5 +1,5 @@
 import {waitUntil} from '@vercel/functions'
-import {bot} from '../../src/bot.js'
+import {bot} from '../../src/bot'
 
 export async function POST(request: Request): Promise<Response> {
   console.log('[webhook] POST received')

@@ -1,5 +1,5 @@
-import {config} from './config.js'
-import {sanityClient} from './sanity-client.js'
+import {config} from './config'
+import {sanityClient} from './sanity-client'
 
 interface CheckResult {
   name: string

@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",
-    "build": "tsc",
-    "start": "node --env-file=.env dist/src/index.js"
+    "build": "tsc --noEmit",
+    "start": "tsx --env-file=.env src/index.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.58",

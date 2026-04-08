@@ -1,10 +1,10 @@
 import {streamText} from 'ai'
-import {getContentAgentModel} from './ai/content-agent.js'
-import {fetchSystemPrompt} from './ai/prompts.js'
-import {saveConversation} from './conversation/save.js'
-import {loadConversationHistory} from './conversation/history.js'
-import {cleanMarkdownStream, stripMarkdown} from './format-telegram.js'
-import {sanitizeDocumentId} from './utils/sanitize.js'
+import {getContentAgentModel} from './ai/content-agent'
+import {fetchSystemPrompt} from './ai/prompts'
+import {saveConversation} from './conversation/save'
+import {loadConversationHistory} from './conversation/history'
+import {cleanMarkdownStream, stripMarkdown} from './format-telegram'
+import {sanitizeDocumentId} from './utils/sanitize'
 
 const MAX_HISTORY_MESSAGES = 20
 

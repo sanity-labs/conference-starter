@@ -1,11 +1,11 @@
 import {Chat} from 'chat'
 import {createTelegramAdapter} from '@chat-adapter/telegram'
-import {config} from './config.js'
-import {handleOpsMessage} from './handler.js'
-import {handleAttendeeMessage} from './handler-attendee.js'
-import {isAllowedOrganizer} from './security/allowlist.js'
-import {sanityClient} from './sanity-client.js'
-import {createSanityState} from './state/index.js'
+import {config} from './config'
+import {handleOpsMessage} from './handler'
+import {handleAttendeeMessage} from './handler-attendee'
+import {isAllowedOrganizer} from './security/allowlist'
+import {sanityClient} from './sanity-client'
+import {createSanityState} from './state/index'
 
 const isServerless = !!process.env.VERCEL
 

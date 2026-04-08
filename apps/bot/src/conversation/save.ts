@@ -1,4 +1,4 @@
-import {sanityClient} from '../sanity-client.js'
+import {sanityClient} from '../sanity-client'
 
 const RETRY_DELAY_MS = 500
 

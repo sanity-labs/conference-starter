@@ -87,6 +87,29 @@ export default defineBlueprint({
       },
       timeout: 30,
     }),
+    // ─── Person Internal Lifecycle ─────────────────────────────────────────
+    defineDocumentFunction({
+      name: 'create-person-internal',
+      src: './create-person-internal',
+      event: {
+        on: ['create'],
+        filter: '_type == "person" && _id match "drafts.*"',
+        includeDrafts: true,
+        projection: '{ _id }',
+        resource: {type: 'dataset', id: 'yjorde43.production'},
+      },
+    }),
+    defineDocumentFunction({
+      name: 'delete-person-internal',
+      src: './delete-person-internal',
+      event: {
+        on: ['delete'],
+        filter: '_type == "person"',
+        includeDrafts: true,
+        projection: '{ _id }',
+        resource: {type: 'dataset', id: 'yjorde43.production'},
+      },
+    }),
     // ─── Scheduled Functions ──────────────────────────────────────────────
     defineScheduleFunction({
       name: 'daily-digest',

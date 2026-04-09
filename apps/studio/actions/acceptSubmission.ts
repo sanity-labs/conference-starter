@@ -58,8 +58,16 @@ export const acceptSubmission: DocumentActionComponent = (props) => {
               children: [{_type: 'span', _key: 'bio-span', text: bio, marks: []}],
             },
           ],
+        })
+
+        // Create personInternal doc with deterministic ID
+        await client.createIfNotExists({
+          _id: `personInternal.${speaker._id}`,
+          _type: 'personInternal',
+          person: {_type: 'reference', _ref: speaker._id, _weak: true},
+          email: submitterEmail,
           travelStatus: 'not-started',
-          internalNotes: `Created from CFP submission. Email: ${submitterEmail}`,
+          internalNotes: 'Created from CFP submission.',
         })
 
         // Create session document

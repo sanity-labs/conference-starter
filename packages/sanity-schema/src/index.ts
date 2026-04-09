@@ -1,5 +1,6 @@
 import {conference} from './documents/conference'
 import {person} from './documents/person'
+import {personInternal} from './documents/personInternal'
 import {session} from './documents/session'
 import {track} from './documents/track'
 import {venue} from './documents/venue'
@@ -32,6 +33,7 @@ export const schemaTypes = [
   // Documents
   conference,
   person,
+  personInternal,
   session,
   track,
   venue,

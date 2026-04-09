@@ -580,7 +580,7 @@ async function seed() {
     transaction.createOrReplace(r)
   }
 
-  // 5. People
+  // 5. People + personInternal records
   console.log('Creating people...')
   for (const p of people) {
     transaction.createOrReplace({
@@ -590,8 +590,13 @@ async function seed() {
       slug: slug(p.name),
       role: p.role,
       company: p.company,
-      travelStatus: 'not-started',
       bio: [textBlock(p.bio, 'bio-1')],
+    })
+    transaction.createOrReplace({
+      _id: `personInternal.${p._id}`,
+      _type: 'personInternal',
+      person: {_type: 'reference', _ref: p._id, _weak: true},
+      travelStatus: 'not-started',
     })
   }
 

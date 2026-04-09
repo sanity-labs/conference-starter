@@ -15,6 +15,7 @@ import {
   RobotIcon,
   CommentIcon,
   HelpCircleIcon,
+  LockIcon,
 } from '@sanity/icons'
 import {AGENT_CONTEXT_SCHEMA_TYPE_NAME} from '@sanity/agent-context/studio'
 import {EmailPreview} from './components/EmailPreview'
@@ -29,7 +30,7 @@ const OG_PREVIEW_TYPES: Record<string, 'session' | 'speaker' | 'page' | 'confere
 
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title('Everything NYC 2026')
+    .title('ContentOps Conf')
     .items([
       // Conference settings — singleton
       S.listItem()
@@ -39,7 +40,7 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
-      // People (speakers, organizers) with status filtering
+      // People (speakers, organizers) with travel status filtering via personInternal
       S.listItem()
         .title('People')
         .icon(UserIcon)
@@ -51,20 +52,31 @@ export const structure: StructureResolver = (S) =>
                 .title('All People')
                 .icon(UserIcon)
                 .child(S.documentTypeList('person').title('All People')),
+              S.listItem()
+                .title('Internal Data')
+                .icon(LockIcon)
+                .child(
+                  S.documentTypeList('personInternal')
+                    .title('Person Internal Records'),
+                ),
               S.divider(),
               S.listItem()
                 .title('Travel: Booked')
                 .child(
                   S.documentList()
                     .title('Travel Booked')
-                    .filter('_type == "person" && travelStatus == "booked"'),
+                    .filter(
+                      '_type == "person" && _id in *[_type == "personInternal" && travelStatus == "booked"].person._ref',
+                    ),
                 ),
               S.listItem()
                 .title('Travel: In Progress')
                 .child(
                   S.documentList()
                     .title('Travel In Progress')
-                    .filter('_type == "person" && travelStatus == "in-progress"'),
+                    .filter(
+                      '_type == "person" && _id in *[_type == "personInternal" && travelStatus == "in-progress"].person._ref',
+                    ),
                 ),
               S.listItem()
                 .title('Travel: Not Started')
@@ -72,7 +84,7 @@ export const structure: StructureResolver = (S) =>
                   S.documentList()
                     .title('Travel Not Started')
                     .filter(
-                      '_type == "person" && (travelStatus == "not-started" || !defined(travelStatus))',
+                      '_type == "person" && _id in *[_type == "personInternal" && (travelStatus == "not-started" || !defined(travelStatus))].person._ref',
                     ),
                 ),
               S.listItem()
@@ -80,7 +92,9 @@ export const structure: StructureResolver = (S) =>
                 .child(
                   S.documentList()
                     .title('Local People')
-                    .filter('_type == "person" && travelStatus == "local"'),
+                    .filter(
+                      '_type == "person" && _id in *[_type == "personInternal" && travelStatus == "local"].person._ref',
+                    ),
                 ),
             ]),
         ),

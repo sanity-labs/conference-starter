@@ -12,7 +12,6 @@ export const person = defineType({
   groups: [
     {name: 'profile', title: 'Profile', default: true},
     {name: 'social', title: 'Social & Links'},
-    {name: 'logistics', title: 'Logistics'},
     {name: 'seo', title: 'SEO'},
   ],
   fields: [
@@ -75,20 +74,6 @@ export const person = defineType({
         'Current company or organization. Displayed on speaker cards and used for filtering. If independent, use "Independent" or their consultancy name.',
     }),
     defineField({
-      name: 'email',
-      title: 'Email',
-      type: 'string',
-      group: 'profile',
-      description:
-        'Contact email address. Used for organizer communications and email notifications. Not displayed publicly.',
-      validation: (rule) =>
-        rule.custom((value) => {
-          if (!value) return true
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Enter a valid email address'
-          return true
-        }),
-    }),
-    defineField({
       name: 'bio',
       title: 'Biography',
       type: 'array',
@@ -142,41 +127,6 @@ export const person = defineType({
         rule
           .uri({scheme: ['http', 'https']})
           .error('Enter a valid URL starting with http:// or https://'),
-    }),
-    defineField({
-      name: 'telegramId',
-      title: 'Telegram ID',
-      type: 'string',
-      group: 'logistics',
-      description:
-        'Telegram user ID (numeric). Used for access control on the Telegram ops bot. Find via @userinfobot on Telegram.',
-    }),
-    defineField({
-      name: 'travelStatus',
-      title: 'Travel Status',
-      type: 'string',
-      group: 'logistics',
-      description:
-        'Internal field for organizers. Tracks whether travel arrangements are confirmed. Not displayed on the website.',
-      options: {
-        list: [
-          {title: 'Not Started', value: 'not-started'},
-          {title: 'In Progress', value: 'in-progress'},
-          {title: 'Booked', value: 'booked'},
-          {title: 'N/A (Local)', value: 'local'},
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'not-started',
-    }),
-    defineField({
-      name: 'internalNotes',
-      title: 'Internal Notes',
-      type: 'text',
-      group: 'logistics',
-      rows: 3,
-      description:
-        'Private notes for organizers — dietary requirements, AV needs, scheduling constraints. Never displayed publicly.',
     }),
     ...seoFields('seo'),
   ],

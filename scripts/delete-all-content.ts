@@ -26,6 +26,7 @@ const contentTypes = [
   'page',
   'homepage',
   'afterpage',
+  'personInternal',
   'person',
   'track',
   'venue',

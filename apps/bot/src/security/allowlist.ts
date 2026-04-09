@@ -10,7 +10,9 @@ async function getOrganizerTelegramIds(): Promise<Set<string>> {
   }
 
   const result = await sanityClient.fetch<Array<{telegramId: string | null}>>(
-    `*[_type == "conference"][0].organizers[]->{ telegramId }`,
+    `*[_type == "conference"][0].organizers[]-> {
+      "telegramId": *[_type == "personInternal" && person._ref == ^._id][0].telegramId
+    }`,
   )
 
   allowedIds = new Set(

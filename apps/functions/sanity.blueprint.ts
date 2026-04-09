@@ -1,4 +1,5 @@
-import {defineBlueprint, defineDocumentFunction, defineScheduleFunction} from '@sanity/blueprints'
+import {defineBlueprint, defineDocumentFunction} from '@sanity/blueprints'
+// import {defineScheduleFunction} from '@sanity/blueprints' // TODO: Re-enable with org-scoped stack
 
 export default defineBlueprint({
   resources: [
@@ -111,29 +112,30 @@ export default defineBlueprint({
       },
     }),
     // ─── Scheduled Functions ──────────────────────────────────────────────
-    defineScheduleFunction({
-      name: 'daily-digest',
-      src: './daily-digest',
-      event: {
-        minute: '0',
-        hour: '7',
-        dayOfWeek: '*',
-        month: '*',
-        dayOfMonth: '*',
-      },
-      timezone: 'America/New_York',
-    }),
-    defineScheduleFunction({
-      name: 'reminder-cron',
-      src: './reminder-cron',
-      event: {
-        minute: '0',
-        hour: '8',
-        dayOfWeek: '*',
-        month: '*',
-        dayOfMonth: '*',
-      },
-      timezone: 'America/New_York',
-    }),
+    // TODO: Re-enable once stack is org-scoped (required for scheduled functions)
+    // defineScheduleFunction({
+    //   name: 'daily-digest',
+    //   src: './daily-digest',
+    //   event: {
+    //     minute: '0',
+    //     hour: '7',
+    //     dayOfWeek: '*',
+    //     month: '*',
+    //     dayOfMonth: '*',
+    //   },
+    //   timezone: 'America/New_York',
+    // }),
+    // defineScheduleFunction({
+    //   name: 'reminder-cron',
+    //   src: './reminder-cron',
+    //   event: {
+    //     minute: '0',
+    //     hour: '8',
+    //     dayOfWeek: '*',
+    //     month: '*',
+    //     dayOfMonth: '*',
+    //   },
+    //   timezone: 'America/New_York',
+    // }),
   ],
 })

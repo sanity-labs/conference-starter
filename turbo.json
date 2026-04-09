@@ -12,7 +12,9 @@
         "NEXT_PUBLIC_SANITY_DATASET",
         "SANITY_API_READ_TOKEN",
         "SANITY_API_WRITE_TOKEN",
-        "RESEND_API_KEY"
+        "RESEND_API_KEY",
+        "SANITY_CONTEXT_MCP_URL",
+        "ANTHROPIC_API_KEY"
       ]
     },
     "build": {
@@ -34,7 +36,9 @@
         "RESEND_API_KEY",
         "RESEND_FROM_ADDRESS",
         "SANITY_STUDIO_PREVIEW_URL",
-        "SVIX_WEBHOOK_SECRET"
+        "SVIX_WEBHOOK_SECRET",
+        "SANITY_CONTEXT_MCP_URL",
+        "ANTHROPIC_API_KEY"
       ]
     },
     "type-check": {

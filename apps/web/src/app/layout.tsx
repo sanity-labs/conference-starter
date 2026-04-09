@@ -11,6 +11,7 @@ import {Footer} from '@/components/footer'
 import {JsonLd} from '@/components/json-ld'
 import type {WebSite} from 'schema-dts'
 import {SITE_URL, SITE_NAME, getDefaultOgImage} from '@/lib/metadata'
+import {ConciergeChat} from '@/components/concierge-chat'
 import './globals.css'
 
 const inter = Inter({
@@ -74,6 +75,7 @@ export default function RootLayout({
         <Suspense>
           <DraftModeShell />
         </Suspense>
+        <ConciergeChat />
       </body>
     </html>
   )

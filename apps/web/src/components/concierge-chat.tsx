@@ -10,7 +10,8 @@ export function ConciergeChat() {
   const [isOpen, setIsOpen] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const {messages, input, setInput, status, sendMessage} = useChat({transport})
+  const [input, setInput] = useState('')
+  const {messages, status, sendMessage} = useChat({transport})
 
   const isLoading = status === 'streaming' || status === 'submitted'
 

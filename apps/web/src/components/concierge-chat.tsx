@@ -1,6 +1,6 @@
 'use client'
 
-import {useState, useMemo, useRef, useEffect} from 'react'
+import {useState, useMemo, useRef, useEffect, useCallback} from 'react'
 import {useChat} from '@ai-sdk/react'
 import {DefaultChatTransport} from 'ai'
 
@@ -10,7 +10,7 @@ export function ConciergeChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const transport = useMemo(() => new DefaultChatTransport({api: '/api/chat'}), [])
-  const {messages, status, sendMessage} = useChat({transport})
+  const {messages, status, sendMessage, error, clearError} = useChat({transport})
 
   const isLoading = status === 'streaming' || status === 'submitted'
 
@@ -18,107 +18,62 @@ export function ConciergeChat() {
     messagesEndRef.current?.scrollIntoView({behavior: 'smooth'})
   }, [messages])
 
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) setIsOpen(false)
+    },
+    [isOpen],
+  )
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
+
   return (
     <aside aria-label="Conference concierge chat">
       {!isOpen && (
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          style={{
-            position: 'fixed',
-            bottom: '1.5rem',
-            right: '1.5rem',
-            zIndex: 50,
-            padding: '0.75rem 1.25rem',
-            borderRadius: '9999px',
-            border: '1px solid var(--color-border, #ccc)',
-            background: 'var(--color-surface, #fff)',
-            color: 'var(--color-text-primary, #000)',
-            cursor: 'pointer',
-            fontSize: '0.875rem',
-          }}
+          className="fixed right-6 bottom-6 z-50 rounded-full border border-gray-200 bg-white px-5 py-3 text-sm text-gray-900 shadow-md transition-colors hover:bg-gray-50"
         >
           Ask the Concierge
         </button>
       )}
 
       {isOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            bottom: '1.5rem',
-            right: '1.5rem',
-            zIndex: 50,
-            width: '24rem',
-            maxHeight: '32rem',
-            display: 'flex',
-            flexDirection: 'column',
-            borderRadius: '0.75rem',
-            border: '1px solid var(--color-border, #ccc)',
-            background: 'var(--color-surface, #fff)',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
-          }}
-        >
-          <header
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '0.75rem 1rem',
-              borderBottom: '1px solid var(--color-border, #ccc)',
-            }}
-          >
-            <strong>Concierge</strong>
+        <div className="fixed right-4 bottom-4 z-50 flex max-h-[80dvh] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg sm:right-6 sm:bottom-6 sm:max-h-[32rem]">
+          <header className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
+            <p className="text-sm font-semibold text-gray-900">Concierge</p>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
               aria-label="Close chat"
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '1.25rem',
-                lineHeight: 1,
-                color: 'inherit',
-              }}
+              className="text-lg/none text-gray-400 transition-colors hover:text-gray-600"
             >
               &times;
             </button>
           </header>
 
           <ul
-            style={{
-              flex: 1,
-              overflow: 'auto',
-              padding: '0.75rem 1rem',
-              margin: 0,
-              listStyle: 'none',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.5rem',
-            }}
+            role="list"
+            aria-live="polite"
+            className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4"
           >
             {messages.length === 0 && (
-              <li style={{color: 'var(--color-text-secondary, #666)', fontSize: '0.875rem'}}>
+              <li className="text-sm text-gray-500">
                 Ask me about the schedule, speakers, venue, or anything else about ContentOps Conf.
               </li>
             )}
             {messages.map((message) => (
               <li
                 key={message.id}
-                style={{
-                  alignSelf: message.role === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '85%',
-                  padding: '0.5rem 0.75rem',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.875rem',
-                  background:
-                    message.role === 'user'
-                      ? 'var(--color-accent, #0070f3)'
-                      : 'var(--color-muted, #f0f0f0)',
-                  color: message.role === 'user' ? '#fff' : 'inherit',
-                  whiteSpace: 'pre-wrap',
-                }}
+                className={
+                  message.role === 'user'
+                    ? 'self-end max-w-[85%] whitespace-pre-wrap rounded-lg bg-gray-900 px-3 py-2 text-sm text-white'
+                    : 'self-start max-w-[85%] whitespace-pre-wrap rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-900'
+                }
               >
                 {message.parts
                   .filter((part) => part.type === 'text')
@@ -128,21 +83,26 @@ export function ConciergeChat() {
               </li>
             ))}
             {isLoading && messages[messages.length - 1]?.role === 'user' && (
-              <li
-                style={{
-                  alignSelf: 'flex-start',
-                  padding: '0.5rem 0.75rem',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.875rem',
-                  background: 'var(--color-muted, #f0f0f0)',
-                  color: 'var(--color-text-secondary, #666)',
-                }}
-              >
+              <li className="self-start rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-500">
                 Thinking...
               </li>
             )}
             <div ref={messagesEndRef} />
           </ul>
+
+          {error && (
+            <div className="flex items-center gap-2 border-t border-red-100 bg-red-50 px-4 py-2 text-sm text-red-700">
+              <p className="flex-1">Something went wrong. Try again.</p>
+              <button
+                type="button"
+                onClick={clearError}
+                className="text-red-500 hover:text-red-700"
+                aria-label="Dismiss error"
+              >
+                &times;
+              </button>
+            </div>
+          )}
 
           <form
             onSubmit={(e) => {
@@ -151,42 +111,22 @@ export function ConciergeChat() {
               sendMessage({text: input})
               setInput('')
             }}
-            style={{
-              display: 'flex',
-              gap: '0.5rem',
-              padding: '0.75rem 1rem',
-              borderTop: '1px solid var(--color-border, #ccc)',
-            }}
+            className="flex shrink-0 gap-2 border-t border-gray-200 px-4 py-3"
           >
             <input
               type="text"
+              name="message"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask a question..."
               disabled={isLoading}
-              style={{
-                flex: 1,
-                padding: '0.5rem 0.75rem',
-                borderRadius: '0.375rem',
-                border: '1px solid var(--color-border, #ccc)',
-                fontSize: '0.875rem',
-                background: 'transparent',
-                color: 'inherit',
-              }}
+              aria-label="Chat message"
+              className="min-w-0 flex-1 rounded-md border border-gray-200 bg-transparent px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none disabled:opacity-50 max-sm:text-base/6"
             />
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              style={{
-                padding: '0.5rem 1rem',
-                borderRadius: '0.375rem',
-                border: '1px solid transparent',
-                background: 'var(--color-accent, #0070f3)',
-                color: '#fff',
-                cursor: isLoading || !input.trim() ? 'not-allowed' : 'pointer',
-                opacity: isLoading || !input.trim() ? 0.5 : 1,
-                fontSize: '0.875rem',
-              }}
+              className="shrink-0 rounded-md bg-gray-900 px-4 py-2 text-sm text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Send
             </button>

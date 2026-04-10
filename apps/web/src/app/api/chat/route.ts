@@ -1,6 +1,27 @@
 import {streamText, stepCountIs, convertToModelMessages, type UIMessage} from 'ai'
 import {createAnthropic} from '@ai-sdk/anthropic'
 import {createMCPClient} from '@ai-sdk/mcp'
+import {client} from '@/sanity/client'
+
+const PROMPT_ID = 'prompt.webConcierge'
+const FALLBACK_SYSTEM_PROMPT =
+  'You are the AI concierge for ContentOps Conf. Help attendees with questions about the schedule, speakers, venue, and other conference details. Be friendly, concise, and helpful.'
+
+const promptCache = {instruction: '', fetchedAt: 0}
+
+async function getSystemPrompt(): Promise<string> {
+  if (promptCache.instruction && Date.now() - promptCache.fetchedAt < 60_000) {
+    return promptCache.instruction
+  }
+  const doc = await client.fetch<{instruction: string | null}>(
+    `*[_id == $id][0]{ instruction }`,
+    {id: PROMPT_ID},
+  )
+  const instruction = doc?.instruction || FALLBACK_SYSTEM_PROMPT
+  promptCache.instruction = instruction
+  promptCache.fetchedAt = Date.now()
+  return instruction
+}
 
 const RATE_LIMIT_WINDOW_MS = 60_000
 const RATE_LIMIT_MAX = 20
@@ -16,6 +37,8 @@ function isRateLimited(ip: string): boolean {
   entry.count++
   return entry.count > RATE_LIMIT_MAX
 }
+
+export const maxDuration = 30
 
 export async function POST(request: Request) {
   const mcpUrl = process.env.SANITY_CONTEXT_MCP_URL
@@ -37,13 +60,16 @@ export async function POST(request: Request) {
 
   const {messages} = (await request.json()) as {messages: UIMessage[]}
 
-  const mcpClient = await createMCPClient({
-    transport: {
-      type: 'http',
-      url: mcpUrl,
-      headers: {Authorization: `Bearer ${readToken}`},
-    },
-  })
+  const [mcpClient, systemPrompt] = await Promise.all([
+    createMCPClient({
+      transport: {
+        type: 'http',
+        url: mcpUrl,
+        headers: {Authorization: `Bearer ${readToken}`},
+      },
+    }),
+    getSystemPrompt(),
+  ])
 
   const anthropic = createAnthropic({apiKey: anthropicApiKey})
 
@@ -52,15 +78,18 @@ export async function POST(request: Request) {
 
     const result = streamText({
       model: anthropic('claude-sonnet-4-6'),
-      system:
-        'You are the AI concierge for ContentOps Conf. Help attendees with questions about the schedule, speakers, venue, and other conference details. Be friendly, concise, and helpful. Use the available tools to look up information from the conference database.',
+      system: systemPrompt,
       messages: await convertToModelMessages(messages),
       tools,
       stopWhen: stepCountIs(10),
+      onFinish: async () => {
+        await mcpClient.close()
+      },
     })
 
     return result.toUIMessageStreamResponse()
-  } finally {
+  } catch (error) {
     await mcpClient.close()
+    throw error
   }
 }

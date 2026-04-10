@@ -346,6 +346,10 @@ export const structure: StructureResolver = (S) =>
                 .title('Telegram Attendee Bot')
                 .icon(RobotIcon)
                 .child(S.document().schemaType('prompt').documentId('prompt.botAttendee')),
+              S.listItem()
+                .title('Web Concierge')
+                .icon(RobotIcon)
+                .child(S.document().schemaType('prompt').documentId('prompt.webConcierge')),
             ]),
         ),
 

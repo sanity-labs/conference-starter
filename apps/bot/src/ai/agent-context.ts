@@ -12,6 +12,6 @@ export async function createAgentContextClient(agentContextConfig: {
       headers: {Authorization: `Bearer ${agentContextConfig.readToken}`},
     },
   })
-  const tools = await mcpClient.tools()
+  const tools = await mcpClient.tools() as ToolSet
   return {mcpClient, tools}
 }

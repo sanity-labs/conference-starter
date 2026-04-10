@@ -1,4 +1,4 @@
-import {streamText, stepCountIs, convertToModelMessages, type UIMessage} from 'ai'
+import {streamText, stepCountIs, convertToModelMessages, type UIMessage, type ToolSet} from 'ai'
 import {createAnthropic} from '@ai-sdk/anthropic'
 import {createMCPClient} from '@ai-sdk/mcp'
 import {client} from '@/sanity/client'
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
   const anthropic = createAnthropic({apiKey: anthropicApiKey})
 
   try {
-    const tools = await mcpClient.tools()
+    const tools = (await mcpClient.tools()) as ToolSet
 
     const result = streamText({
       model: anthropic('claude-sonnet-4-6'),

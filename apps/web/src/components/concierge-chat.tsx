@@ -1,16 +1,15 @@
 'use client'
 
-import {useState, useRef, useEffect} from 'react'
+import {useState, useMemo, useRef, useEffect} from 'react'
 import {useChat} from '@ai-sdk/react'
 import {DefaultChatTransport} from 'ai'
 
-const transport = new DefaultChatTransport({api: '/api/chat'})
-
 export function ConciergeChat() {
   const [isOpen, setIsOpen] = useState(false)
+  const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const [input, setInput] = useState('')
+  const transport = useMemo(() => new DefaultChatTransport({api: '/api/chat'}), [])
   const {messages, status, sendMessage} = useChat({transport})
 
   const isLoading = status === 'streaming' || status === 'submitted'

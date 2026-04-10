@@ -1,4 +1,4 @@
-import {streamText, stepCountIs, type UIMessage} from 'ai'
+import {streamText, stepCountIs, convertToModelMessages, type UIMessage} from 'ai'
 import {createAnthropic} from '@ai-sdk/anthropic'
 import {createMCPClient} from '@ai-sdk/mcp'
 
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       model: anthropic('claude-sonnet-4-6'),
       system:
         'You are the AI concierge for ContentOps Conf. Help attendees with questions about the schedule, speakers, venue, and other conference details. Be friendly, concise, and helpful. Use the available tools to look up information from the conference database.',
-      messages,
+      messages: await convertToModelMessages(messages),
       tools,
       stopWhen: stepCountIs(10),
     })

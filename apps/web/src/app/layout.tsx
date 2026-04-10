@@ -11,12 +11,7 @@ import {Footer} from '@/components/footer'
 import {JsonLd} from '@/components/json-ld'
 import type {WebSite} from 'schema-dts'
 import {SITE_URL, SITE_NAME, getDefaultOgImage} from '@/lib/metadata'
-import dynamic from 'next/dynamic'
-
-const ConciergeChat = dynamic(() =>
-  import('@/components/concierge-chat').then((m) => m.ConciergeChat),
-  {ssr: false},
-)
+import {ConciergeChat} from '@/components/concierge-chat'
 import './globals.css'
 
 const inter = Inter({

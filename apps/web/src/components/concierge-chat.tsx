@@ -3,6 +3,7 @@
 import {useState, useMemo, useRef, useEffect, useCallback} from 'react'
 import {useChat} from '@ai-sdk/react'
 import {DefaultChatTransport} from 'ai'
+import {Streamdown} from 'streamdown'
 
 export function ConciergeChat() {
   const [isOpen, setIsOpen] = useState(false)
@@ -72,14 +73,20 @@ export function ConciergeChat() {
                 className={
                   message.role === 'user'
                     ? 'self-end max-w-[85%] whitespace-pre-wrap rounded-lg bg-gray-900 px-3 py-2 text-sm text-white'
-                    : 'self-start max-w-[85%] whitespace-pre-wrap rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-900'
+                    : 'prose prose-sm prose-gray self-start max-w-[85%] rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-900'
                 }
               >
                 {message.parts
                   .filter((part) => part.type === 'text')
-                  .map((part, i) => (
-                    <span key={i}>{part.text}</span>
-                  ))}
+                  .map((part, i) =>
+                    message.role === 'assistant' ? (
+                      <Streamdown key={i} isAnimating={status === 'streaming'}>
+                        {part.text}
+                      </Streamdown>
+                    ) : (
+                      <span key={i}>{part.text}</span>
+                    ),
+                  )}
               </li>
             ))}
             {isLoading && messages[messages.length - 1]?.role === 'user' && (

@@ -75,7 +75,9 @@ export default function RootLayout({
         <Suspense>
           <DraftModeShell />
         </Suspense>
-        <ConciergeChat />
+        <Suspense>
+          <ConciergeChat />
+        </Suspense>
       </body>
     </html>
   )

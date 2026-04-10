@@ -3,6 +3,37 @@ import {createAnthropic} from '@ai-sdk/anthropic'
 import {createMCPClient} from '@ai-sdk/mcp'
 import {client} from '@/sanity/client'
 
+const CONVERSATION_PREFIX = 'agent.conversation.web-'
+
+async function saveConversation(chatId: string, messages: UIMessage[]) {
+  const textMessages = messages
+    .map((m) => ({
+      role: m.role,
+      content: m.parts
+        .filter((p): p is {type: 'text'; text: string} => p.type === 'text')
+        .map((p) => p.text)
+        .join(''),
+    }))
+    .filter((m) => m.content.trim() !== '')
+
+  if (textMessages.length === 0) return
+
+  const docId = `${CONVERSATION_PREFIX}${chatId.replace(/[^a-zA-Z0-9._-]/g, '-')}`
+  try {
+    await client.createOrReplace(
+      {
+        _id: docId,
+        _type: 'agent.conversation',
+        platform: 'web',
+        messages: textMessages,
+      },
+      {autoGenerateArrayKeys: true},
+    )
+  } catch (err) {
+    console.error('Failed to save conversation:', err)
+  }
+}
+
 const PROMPT_ID = 'prompt.webConcierge'
 const FALLBACK_SYSTEM_PROMPT =
   'You are the AI concierge for ContentOps Conf. Help attendees with questions about the schedule, speakers, venue, and other conference details. Be friendly, concise, and helpful.'
@@ -58,7 +89,7 @@ export async function POST(request: Request) {
     return new Response('Too many requests', {status: 429})
   }
 
-  const {messages} = (await request.json()) as {messages: UIMessage[]}
+  const {messages, id: chatId} = (await request.json()) as {messages: UIMessage[]; id?: string}
 
   const [mcpClient, systemPrompt] = await Promise.all([
     createMCPClient({
@@ -87,7 +118,14 @@ export async function POST(request: Request) {
       },
     })
 
-    return result.toUIMessageStreamResponse()
+    return result.toUIMessageStreamResponse({
+      originalMessages: messages,
+      onFinish: chatId
+        ? async ({messages: allMessages}) => {
+            await saveConversation(chatId, allMessages)
+          }
+        : undefined,
+    })
   } catch (error) {
     await mcpClient.close()
     throw error

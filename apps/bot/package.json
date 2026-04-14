@@ -15,7 +15,7 @@
     "@sanity/client": "^7.17.0",
     "@vercel/functions": "^3.4.3",
     "ai": "^6.0.116",
-    "chat": "^4.20.1",
+    "chat": "^4.26.0",
     "content-agent": "^0.4.7",
     "zod": "^3.25.76"
   },

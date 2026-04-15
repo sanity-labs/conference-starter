@@ -28,7 +28,7 @@ import type {DigestSlot} from '../_shared/schedule-format'
 
 const TIMEZONE = process.env.CONFERENCE_TIMEZONE || 'America/New_York'
 const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'ContentOps Conf <noreply@contentops.dev>'
-const SITE_URL = process.env.SITE_URL || 'https://everything-nyc.sanity.dev'
+const SITE_URL = process.env.SITE_URL || 'https://contentops-conf.sanity.dev'
 
 interface ConferenceConfig {
   _id: string

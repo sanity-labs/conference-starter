@@ -3,7 +3,7 @@
  * Maps document types to website path prefixes.
  */
 
-const SITE_URL = process.env.SITE_URL || 'https://everything-nyc.sanity.dev'
+const SITE_URL = process.env.SITE_URL || 'https://contentops-conf.sanity.dev'
 
 const typePrefixMap: Record<string, string> = {
   session: '/sessions',

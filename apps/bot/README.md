@@ -122,7 +122,7 @@ createContentAgent({
 "
 ```
 
-Look for the entry matching your project's Studio (e.g., "Everything NYC 2026" with resource `yjorde43.production`) and copy its `key` value.
+Look for the entry matching your project's Studio (e.g., "ContentOps Conf" with resource `yjorde43.production`) and copy its `key` value.
 
 **Common mistake**: Using the Studio app ID alone (e.g., `iqnz8eukp94bobzaorlf4m8x`) without the workspace suffix (`-default`). This produces `APPLICATION_NOT_FOUND`.
 

@@ -1,9 +1,9 @@
-# Detailed Project Brief: Everything NYC 2026 Conference Platform
+# Detailed Project Brief: ContentOps Conf Conference Platform
 
 > **Status:** READY FOR REVIEW — All team input incorporated
-> **Goal:** Build the definitive conference platform on Sanity — both a real product for Everything NYC 2026 and a showcase/demo of Sanity's full capabilities.
+> **Goal:** Build the definitive conference platform on Sanity — both a real product for ContentOps Conf and a showcase/demo of Sanity's full capabilities.
 > **MVP Launch:** Landing page + CFP submission page. Full site builds out from there.
-> **URL Structure:** Current year at root (`everything.nyc/`), past years at `/YYYY/` paths. Post-conference, content becomes an archive with recordings attached.
+> **URL Structure:** Current year at root (`contentopsconf.dev/`), past years at `/YYYY/` paths. Post-conference, content becomes an archive with recordings attached.
 
 ---
 
@@ -21,11 +21,11 @@ A complete conference operations platform where Sanity is the backbone for every
 
 ### What This Is NOT
 - Not just a conference website template
-- Not a generic event platform — it's purpose-built for Everything NYC 2026
+- Not a generic event platform — it's purpose-built for ContentOps Conf
 - Not a ticketing platform (we integrate with Luma for registration)
 
 ### Success Criteria
-1. Powers the actual Everything NYC 2026 conference
+1. Powers the actual ContentOps Conf conference
 2. Demonstrates every major Sanity capability in a real-world context
 3. Serves as a reference architecture other developers can learn from
 4. Content model is a showcase of Sanity best practices
@@ -259,7 +259,7 @@ sanity.blueprint.ts
 
 ### ADR-006b: Post-Conference Archive + Year-Based Routing
 
-**Decision:** Current conference year at root domain (`everything.nyc/`), past years at `/YYYY/` paths. Post-conference, content becomes an archive with recordings attached.
+**Decision:** Current conference year at root domain (`contentopsconf.dev/`), past years at `/YYYY/` paths. Post-conference, content becomes an archive with recordings attached.
 
 **Architecture:**
 - `conference` document has a `status` field: `upcoming` → `live` → `archived`
@@ -637,7 +637,7 @@ Every major Sanity capability and where it appears:
 
 ### Remaining Open Items
 - [ ] **P-004: Luma API key** — needed before Sprint 3
-- [ ] **Conference branding** — design assets for Everything NYC 2026 (not blocking — minimal frontend first)
+- [ ] **Conference branding** — design assets for ContentOps Conf (not blocking — minimal frontend first)
 - [ ] **Domain** — what's the conference URL?
 
 ### Resolved Items

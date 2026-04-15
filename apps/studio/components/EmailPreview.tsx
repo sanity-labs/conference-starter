@@ -7,7 +7,7 @@ const sampleVariables: Record<string, string> = {
   submitterName: 'Alex Johnson',
   sessionTitle: 'Building AI-Powered Content Platforms',
   speakerName: 'Alex Johnson',
-  conferenceName: 'Everything NYC 2026',
+  conferenceName: 'ContentOps Conf',
 }
 
 function interpolateSubject(subject: string): string {

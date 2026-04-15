@@ -122,7 +122,7 @@
 
 ### D-018: Post-Conference Archive + Year-Based Routing
 **Date:** 2026-02-20 | **Decided by:** @knut
-**Decision:** Current conference year at root domain (`everything.nyc/`), past years at `/YYYY/` paths. Post-conference, content becomes an archive with recordings.
+**Decision:** Current conference year at root domain (`contentopsconf.dev/`), past years at `/YYYY/` paths. Post-conference, content becomes an archive with recordings.
 **Implementation:**
 - `conference.status`: `upcoming` → `live` → `archived`
 - `session.recording`: video URL field populated post-conference

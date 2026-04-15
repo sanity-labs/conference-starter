@@ -10,7 +10,7 @@ interface SubmissionEvent {
   submitterEmail: string
 }
 
-const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <noreply@everything.nyc>'
+const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'ContentOps Conf <noreply@contentopsconf.dev>'
 
 export const handler = documentEventHandler<SubmissionEvent>(async ({context, event}) => {
   const {data} = event
@@ -35,7 +35,7 @@ export const handler = documentEventHandler<SubmissionEvent>(async ({context, ev
   const variables: Record<string, string> = {
     submitterName: data.submitterName,
     sessionTitle: data.sessionTitle,
-    conferenceName: 'Everything NYC 2026',
+    conferenceName: 'ContentOps Conf',
   }
 
   const bodyHtml = renderEmailBody(template.body, variables)

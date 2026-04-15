@@ -8,7 +8,7 @@ import {
   type AnnouncementData,
 } from '../_shared/announcement-format'
 
-const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <noreply@everything.nyc>'
+const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'ContentOps Conf <noreply@contentopsconf.dev>'
 
 export const handler = documentEventHandler<AnnouncementData>(async ({context, event}) => {
   const {data} = event

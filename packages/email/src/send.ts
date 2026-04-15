@@ -2,7 +2,7 @@ import {render} from '@react-email/render'
 import {Resend} from 'resend'
 import type {ReactElement} from 'react'
 
-const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <noreply@everything.nyc>'
+const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'ContentOps Conf <noreply@contentopsconf.dev>'
 
 let _resend: Resend | null = null
 

@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     const bodyHtml = renderEmailBody(body, interpolationValues)
     const html = wrapInLayout(bodyHtml, resolvedSubject)
 
-    const fromAddress = process.env.RESEND_FROM_ADDRESS || 'Everything NYC <noreply@everything.nyc>'
+    const fromAddress = process.env.RESEND_FROM_ADDRESS || 'ContentOps Conf <noreply@contentopsconf.dev>'
 
     const {data, error} = await resend().emails.send({
       from: fromAddress,

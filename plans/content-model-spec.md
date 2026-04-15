@@ -1,4 +1,4 @@
-# Content Model Specification — Everything NYC 2026
+# Content Model Specification — ContentOps Conf
 
 > **Status:** DRAFT — Ready for team review
 > **Author:** @eventide
@@ -21,7 +21,7 @@ This content model follows three principles:
 
 ### 1. `conference`
 
-The top-level container. Everything NYC 2026 is a single conference document. All other documents reference back to it, making multi-conference support trivial later.
+The top-level container. ContentOps Conf is a single conference document. All other documents reference back to it, making multi-conference support trivial later.
 
 ```ts
 defineType({

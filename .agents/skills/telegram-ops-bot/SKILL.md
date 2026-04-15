@@ -47,7 +47,7 @@ const telegram = createTelegramAdapter({
 })
 
 const bot = new Chat({
-  userName: 'everything-nyc-bot',
+  userName: 'contentops-conf-bot',
   adapters: {telegram},
   state: createSanityState(sanityClient),       // Content Lake, not memory
   onLockConflict: 'force',                      // safety net for stale locks

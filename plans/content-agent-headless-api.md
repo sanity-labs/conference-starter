@@ -40,7 +40,7 @@ const model = contentAgent.agent('concierge-thread', {
   config: {
     capabilities: { read: true, write: false },
     filter: { read: '_type in ["session", "speaker", "track", "venue"]' },
-    instruction: 'You are a helpful conference concierge for Everything NYC 2026.',
+    instruction: 'You are a helpful conference concierge for ContentOps Conf.',
   },
 })
 
@@ -66,7 +66,7 @@ function ConciergeChatbot() {
     headers: { Authorization: `Bearer ${authToken}` },
     body: {
       config: {
-        instruction: 'You are the Everything NYC 2026 conference concierge.',
+        instruction: 'You are the ContentOps Conf conference concierge.',
         capabilities: { read: true, write: false },
         filter: {
           read: '_type in ["session", "speaker", "track", "venue", "sponsor"]',

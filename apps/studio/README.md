@@ -1,6 +1,6 @@
 # Studio — Sanity Studio
 
-Sanity Studio for Everything NYC 2026. Includes custom structure, a drag-and-drop schedule builder, CFP submission workflow actions, and Sanity Functions for automation.
+Sanity Studio for ContentOps Conf. Includes custom structure, a drag-and-drop schedule builder, CFP submission workflow actions, and Sanity Functions for automation.
 
 ## Stack
 

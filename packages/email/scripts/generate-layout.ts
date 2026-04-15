@@ -22,7 +22,7 @@ const OUTPUT_PATHS = [
 async function main() {
   const element = createElement(EmailLayout, {
     preview: '{{EMAIL_PREVIEW}}',
-    conferenceName: 'Everything NYC 2026',
+    conferenceName: 'ContentOps Conf',
     children: createElement('div', {
       dangerouslySetInnerHTML: {__html: PLACEHOLDER},
     }),

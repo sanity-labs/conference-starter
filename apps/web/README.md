@@ -1,6 +1,6 @@
 # Web — Conference Website
 
-Next.js 16 public-facing website for Everything NYC 2026. Uses the App Router with `use cache` for fast, cached pages and Sanity Live for real-time preview.
+Next.js 16 public-facing website for ContentOps Conf. Uses the App Router with `use cache` for fast, cached pages and Sanity Live for real-time preview.
 
 ## Stack
 
@@ -78,7 +78,7 @@ SANITY_API_READ_TOKEN=        # Sanity API token with viewer role
 # Email (for webhook handling + preview)
 RESEND_API_KEY=
 RESEND_WEBHOOK_SECRET=
-RESEND_FROM_ADDRESS=noreply@everything.nyc
+RESEND_FROM_ADDRESS=noreply@contentopsconf.dev
 
 # Optional
 NEXT_PUBLIC_SITE_URL=         # Base URL for OG images and metadata

@@ -44,12 +44,13 @@ export async function handleAttendeeMessage(
     finalText = stripMarkdown(await result.text)
   } finally {
     if (finalText) {
-      const allMessages = [
-        ...history,
-        {role: 'user', content: message.text},
-        {role: 'assistant', content: finalText},
-      ]
-      await saveConversation({chatId, messages: allMessages}).catch(console.error)
+      await saveConversation({
+        chatId,
+        newMessages: [
+          {role: 'user', content: message.text},
+          {role: 'assistant', content: finalText},
+        ],
+      }).catch(console.error)
     }
     await mcpClient.close()
   }

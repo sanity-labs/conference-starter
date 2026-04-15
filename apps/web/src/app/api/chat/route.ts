@@ -1,34 +1,35 @@
-import {streamText, stepCountIs, convertToModelMessages, type UIMessage, type ToolSet} from 'ai'
+import {streamText, stepCountIs, convertToModelMessages, type ToolSet, type UIMessage} from 'ai'
 import {createAnthropic} from '@ai-sdk/anthropic'
 import {createMCPClient} from '@ai-sdk/mcp'
 import {client} from '@/sanity/client'
+import {createClient} from 'next-sanity'
+
+const writeClient = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '',
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  apiVersion: '2026-03-15',
+  token: process.env.SANITY_API_WRITE_TOKEN,
+  useCdn: false,
+})
 
 const CONVERSATION_PREFIX = 'agent.conversation.web-'
 
-async function saveConversation(chatId: string, messages: UIMessage[]) {
-  const textMessages = messages
-    .map((m) => ({
-      role: m.role,
-      content: m.parts
-        .filter((p): p is {type: 'text'; text: string} => p.type === 'text')
-        .map((p) => p.text)
-        .join(''),
-    }))
-    .filter((m) => m.content.trim() !== '')
-
-  if (textMessages.length === 0) return
+async function appendMessages(chatId: string, newMessages: Array<{role: string; content: string}>) {
+  const items = newMessages.filter((m) => m.content.trim() !== '')
+  if (items.length === 0) return
 
   const docId = `${CONVERSATION_PREFIX}${chatId.replace(/[^a-zA-Z0-9._-]/g, '-')}`
   try {
-    await client.createOrReplace(
-      {
+    await writeClient
+      .transaction()
+      .createIfNotExists({
         _id: docId,
         _type: 'agent.conversation',
         platform: 'web',
-        messages: textMessages,
-      },
-      {autoGenerateArrayKeys: true},
-    )
+        messages: [],
+      })
+      .patch(docId, (p) => p.setIfMissing({messages: []}).append('messages', items))
+      .commit({autoGenerateArrayKeys: true})
   } catch (err) {
     console.error('Failed to save conversation:', err)
   }
@@ -118,11 +119,20 @@ export async function POST(request: Request) {
       },
     })
 
+    const existingCount = messages.length
+
     return result.toUIMessageStreamResponse({
       originalMessages: messages,
       onFinish: chatId
         ? async ({messages: allMessages}) => {
-            await saveConversation(chatId, allMessages)
+            const newMessages = allMessages.slice(existingCount).map((m) => ({
+              role: m.role,
+              content: m.parts
+                .filter((p): p is {type: 'text'; text: string} => p.type === 'text')
+                .map((p) => p.text)
+                .join(''),
+            }))
+            await appendMessages(chatId, newMessages)
           }
         : undefined,
     })

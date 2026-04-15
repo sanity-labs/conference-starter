@@ -12,7 +12,7 @@ export async function handleOpsMessage(
   thread: {id: string; post: (text: string | AsyncIterable<string>) => Promise<unknown>},
   message: {text: string},
 ) {
-  const model = getContentAgentModel(thread.id)
+  const model = await getContentAgentModel(thread.id)
   const systemPrompt = await fetchSystemPrompt('prompt.botOps')
   const chatId = `agent.conversation.bot-telegram-${sanitizeDocumentId(thread.id)}`
 
@@ -36,12 +36,12 @@ export async function handleOpsMessage(
   // Wait for stream to complete and get final text for persistence
   const finalText = stripMarkdown(await result.text)
 
-  // Persist full conversation to Content Lake
-  const allMessages = [
-    ...history,
-    {role: 'user', content: message.text},
-    {role: 'assistant', content: finalText},
-  ]
-
-  saveConversation({chatId, messages: allMessages}).catch(console.error)
+  // Append new turn to Content Lake
+  saveConversation({
+    chatId,
+    newMessages: [
+      {role: 'user', content: message.text},
+      {role: 'assistant', content: finalText},
+    ],
+  }).catch(console.error)
 }

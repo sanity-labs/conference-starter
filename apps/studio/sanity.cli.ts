@@ -5,9 +5,8 @@ export default defineCliConfig({
     projectId: process.env.SANITY_STUDIO_PROJECT_ID || "yjorde43",
     dataset: process.env.SANITY_STUDIO_DATASET || "production",
   },
-  studioHost: "everything-nyc-2026",
   deployment: {
-    appId: "iqnz8eukp94bobzaorlf4m8x",
+    appId: "e2xwscncjg1wp2323ph3wwv9",
   },
   schemaExtraction: {
     enabled: true,

@@ -20,7 +20,7 @@ export default defineConfig({
 
   projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
   dataset: process.env.SANITY_STUDIO_DATASET!,
-
+  studioUrl: "contentops-conf-studio.sanity.dev",
   plugins: [
     structureTool({ structure, defaultDocumentNode }),
     visionTool(),

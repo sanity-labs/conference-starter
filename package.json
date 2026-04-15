@@ -7,7 +7,8 @@
     "type-check": "turbo type-check",
     "lint": "turbo lint",
     "typegen": "pnpm --filter @repo/studio exec sanity schema extract --enforce-required-fields && pnpm --filter @repo/studio exec sanity typegen generate",
-    "predev": "tsx scripts/check-next-version.ts"
+    "predev": "tsx scripts/check-next-version.ts",
+    "clean": "rm -rf .turbo node_modules/.cache apps/*/.next apps/*/.turbo apps/*/dist packages/*/.turbo packages/*/dist"
   },
   "devDependencies": {
     "tsx": "^4.21.0",

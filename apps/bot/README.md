@@ -4,17 +4,54 @@ Two bots in one: an **ops bot** for organizers (read/write via Content Agent) an
 
 ## First-Time Setup
 
-1. **Create a Telegram bot**: Message [@BotFather](https://t.me/BotFather) → `/newbot` → copy the token (create a **separate** bot for local dev — see [Dev vs Production](#dev-vs-production-use-separate-bots))
-2. **Create a Sanity API token**: [sanity.io/manage](https://sanity.io/manage) → Project → API → Tokens → Add Token → **Editor** role
-3. **Find your org ID**: [sanity.io/manage](https://sanity.io/manage) → Organization → Settings → copy the ID
-4. **Find your app key**: The Content Agent needs the deployed Studio's application key (see [Application Key](#application-key) below)
-5. **Copy env file**: `cp .env.example .env` and fill in all values
-6. **Seed the bot prompt**: `cd apps/studio && npx sanity exec ../../scripts/seed-prompts.ts --with-user-token`
-7. **Open Studio once**: Visit your deployed Studio in a browser — this registers it with the Content Agent service
-8. **Add yourself as organizer**: In Studio, edit the conference document → add your person (with your Telegram user ID) to `organizers[]`
-9. **Start the bot**: `pnpm dev`
+> **How Telegram bots work**: Unlike Slack or Discord, Telegram bots are not shared instances you "join." Each developer creates their own bot via Telegram's [@BotFather](https://t.me/BotFather), gets a unique token, and runs the bot process locally. Users then find and message your bot by the username you chose during creation. Think of it like provisioning your own server, not joining someone else's.
+
+### 1. Create your own Telegram bot
+
+1. Open Telegram and message [@BotFather](https://t.me/BotFather) (Telegram's official bot-creation tool)
+2. Send `/newbot`
+3. Choose a display name (e.g., "ContentOps Dev Bot")
+4. Choose a username — must end in `bot` (e.g., `contentops_dev_bot`)
+5. BotFather replies with a token like `123456:ABC-DEF...` — copy it, this is your `TELEGRAM_BOT_TOKEN`
+
+You now have a bot. To talk to it, search for `@your_bot_username` in Telegram and start a chat. It won't respond yet — you need to run the bot process first (step 7 below).
+
+Create a **separate** bot for local dev vs production — see [Dev vs Production](#dev-vs-production-use-separate-bots).
+
+### 2. Set up Sanity credentials
+
+1. **Create a Sanity API token**: [sanity.io/manage](https://sanity.io/manage) → Project → API → Tokens → Add Token → **Editor** role
+2. **Find your org ID**: [sanity.io/manage](https://sanity.io/manage) → Organization → Settings → copy the ID
+3. **Find your app key**: The Content Agent needs the deployed Studio's application key (see [Application Key](#application-key) below)
+
+### 3. Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Fill in all values — see [Environment Variables](#environment-variables) for details on each.
+
+### 4. Seed content and register yourself
+
+1. **Seed the bot prompt**: `cd apps/studio && npx sanity exec ../../scripts/seed-prompts.ts --with-user-token`
+2. **Open Studio once**: Visit your deployed Studio in a browser — this registers it with the Content Agent service
+3. **Add yourself as organizer**: In Studio, edit the conference document → add your person to `organizers[]`
+   - Your person document needs a `telegramId` field — this is your numeric Telegram user ID (not your username). To find it, message [@userinfobot](https://t.me/userinfobot) on Telegram.
+
+### 5. Start the bot
+
+```bash
+pnpm dev
+```
 
 The preflight checks will tell you if anything is misconfigured.
+
+### 6. Talk to your bot
+
+Open Telegram, search for `@your_bot_username` (the name you chose in step 1), and send a message. If you're in the organizers list, you'll get an AI-powered response.
+
+> **Tip**: While testing, use Telegram's "Clear Chat History" (tap the bot name → ⋮ menu → Clear History) to reset the conversation. This only clears your local Telegram view — the bot's conversation history in Sanity is separate.
 
 ## Architecture
 

@@ -1,4 +1,8 @@
 import {streamText, stepCountIs, convertToModelMessages, type ToolSet, type UIMessage} from 'ai'
+// Direct @ai-sdk/anthropic keeps this starter deployable to any host. A
+// Vercel AI Gateway (anthropic/claude-sonnet-4-6 + AI_GATEWAY_API_KEY) is a
+// valid optional layer if you want provider failover, cost tracking, and
+// OIDC-issued tokens — swap this import for the gateway provider there.
 import {createAnthropic} from '@ai-sdk/anthropic'
 import {createMCPClient} from '@ai-sdk/mcp'
 import type {SanityClient} from '@sanity/client'

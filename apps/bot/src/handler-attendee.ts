@@ -1,4 +1,7 @@
 import {stepCountIs, streamText} from 'ai'
+// Direct @ai-sdk/anthropic keeps the bot deployable to any host. A Vercel AI
+// Gateway is a valid optional layer if you want provider failover, cost
+// tracking, and OIDC-issued tokens — swap this import to use the gateway.
 import {createAnthropic} from '@ai-sdk/anthropic'
 import {createAgentContextClient} from './ai/agent-context'
 import {fetchSystemPrompt} from './ai/prompts'

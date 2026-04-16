@@ -75,16 +75,13 @@ export default function RootLayout({
         <Suspense>
           <DraftModeShell />
         </Suspense>
-        <Suspense>
-          <ConciergeChat />
-        </Suspense>
+        <ConciergeChat />
       </body>
     </html>
   )
 }
 
 async function DynamicShell({children}: {children: React.ReactNode}) {
-  const {isEnabled: isDraftMode} = await draftMode()
   const opts = await getDynamicFetchOptions()
   return (
     <CachedNav perspective={opts.perspective} stega={opts.stega}>

@@ -45,3 +45,5 @@ production-export-*/
 .codex/
 .so/
 .mcp.json
+.playwright-mcp/
+VIDEO_SCRIPTS.md

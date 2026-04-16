@@ -1,7 +1,10 @@
 # A Conference Operating System
 
-> [!WARNING]
-> This project is a work in progress. It's meant as inspiration and a reference architecture for building conference platforms on Sanity — it's not a production-ready starter kit... yet. APIs, patterns, and dependencies may change without notice.
+> [!NOTE]
+> **Status — reference architecture, not a turnkey starter (yet).**
+> Demo-ready today: content model, Studio, website, CFP pipeline, email system, AI concierge, dual-mode Telegram bot, 9 Sanity Functions, dynamic OG, llms.txt + markdown mirror.
+> Rough edges being polished: Sanity-backed rate limiting, CSP headers, error boundaries, auth gates on admin endpoints, platform-agnostic observability hook. See `plans/` for backlog.
+> APIs and patterns may still change — version-pin before building on top.
 
 A conference operations platform built on [Sanity](https://www.sanity.io) as a reference architecture. Not just a CMS-backed website — a **content operating system** for events where the Content Lake drives the website, emails, AI screening, Telegram bot, and automation.
 
@@ -269,7 +272,7 @@ This project demonstrates three distinct patterns for building agentic end-user 
 
 ### Ops Bot — Content Agent API (read+write)
 
-![Conference management bot — organizer ops via Content Agent](conference-management-bot.png)
+![Conference management bot — organizer ops via Content Agent](docs/conference-management-bot.png)
 
 The organizer-facing Telegram bot uses the [Content Agent API](https://www.sanity.io/docs/apis-and-sdks/content-agent-api) via the [`content-agent`](https://npmx.dev/package/content-agent) npm package — a [Vercel AI SDK](https://sdk.vercel.ai/) provider that bundles an LLM with full content access. The agent can read and write documents, query with GROQ, and perform bulk operations — all scoped by GROQ filters and capabilities.
 
@@ -294,7 +297,7 @@ Docs: [Content Agent API](https://www.sanity.io/docs/apis-and-sdks/content-agent
 
 ### Attendee Bot — Agent Context + BYO LLM (read-only)
 
-![Conference concierge — attendee Q&A via Agent Context](conference-concierge.png)
+![Conference concierge — attendee Q&A via Agent Context](docs/conference-concierge.png)
 
 The attendee-facing bot uses a different pattern: **bring your own LLM** (Anthropic Sonnet) with content access provided by [Agent Context](https://www.sanity.io/docs/ai) through the [Model Context Protocol (MCP)](https://www.sanity.io/docs/ai/mcp-server). The `@sanity/agent-context` Studio plugin creates an MCP endpoint that exposes your content as tools (`initial_context`, `groq_query`, `schema_explorer`), which any MCP-compatible LLM can call.
 

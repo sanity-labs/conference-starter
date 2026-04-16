@@ -260,6 +260,9 @@ export const session = defineType({
   orderings: [
     {title: 'Title A-Z', name: 'titleAsc', by: [{field: 'title', direction: 'asc'}]},
     {title: 'Type', name: 'type', by: [{field: 'sessionType', direction: 'asc'}]},
+    {title: 'Duration (shortest first)', name: 'durationAsc', by: [{field: 'duration', direction: 'asc'}]},
+    {title: 'Duration (longest first)', name: 'durationDesc', by: [{field: 'duration', direction: 'desc'}]},
+    {title: 'Track A-Z', name: 'trackAsc', by: [{field: 'track.name', direction: 'asc'}]},
   ],
   preview: {
     select: {

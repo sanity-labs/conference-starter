@@ -5,14 +5,29 @@ import {resend} from '@repo/email/send'
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, x-studio-secret',
 }
 
 export function OPTIONS() {
   return new Response(null, {status: 204, headers: CORS_HEADERS})
 }
 
+// Shared-secret gate. The studio action sends `x-studio-secret` taken from
+// SANITY_STUDIO_SEND_SECRET (bundled into the Studio client) and the API
+// compares to STUDIO_SEND_SECRET (server-side). Because the Studio bundle is
+// public, this is a soft lock that stops casual unauthenticated POSTs — not a
+// strong auth boundary. Enough for a transactional test-send endpoint.
+function checkSecret(request: Request): boolean {
+  const expected = process.env.STUDIO_SEND_SECRET
+  if (!expected) return true // unset → endpoint is open (local dev)
+  return request.headers.get('x-studio-secret') === expected
+}
+
 export async function POST(request: Request) {
+  if (!checkSecret(request)) {
+    return NextResponse.json({error: 'Unauthorized'}, {status: 401, headers: CORS_HEADERS})
+  }
+
   try {
     const {to, subject, body, variables} = await request.json()
 

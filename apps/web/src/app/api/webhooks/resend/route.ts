@@ -25,8 +25,18 @@ export async function POST(request: Request) {
   try {
     const body = await request.text()
 
-    // Verify webhook signature when secret is configured
-    if (process.env.RESEND_WEBHOOK_SECRET) {
+    // Signature verification.
+    // In production, RESEND_WEBHOOK_SECRET is required — missing secret is a
+    // misconfiguration and we fail closed so unauthenticated POSTs can't
+    // spoof delivery status.
+    // In development we allow unsigned webhooks to simplify testing with
+    // ngrok / local forwarders when the secret isn't wired up yet.
+    const secret = process.env.RESEND_WEBHOOK_SECRET
+    if (!secret && process.env.NODE_ENV === 'production') {
+      console.error('RESEND_WEBHOOK_SECRET is not configured')
+      return NextResponse.json({error: 'Webhook verification misconfigured'}, {status: 500})
+    }
+    if (secret) {
       const svixId = request.headers.get('svix-id')
       const svixTimestamp = request.headers.get('svix-timestamp')
       const svixSignature = request.headers.get('svix-signature')
@@ -35,7 +45,7 @@ export async function POST(request: Request) {
         return NextResponse.json({error: 'Missing webhook signature headers'}, {status: 401})
       }
 
-      const wh = new Webhook(process.env.RESEND_WEBHOOK_SECRET)
+      const wh = new Webhook(secret)
       try {
         wh.verify(body, {
           'svix-id': svixId,

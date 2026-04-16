@@ -33,9 +33,13 @@ export const sendTestEmail: DocumentActionComponent = (props) => {
       setIsSending(true)
 
       try {
+        const studioSecret = process.env.SANITY_STUDIO_SEND_SECRET
+        const headers: Record<string, string> = {'Content-Type': 'application/json'}
+        if (studioSecret) headers['x-studio-secret'] = studioSecret
+
         const res = await fetch(`${PREVIEW_API_URL}/api/send-test-email`, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers,
           body: JSON.stringify({
             to: currentUser.email,
             subject: doc.subject,

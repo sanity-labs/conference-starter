@@ -3,6 +3,7 @@ import {createAnthropic} from '@ai-sdk/anthropic'
 import {createMCPClient} from '@ai-sdk/mcp'
 import {client} from '@/sanity/client'
 import {createClient} from 'next-sanity'
+import {checkRateLimit} from '@/lib/rate-limit-sanity'
 
 const writeClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '',
@@ -55,21 +56,6 @@ async function getSystemPrompt(): Promise<string> {
   return instruction
 }
 
-const RATE_LIMIT_WINDOW_MS = 60_000
-const RATE_LIMIT_MAX = 20
-const rateLimitMap = new Map<string, {count: number; resetAt: number}>()
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now()
-  const entry = rateLimitMap.get(ip)
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, {count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS})
-    return false
-  }
-  entry.count++
-  return entry.count > RATE_LIMIT_MAX
-}
-
 export const maxDuration = 30
 
 export async function POST(request: Request) {
@@ -86,8 +72,16 @@ export async function POST(request: Request) {
     request.headers.get('x-real-ip') ||
     'unknown'
 
-  if (isRateLimited(ip)) {
-    return new Response('Too many requests', {status: 429})
+  const rateLimit = await checkRateLimit(writeClient, ip)
+  if (!rateLimit.allowed) {
+    const headers: Record<string, string> = {}
+    if (rateLimit.resetAt) {
+      headers['Retry-After'] = Math.max(
+        1,
+        Math.ceil((rateLimit.resetAt - Date.now()) / 1000),
+      ).toString()
+    }
+    return new Response('Too many requests', {status: 429, headers})
   }
 
   const {messages, id: chatId} = (await request.json()) as {messages: UIMessage[]; id?: string}

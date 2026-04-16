@@ -158,6 +158,27 @@
 **Decision:** Build an App SDK / Studio tool that auto-walks `_ref` fields when adding documents to a Content Release, showing a diff view (green=included, red=missing, yellow=still draft) and allowing one-click inclusion of dependencies. Block release publishing when dangling draft references are detected.
 **Rationale:** Conference content model is deeply reference-heavy. Manual dependency tracking will fail. Tooling prevents broken references in production. Also a great reusable open-source contribution.
 
+### D-023: Sanity-Backed Rate Limiting (No External KV)
+**Date:** 2026-04-16 | **Decided by:** @knut
+**Decision:** Rate-limit state for `/api/chat` lives in Sanity `chat.state.ratelimit.*` documents using the same path-based-ID + `ifRevisionId` pattern the Telegram bot uses for subscriptions, locks, and caches (see `apps/bot/src/state/sanity-state-adapter.ts`). The web app ships a two-layer check: an in-memory burst guard (10 req / 10 s, instance-local, fails open) plus a Sanity-document counter (100 req / 1 h, fleet-wide, persistent). No Redis, no Upstash, no Vercel KV.
+**Rationale:** The starter's whole thesis is "Sanity as a content operating system" — reaching for an external KV for operational state would split data across systems that no longer share TypeGen, Visual Editing, or audit history and would undermine the framing. The trade-off is accepted: Sanity writes have quota limits, so the Sanity layer is a coarse ceiling, not a fast per-request throttle. The in-memory burst guard absorbs flooders without round-tripping to Sanity on every request.
+**Reuses:** `chat.state` document schema (extended with `ratelimit` kind + `count` field). `apps/web/src/lib/rate-limit-sanity.ts` mirrors the adapter pattern at `apps/bot/src/state/sanity-state-adapter.ts`.
+
+### D-024: Platform-Agnostic AI Provider Wiring
+**Date:** 2026-04-16 | **Decided by:** @knut
+**Decision:** The concierge (`apps/web/src/app/api/chat/route.ts`) and attendee Telegram bot (`apps/bot/src/handler-attendee.ts`) call `@ai-sdk/anthropic` directly with `ANTHROPIC_API_KEY`. We do not default to Vercel AI Gateway, OIDC-bound tokens, or any host-specific provider abstraction. Both call sites carry a comment pointing forkers at AI Gateway as a valid optional layer.
+**Rationale:** The starter should be deployable to any host (Vercel, Netlify, Fly, bare VPS) without forcing a gateway subscription or binding to a specific platform's identity system. Vercel-specific products are footnotes, not defaults. Forkers who want provider failover, cost tracking, or OIDC tokens can swap the provider in one line.
+
+### D-025: Observability as a Pluggable Hook
+**Date:** 2026-04-16 | **Decided by:** @knut
+**Decision:** The web app ships `apps/web/src/instrumentation.ts` with a no-op `register()` and a minimal `onRequestError()` that logs to console. Forkers wire their own OpenTelemetry collector / Sentry / structured logs / Vercel Speed Insights / whatever. The starter does not pre-enroll anyone in a vendor's telemetry.
+**Rationale:** Consistent with D-024: platform-neutral by default. Drop-in patterns live in `docs/observability.md` — OpenTelemetry, Sentry, and plain structured console, plus a short list of the panels worth instrumenting first (concierge latency, rate-limit 429s, CFP funnel).
+
+### D-026: SDKStudioContext Workaround — Cleanup Pending
+**Date:** 2026-04-16 | **Decided by:** @knut
+**Decision:** The App SDK Studio tools (`apps/studio/tools/schedule-builder/`) pass `studio: {}` (empty) to `SanityApp` to trigger cookie-auth fallback. This is a workaround; see `plans/memo-app-sdk-studio-auth.md` for details. Sanity Studio PR #12157 adds `SDKStudioContext` natively; once `sanity@>=5.12` is available, replace the workaround with the context provider and update the memo.
+**Rationale:** Tracked so the workaround doesn't become permanent. Status reminder only — no code change needed today.
+
 ## Pending
 
 ### ~~P-001: Content Releases — Studio-first or Programmatic?~~ → RESOLVED

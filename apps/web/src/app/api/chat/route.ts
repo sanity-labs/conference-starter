@@ -1,19 +1,35 @@
 import {streamText, stepCountIs, convertToModelMessages, type ToolSet, type UIMessage} from 'ai'
 import {createAnthropic} from '@ai-sdk/anthropic'
 import {createMCPClient} from '@ai-sdk/mcp'
+import type {SanityClient} from '@sanity/client'
 import {client} from '@/sanity/client'
 import {createClient} from 'next-sanity'
 import {checkRateLimit} from '@/lib/rate-limit-sanity'
 
-const writeClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '',
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: '2026-03-15',
-  token: process.env.SANITY_API_WRITE_TOKEN,
-  useCdn: false,
-})
+let writeClientCache: SanityClient | null = null
+
+function getWriteClient(): SanityClient {
+  if (writeClientCache) return writeClientCache
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
+  const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET
+  const token = process.env.SANITY_API_WRITE_TOKEN
+  if (!projectId || !dataset || !token) {
+    throw new Error(
+      'Concierge write client unavailable: NEXT_PUBLIC_SANITY_PROJECT_ID, NEXT_PUBLIC_SANITY_DATASET, and SANITY_API_WRITE_TOKEN are required',
+    )
+  }
+  writeClientCache = createClient({
+    projectId,
+    dataset,
+    apiVersion: '2026-03-15',
+    token,
+    useCdn: false,
+  })
+  return writeClientCache
+}
 
 const CONVERSATION_PREFIX = 'agent.conversation.web-'
+const CONVERSATION_MAX_MESSAGES = 100
 
 async function appendMessages(chatId: string, newMessages: Array<{role: string; content: string}>) {
   const items = newMessages.filter((m) => m.content.trim() !== '')
@@ -21,7 +37,8 @@ async function appendMessages(chatId: string, newMessages: Array<{role: string; 
 
   const docId = `${CONVERSATION_PREFIX}${chatId.replace(/[^a-zA-Z0-9._-]/g, '-')}`
   try {
-    await writeClient
+    const w = getWriteClient()
+    await w
       .transaction()
       .createIfNotExists({
         _id: docId,
@@ -29,7 +46,14 @@ async function appendMessages(chatId: string, newMessages: Array<{role: string; 
         platform: 'web',
         messages: [],
       })
-      .patch(docId, (p) => p.setIfMissing({messages: []}).append('messages', items))
+      .patch(docId, (p) =>
+        p
+          .setIfMissing({messages: []})
+          .append('messages', items)
+          // Keep only the most recent N messages so conversation docs
+          // stay bounded for high-traffic threads.
+          .splice('messages', 0, -CONVERSATION_MAX_MESSAGES),
+      )
       .commit({autoGenerateArrayKeys: true})
   } catch (err) {
     console.error('Failed to save conversation:', err)
@@ -72,7 +96,7 @@ export async function POST(request: Request) {
     request.headers.get('x-real-ip') ||
     'unknown'
 
-  const rateLimit = await checkRateLimit(writeClient, ip)
+  const rateLimit = await checkRateLimit(getWriteClient(), ip)
   if (!rateLimit.allowed) {
     const headers: Record<string, string> = {}
     if (rateLimit.resetAt) {

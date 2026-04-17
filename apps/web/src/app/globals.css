@@ -171,12 +171,31 @@ html {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 1.25rem;
+    padding: 0.5rem 0.75rem;
     font-weight: 500;
     font-size: 0.875rem;
     line-height: 1.25rem;
     border-radius: var(--radius-md);
-    min-height: 2.75rem;
+    min-height: 2.25rem;
+    position: relative;
+  }
+
+  /* Touch-target expansion per uidotsh://ui/design-guidelines/buttons:
+     invisible pseudo-element keeps the hit area ≥ 48×48px on
+     coarse-pointer devices while letting the visible button stay compact. */
+  .btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 3rem);
+    height: max(100%, 3rem);
+    transform: translate(-50%, -50%);
+  }
+  @media (pointer: fine) {
+    .btn::after {
+      display: none;
+    }
   }
 
   .btn:disabled {

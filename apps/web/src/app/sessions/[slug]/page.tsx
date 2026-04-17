@@ -349,7 +349,7 @@ function MediaLinks({session}: {session: NonNullable<SESSION_DETAIL_QUERY_RESULT
               href={session.slidesUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+              className="text-sm text-text-secondary hover:text-text-primary"
             >
               View slides &rarr;
             </a>
@@ -361,7 +361,7 @@ function MediaLinks({session}: {session: NonNullable<SESSION_DETAIL_QUERY_RESULT
               href={session.recordingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+              className="text-sm text-text-secondary hover:text-text-primary"
             >
               Watch recording &rarr;
             </a>

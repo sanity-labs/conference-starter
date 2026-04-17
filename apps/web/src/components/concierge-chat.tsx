@@ -51,7 +51,7 @@ export function ConciergeChat() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed right-6 bottom-6 z-50 rounded-full border border-gray-200 bg-white px-5 py-3 text-sm text-gray-900 shadow-md transition-colors hover:bg-gray-50"
+          className="fixed right-6 bottom-6 z-50 rounded-full border border-gray-200 bg-white px-5 py-3 text-sm text-gray-900 shadow-md hover:bg-gray-50"
         >
           Ask the Concierge
         </button>
@@ -66,7 +66,7 @@ export function ConciergeChat() {
                 type="button"
                 onClick={handleNewConversation}
                 aria-label="New conversation"
-                className="text-xs text-gray-400 transition-colors hover:text-gray-600"
+                className="text-xs text-gray-400 hover:text-gray-600"
               >
                 New chat
               </button>
@@ -74,7 +74,7 @@ export function ConciergeChat() {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close chat"
-                className="text-lg/none text-gray-400 transition-colors hover:text-gray-600"
+                className="text-lg/none text-gray-400 hover:text-gray-600"
               >
                 &times;
               </button>
@@ -189,7 +189,7 @@ function ChatMessages() {
         <button
           type="submit"
           disabled={isLoading || !input.trim()}
-          className="shrink-0 rounded-md bg-gray-900 px-4 py-2 text-sm text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="shrink-0 rounded-md bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Send
         </button>

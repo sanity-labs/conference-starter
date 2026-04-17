@@ -64,7 +64,7 @@ export function Footer({data}: {data: NavData}) {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+                    className="text-sm text-text-secondary hover:text-text-primary"
                   >
                     {link.label}
                   </a>

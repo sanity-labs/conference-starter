@@ -162,12 +162,13 @@ export type ChatState = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  kind?: "subscription" | "lock" | "cache" | "list";
+  kind?: "subscription" | "lock" | "cache" | "list" | "ratelimit";
   threadId?: string;
   lockToken?: string;
   expiresAt?: number;
   value?: string;
   items?: Array<string>;
+  count?: number;
 };
 
 export type AgentConversation = {
@@ -790,33 +791,6 @@ export type Venue = {
   };
 };
 
-export type SanityAgentContextConversation = {
-  _id: string;
-  _type: "sanity.agentContextConversation";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  agentId?: string;
-  threadId?: string;
-  messages?: Array<{
-    role?: "user" | "assistant" | "system" | "tool";
-    content?: string;
-    toolName?: string;
-    toolType?: "call" | "result";
-    _type: "conversationMessage";
-    _key: string;
-  }>;
-  startedAt?: string;
-  messagesUpdatedAt?: string;
-  coreMetrics?: {
-    successScore?: number;
-    sentiment?: "positive" | "neutral" | "negative";
-    contentGaps?: Array<string>;
-  };
-  classifiedAt?: string;
-  classificationError?: string;
-};
-
 export type SanityAgentContext = {
   _id: string;
   _type: "sanity.agentContext";
@@ -951,7 +925,7 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = ScoringCriterion | PageReference | SessionReference | PersonReference | NavItem | FaqReference | FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerGrid | SanityImageAssetReference | RichText | Hero | Cta | ChatState | AgentConversation | Faq | Prompt | SubmissionReference | EmailLog | EmailTemplate | Slug | ConferenceReference | Submission | VenueReference | Announcement | Page | SanityImageCrop | SanityImageHotspot | Sponsor | RoomReference | ScheduleSlot | Room | TrackReference | Session | Track | Color | PersonInternal | Person | Conference | Venue | SanityAgentContextConversation | SanityAgentContext | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes = ScoringCriterion | PageReference | SessionReference | PersonReference | NavItem | FaqReference | FaqSection | CtaBlock | SchedulePreview | SponsorBar | SpeakerGrid | SanityImageAssetReference | RichText | Hero | Cta | ChatState | AgentConversation | Faq | Prompt | SubmissionReference | EmailLog | EmailTemplate | Slug | ConferenceReference | Submission | VenueReference | Announcement | Page | SanityImageCrop | SanityImageHotspot | Sponsor | RoomReference | ScheduleSlot | Room | TrackReference | Session | Track | Color | PersonInternal | Person | Conference | Venue | SanityAgentContext | RgbaColor | HsvaColor | HslaColor | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 
 // Source: ../../packages/sanity-queries/src/announcements.ts
 // Variable: ANNOUNCEMENTS_QUERY

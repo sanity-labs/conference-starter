@@ -70,7 +70,7 @@ export function NavLink({item}: {item: NavItemData}) {
   if (!resolved) return null
 
   const className =
-    'inline-flex items-center px-3 py-2 text-sm text-text-secondary transition-colors hover:text-text-primary'
+    'inline-flex items-center px-3 py-2 text-sm text-text-secondary hover:text-text-primary'
 
   if (resolved.external) {
     return (

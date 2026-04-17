@@ -230,7 +230,7 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
               {speaker.photo && (
                 <SanityImage
                   value={speaker.photo}
-                  className="aspect-square w-full rounded-lg object-cover outline-1 -outline-offset-1 outline-black/5 transition-opacity group-hover:opacity-90"
+                  className="aspect-square w-full rounded-lg object-cover outline-1 -outline-offset-1 outline-black/5 group-hover:opacity-90"
                   width={400}
                   height={400}
                   sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
@@ -248,7 +248,7 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
       </ul>
       {speakers.length > 8 && (
         <p className="mt-6">
-          <Link href="/speakers" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+          <Link href="/speakers" className="text-sm font-medium text-text-secondary hover:text-text-primary">
             View all {speakers.length} speakers &rarr;
           </Link>
         </p>
@@ -303,7 +303,7 @@ function SessionsPreview({sessions}: {sessions: FEATURED_SESSIONS_QUERY_RESULT})
         ))}
       </ul>
       <p className="mt-6">
-        <Link href="/sessions" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+        <Link href="/sessions" className="text-sm font-medium text-text-secondary hover:text-text-primary">
           View all sessions &rarr;
         </Link>
       </p>
@@ -332,7 +332,7 @@ function SponsorsBar({sponsors}: {sponsors: SPONSORS_QUERY_RESULT}) {
                 href={sponsor.website ?? undefined}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block transition-opacity hover:opacity-80"
+                className="block hover:opacity-80"
               >
                 <SanityImage
                   value={sponsor.logo}
@@ -356,7 +356,7 @@ function SponsorsBar({sponsors}: {sponsors: SPONSORS_QUERY_RESULT}) {
         ))}
       </ul>
       <p className="mt-6">
-        <Link href="/sponsors" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+        <Link href="/sponsors" className="text-sm font-medium text-text-secondary hover:text-text-primary">
           View all sponsors &rarr;
         </Link>
       </p>
@@ -375,7 +375,7 @@ function VenueSection({conference}: {conference: NonNullable<CONFERENCE_QUERY_RE
         <p className="text-lg font-medium">{conference.venue.name}</p>
         <address className="mt-1 text-text-muted not-italic">{conference.venue.address}</address>
         <p className="mt-4">
-          <Link href="/venue" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+          <Link href="/venue" className="text-sm font-medium text-text-secondary hover:text-text-primary">
             Venue details &rarr;
           </Link>
         </p>

@@ -31,7 +31,7 @@ export function ScheduleDayNav({days}: ScheduleDayNavProps) {
                   const qs = params.toString()
                   router.push(`/schedule${qs ? `?${qs}` : ''}`, {scroll: false})
                 }}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                className={`rounded-lg px-4 py-2 text-sm font-medium ${
                   isActive
                     ? 'bg-surface-muted text-text-primary'
                     : 'text-text-muted hover:bg-surface-alt hover:text-text-primary'

@@ -101,7 +101,7 @@ function VenueHeader({venue}: {venue: NonNullable<VENUE_QUERY_RESULT>}) {
             href={venue.mapUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary"
+            className="text-sm font-medium text-text-secondary hover:text-text-primary"
           >
             Get Directions &rarr;
           </a>

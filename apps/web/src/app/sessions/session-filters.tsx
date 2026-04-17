@@ -122,7 +122,7 @@ function FilterGroup({
               key={opt.value}
               type="button"
               onClick={() => onSelect(isActive ? null : opt.value)}
-              className={`rounded-full border px-3 py-1 text-sm transition-colors ${
+              className={`rounded-full border px-3 py-1 text-sm ${
                 isActive
                   ? 'border-border-strong bg-surface-alt text-text-primary'
                   : 'border-border text-text-secondary hover:border-border-strong hover:text-text-primary'
@@ -140,7 +140,7 @@ function FilterGroup({
 
 function SessionCard({session}: {session: Session}) {
   return (
-    <li className="rounded-md border border-border p-4 transition-colors hover:border-border-strong">
+    <li className="rounded-md border border-border p-4 hover:border-border-strong">
       <Link href={`/sessions/${session.slug}`} className="font-medium hover:underline">
         {session.title}
       </Link>

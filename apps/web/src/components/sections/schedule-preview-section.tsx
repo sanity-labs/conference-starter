@@ -76,7 +76,7 @@ export async function SchedulePreviewSection({
         ))}
       </ul>
       <p className="mt-4">
-        <Link href="/schedule" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+        <Link href="/schedule" className="text-sm font-medium text-text-secondary hover:text-text-primary">
           View full schedule &rarr;
         </Link>
       </p>

@@ -171,7 +171,7 @@ function SocialLinks({speaker}: {speaker: NonNullable<SPEAKER_DETAIL_QUERY_RESUL
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-text-muted transition-colors hover:text-text-primary"
+            className="text-text-muted hover:text-text-primary"
           >
             {link.label}
           </a>

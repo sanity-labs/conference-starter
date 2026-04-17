@@ -136,7 +136,6 @@ html {
     border-radius: var(--radius-md);
     background: var(--color-surface);
     color: var(--color-text-primary);
-    transition: border-color 0.15s;
   }
 
   .form-input:hover {
@@ -162,7 +161,6 @@ html {
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     padding: 1rem 1.25rem;
-    transition: border-color 0.15s;
   }
 
   .card:hover {
@@ -178,10 +176,6 @@ html {
     font-size: 0.875rem;
     line-height: 1.25rem;
     border-radius: var(--radius-md);
-    transition:
-      background-color 0.15s,
-      border-color 0.15s,
-      color 0.15s;
     min-height: 2.75rem;
   }
 

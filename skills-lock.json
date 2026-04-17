@@ -9,7 +9,7 @@
     "create-agent-with-sanity-context": {
       "source": "sanity-io/agent-context",
       "sourceType": "github",
-      "computedHash": "47f516a0018360ff86303acf2ecc45fec532de5f5cae612cef3b156fa5de1e2a"
+      "computedHash": "b3c8bba53144308a011e3eb78bdade6266363474275200c58e31c479bd3852d1"
     },
     "dial-your-context": {
       "source": "sanity-io/agent-context",

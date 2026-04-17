@@ -98,7 +98,7 @@ type Sponsor = NonNullable<SPONSORS_QUERY_RESULT>[number]
 function SponsorCard({sponsor, tier}: {sponsor: Sponsor; tier: string}) {
   const logoHeight = tierLogoHeight(tier)
   const content = (
-    <div className="flex flex-col items-center rounded-md border border-border p-4 text-center transition-colors hover:border-border-strong">
+    <div className="flex flex-col items-center rounded-md border border-border p-4 text-center hover:border-border-strong">
       {sponsor.logo && (
         <SanityImage
           value={{...sponsor.logo, alt: sponsor.logo.alt || `${sponsor.name} logo`}}

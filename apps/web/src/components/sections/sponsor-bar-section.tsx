@@ -38,7 +38,7 @@ export async function SponsorBarSection({
                 href={sponsor.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block opacity-80 transition-opacity hover:opacity-100"
+                className="block opacity-80 hover:opacity-100"
               >
                 {sponsor.logo ? (
                   <SanityImage
@@ -67,7 +67,7 @@ export async function SponsorBarSection({
         ))}
       </ul>
       <p className="mt-6 text-center">
-        <Link href="/sponsors" className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary">
+        <Link href="/sponsors" className="text-sm font-medium text-text-secondary hover:text-text-primary">
           View all sponsors &rarr;
         </Link>
       </p>

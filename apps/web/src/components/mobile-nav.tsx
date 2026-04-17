@@ -48,13 +48,13 @@ export function MobileNav({children}: {children: React.ReactNode}) {
         className="flex h-11 w-11 flex-col items-center justify-center gap-1.5"
       >
         <span
-          className={`block h-0.5 w-5 bg-text-primary transition-transform ${open ? 'translate-y-2 rotate-45' : ''}`}
+          className={`block h-0.5 w-5 bg-text-primary motion-safe:transition-transform ${open ? 'translate-y-2 rotate-45' : ''}`}
         />
         <span
-          className={`block h-0.5 w-5 bg-text-primary transition-opacity ${open ? 'opacity-0' : ''}`}
+          className={`block h-0.5 w-5 bg-text-primary motion-safe:transition-opacity ${open ? 'opacity-0' : ''}`}
         />
         <span
-          className={`block h-0.5 w-5 bg-text-primary transition-transform ${open ? '-translate-y-2 -rotate-45' : ''}`}
+          className={`block h-0.5 w-5 bg-text-primary motion-safe:transition-transform ${open ? '-translate-y-2 -rotate-45' : ''}`}
         />
       </button>
       {open && (

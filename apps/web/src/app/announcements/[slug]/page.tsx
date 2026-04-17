@@ -154,7 +154,7 @@ async function AnnouncementDetailCached({
                 <li key={i}>
                   <a
                     href={link.url}
-                    className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+                    className="text-sm text-text-secondary hover:text-text-primary"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -167,7 +167,7 @@ async function AnnouncementDetailCached({
               const href = resolveInternalHref(link.reference)
               return (
                 <li key={i}>
-                  <Link href={href} className="text-sm text-text-secondary transition-colors hover:text-text-primary">
+                  <Link href={href} className="text-sm text-text-secondary hover:text-text-primary">
                     {link.label || link.reference.name || 'Link'} &rarr;
                   </Link>
                 </li>
@@ -179,7 +179,7 @@ async function AnnouncementDetailCached({
       )}
 
       <p className="mt-12">
-        <Link href="/announcements" className="text-sm text-text-muted transition-colors hover:text-text-primary">
+        <Link href="/announcements" className="text-sm text-text-muted hover:text-text-primary">
           &larr; All announcements
         </Link>
       </p>

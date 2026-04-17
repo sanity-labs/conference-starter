@@ -93,17 +93,19 @@ async function ScheduleCached({selectedDay, perspective, stega}: {selectedDay?: 
         {timeGroups.size === 0 ? (
           <p className="text-text-muted">No sessions scheduled for this day.</p>
         ) : (
-          <ol className="space-y-8" aria-label="Schedule by time">
+          <ol className="space-y-6" aria-label="Schedule by time">
             {Array.from(timeGroups.entries()).map(([time, groupSlots]) => (
               <li key={time}>
-                <time dateTime={time} className="text-sm font-semibold tabular-nums text-text-primary">
-                  {new Date(time).toLocaleTimeString('en-US', {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    timeZone: 'America/New_York',
-                  })}
-                </time>
-                <ul className="mt-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="sticky top-0 z-10 -mx-6 bg-surface/90 px-6 py-2 backdrop-blur supports-[backdrop-filter]:bg-surface/80 sm:static sm:mx-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+                  <time dateTime={time} className="text-sm font-semibold tabular-nums text-text-primary">
+                    {new Date(time).toLocaleTimeString('en-US', {
+                      hour: 'numeric',
+                      minute: '2-digit',
+                      timeZone: 'America/New_York',
+                    })}
+                  </time>
+                </div>
+                <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {groupSlots.map((slot) => (
                     <SlotCard key={slot._id} slot={slot} />
                   ))}

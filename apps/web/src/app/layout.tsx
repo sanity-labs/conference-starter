@@ -1,5 +1,5 @@
 import type {Metadata} from 'next'
-import {Inter} from 'next/font/google'
+import localFont from 'next/font/local'
 import {Suspense} from 'react'
 import {draftMode} from 'next/headers'
 import {VisualEditing} from 'next-sanity/visual-editing'
@@ -14,8 +14,14 @@ import {SITE_URL, SITE_NAME, getDefaultOgImage} from '@/lib/metadata'
 import {ConciergeChat} from '@/components/concierge-chat'
 import './globals.css'
 
-const inter = Inter({
-  subsets: ['latin'],
+// Self-hosted InterVariable with full OpenType feature-settings + Display
+// optical-size support. The Google Fonts build strips both — see
+// uidotsh://ui/design-guidelines/font-recommendations.
+const inter = localFont({
+  src: [
+    {path: '../../public/fonts/InterVariable.woff2', style: 'normal', weight: '100 900'},
+    {path: '../../public/fonts/InterVariable-Italic.woff2', style: 'italic', weight: '100 900'},
+  ],
   display: 'swap',
   variable: '--font-inter',
 })

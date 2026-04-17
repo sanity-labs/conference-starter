@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type {NAV_QUERY_RESULT} from '@repo/sanity-queries'
 import {SanityImage} from './sanity-image'
 import {NavLink} from './nav-link'
+import {ThemeToggle} from './theme-toggle'
 
 type NavData = NonNullable<NAV_QUERY_RESULT>
 
@@ -73,10 +74,11 @@ export function Footer({data}: {data: NavData}) {
           </div>
         )}
       </div>
-      <div className="mx-auto max-w-content-max border-t border-border px-6 py-6 lg:px-8">
+      <div className="mx-auto flex max-w-content-max flex-wrap items-center justify-between gap-4 border-t border-border px-6 py-6 lg:px-8">
         <p className="text-sm text-text-muted">
           &copy; {year} {data.name ?? 'Conference'}. All rights reserved.
         </p>
+        <ThemeToggle />
       </div>
     </footer>
   )

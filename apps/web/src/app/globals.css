@@ -45,8 +45,27 @@
     monospace;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 html {
   font-optical-sizing: auto;
+}
+
+.dark {
+  /* Dark-mode token overrides. Per uidotsh://ui/design-guidelines/dark-mode:
+     preserve contrast, don't literally invert. Borders stay opacity-based
+     (derived from --color-text-primary) so they auto-adapt. */
+  --color-surface: #0c0a09; /* neutral-950 */
+  --color-surface-alt: #1c1917; /* neutral-900 */
+  --color-surface-muted: #292524; /* neutral-800 */
+  --color-border: color-mix(in oklab, #fafaf9 10%, transparent);
+  --color-border-strong: color-mix(in oklab, #fafaf9 18%, transparent);
+  --color-text-primary: #fafaf9; /* neutral-50 */
+  --color-text-secondary: #d6d3d1; /* neutral-300 */
+  --color-text-muted: #a8a29e; /* neutral-400 — ~7.0:1 on neutral-950 */
+  --color-accent: #60a5fa; /* blue-400 for dark-surface legibility */
+  --color-focus: #60a5fa;
+  color-scheme: dark;
 }
 
 @layer base {

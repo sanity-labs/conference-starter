@@ -134,7 +134,7 @@ function RoomsList({rooms}: {rooms: NonNullable<VENUE_QUERY_RESULT>['rooms']}) {
                 {room.amenities.map((amenity) => (
                   <li
                     key={amenity}
-                    className="rounded-full bg-surface-muted px-2.5 py-0.5 text-xs text-text-muted"
+                    className="rounded-full bg-surface-muted px-2.5 py-0.5 text-xs text-text-on-muted"
                   >
                     {amenity}
                   </li>

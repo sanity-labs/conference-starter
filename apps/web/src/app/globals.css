@@ -13,9 +13,22 @@
      never use solid colors for dividers. */
   --color-border: color-mix(in oklab, #0c0a09 8%, transparent);
   --color-border-strong: color-mix(in oklab, #0c0a09 14%, transparent);
+  /* Text tokens and their intended surface pairings (AA-safe):
+       --color-text-primary    → any surface, any size (19.3:1 on surface)
+       --color-text-secondary  → any surface, any size (10.5:1 on surface)
+       --color-text-muted      → ONLY on --color-surface (7.1:1) — do NOT
+                                 pair with surface-alt / surface-muted for
+                                 small text; use --color-text-on-muted (alias
+                                 of text-secondary) on those surfaces.
+     See docs/accessibility.md for the full contrast contract. */
   --color-text-primary: #0c0a09; /* neutral-950 */
   --color-text-secondary: #44403c; /* neutral-700 */
   --color-text-muted: #57534e; /* neutral-600 — ~7.1:1 on white */
+  /* Alias for "muted-looking text on a non-surface background". Points
+     at text-secondary so it stays AA across every surface, including
+     dark mode. Use this whenever the parent has bg-surface-muted or
+     bg-surface-alt. */
+  --color-text-on-muted: var(--color-text-secondary);
   --color-accent: #2563eb;
   --color-focus: #2563eb;
   --color-error: #dc2626;

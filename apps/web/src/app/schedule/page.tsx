@@ -153,7 +153,7 @@ function SlotCard({slot}: {slot: SCHEDULE_DAY_QUERY_RESULT[number]}) {
     <li
       className={`${
         isBreak
-          ? 'rounded-lg bg-surface-muted p-4 text-text-muted'
+          ? 'rounded-lg bg-surface-muted p-4 text-text-on-muted'
           : 'card'
       } ${slot.isPlenary ? 'sm:col-span-2 lg:col-span-3' : ''}`}
     >

@@ -51,22 +51,22 @@ export function ConciergeChat() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed right-6 bottom-6 z-50 rounded-full border border-gray-200 bg-white px-5 py-3 text-sm text-gray-900 shadow-md hover:bg-gray-50"
+          className="fixed right-6 bottom-6 z-50 rounded-full border border-border bg-surface px-5 py-3 text-sm text-text-primary shadow-md hover:bg-surface-alt"
         >
           Ask the Concierge
         </button>
       )}
 
       {isOpen && (
-        <div className="fixed right-4 bottom-4 z-50 flex max-h-[80dvh] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg sm:right-6 sm:bottom-6 sm:max-h-[32rem]">
-          <header className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
-            <p className="text-sm font-semibold text-gray-900">Concierge</p>
+        <div className="fixed right-4 bottom-4 z-50 flex max-h-[80dvh] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-lg sm:right-6 sm:bottom-6 sm:max-h-[32rem]">
+          <header className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
+            <p className="text-sm font-semibold text-text-primary">Concierge</p>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={handleNewConversation}
                 aria-label="New conversation"
-                className="text-xs text-gray-400 hover:text-gray-600"
+                className="text-xs text-text-muted hover:text-text-primary"
               >
                 New chat
               </button>
@@ -74,7 +74,7 @@ export function ConciergeChat() {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close chat"
-                className="text-lg/none text-gray-400 hover:text-gray-600"
+                className="text-lg/none text-text-muted hover:text-text-primary"
               >
                 &times;
               </button>
@@ -119,7 +119,7 @@ function ChatMessages() {
         className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4"
       >
         {messages.length === 0 && (
-          <li className="text-sm text-gray-500">
+          <li className="text-sm text-text-muted">
             Ask me about the schedule, speakers, venue, or anything else about ContentOps Conf.
           </li>
         )}
@@ -128,8 +128,8 @@ function ChatMessages() {
             key={message.id}
             className={
               message.role === 'user'
-                ? 'self-end max-w-[85%] whitespace-pre-wrap rounded-lg bg-gray-900 px-3 py-2 text-sm text-white'
-                : 'prose prose-sm prose-gray self-start max-w-[85%] rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-900'
+                ? 'self-end max-w-[85%] whitespace-pre-wrap rounded-lg bg-text-primary px-3 py-2 text-sm text-surface'
+                : 'prose prose-sm self-start max-w-[85%] rounded-lg bg-surface-muted px-3 py-2 text-sm text-text-primary'
             }
           >
             {message.parts
@@ -146,7 +146,7 @@ function ChatMessages() {
           </li>
         ))}
         {isLoading && messages[messages.length - 1]?.role === 'user' && (
-          <li className="self-start rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-500">
+          <li className="self-start rounded-lg bg-surface-muted px-3 py-2 text-sm text-text-secondary">
             Thinking...
           </li>
         )}
@@ -159,7 +159,7 @@ function ChatMessages() {
           <button
             type="button"
             onClick={clearError}
-            className="text-red-500 hover:text-red-700"
+            className="text-red-700 hover:text-red-900"
             aria-label="Dismiss error"
           >
             &times;
@@ -174,7 +174,7 @@ function ChatMessages() {
           sendMessage({text: input})
           setInput('')
         }}
-        className="flex shrink-0 gap-2 border-t border-gray-200 px-4 py-3"
+        className="flex shrink-0 gap-2 border-t border-border px-4 py-3"
       >
         <input
           type="text"
@@ -184,12 +184,12 @@ function ChatMessages() {
           placeholder="Ask a question..."
           disabled={isLoading}
           aria-label="Chat message"
-          className="min-w-0 flex-1 rounded-md border border-gray-200 bg-transparent px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none disabled:opacity-50 max-sm:text-base/6"
+          className="min-w-0 flex-1 rounded-md border border-border bg-transparent px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-border-strong focus:outline-none disabled:opacity-50 max-sm:text-base/6"
         />
         <button
           type="submit"
           disabled={isLoading || !input.trim()}
-          className="shrink-0 rounded-md bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="shrink-0 rounded-md bg-text-primary px-4 py-2 text-sm text-surface hover:bg-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
         >
           Send
         </button>

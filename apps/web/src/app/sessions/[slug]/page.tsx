@@ -386,7 +386,7 @@ function RelatedSessions({sessions}: {sessions: RELATED_SESSIONS_QUERY_RESULT | 
                 {session.title}
               </Link>
               {session.sessionType && (
-                <span className="inline-flex items-center rounded-full border border-border bg-surface-muted px-2.5 py-0.5 text-xs font-medium text-text-muted">
+                <span className="inline-flex items-center rounded-full border border-border bg-surface-muted px-2.5 py-0.5 text-xs font-medium text-text-on-muted">
                   {session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)}
                 </span>
               )}

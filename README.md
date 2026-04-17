@@ -2,8 +2,8 @@
 
 > [!NOTE]
 > **Status — reference architecture, not a turnkey starter (yet).**
-> Demo-ready today: content model, Studio, website, CFP pipeline, email system, AI concierge, dual-mode Telegram bot, 9 Sanity Functions, dynamic OG, llms.txt + markdown mirror.
-> Rough edges being polished: Sanity-backed rate limiting, CSP headers, error boundaries, auth gates on admin endpoints, platform-agnostic observability hook. See `plans/` for backlog.
+> Demo-ready today: content model, Studio, website, CFP pipeline, email system, AI concierge, dual-mode Telegram bot, 9 Sanity Functions, dynamic OG, llms.txt + markdown mirror, dark mode, Sanity-backed rate limiting, CSP headers, route-level error boundaries, auth-gated admin endpoints, pluggable observability hook, self-hosted InterVariable typography with AA-audited contrast.
+> Not yet built: Content Releases / year-based archive (Sprint 5), Luma registration sync (Sprint 6), AI Elements for the concierge UI, end-to-end Playwright smoke tests. See `plans/` for backlog.
 > APIs and patterns may still change — version-pin before building on top.
 
 A conference operations platform built on [Sanity](https://www.sanity.io) as a reference architecture. Not just a CMS-backed website — a **content operating system** for events where the Content Lake drives the website, emails, AI screening, Telegram bot, and automation.
@@ -16,7 +16,7 @@ A conference operations platform built on [Sanity](https://www.sanity.io) as a r
 - **Multi-channel announcements** — Publish an announcement in Studio and it distributes to email subscribers and a Telegram channel simultaneously, with per-channel delivery tracking.
 - **Telegram bot (dual-mode)** — Organizer bot with Content Agent (read+write access to the Content Lake) for ops queries. Attendee bot with Anthropic Sonnet + Agent Context MCP (read-only) for public Q&A. Conversation persistence and auto-classification.
 - **Schedule builder** — Custom Studio tool with drag-and-drop slot assignment and conflict detection.
-- **7 serverless functions** — Event-driven Sanity Functions (Blueprints) for CFP screening, email sends, announcement distribution, conversation classification, and re-screening.
+- **9 serverless functions** — Event-driven Sanity Functions (Blueprints) for CFP screening, email sends, announcement distribution (email + Telegram), conversation classification, re-screening, and person-lifecycle sync.
 - **Visual Editing** — Stega-based click-to-edit across the entire website. Works automatically for ~80% of content through CSM reference tracking.
 - **End-to-end type safety** — `sanity typegen` generates TypeScript types from schema and GROQ queries, consumed by all apps.
 
@@ -39,7 +39,7 @@ A conference operations platform built on [Sanity](https://www.sanity.io) as a r
 | CMS | Sanity Studio (custom structure, schedule builder, 5 document actions) |
 | Queries | GROQ with end-to-end TypeGen |
 | Email | React Email + Resend + Portable Text interpolation |
-| Automation | Sanity Functions (Blueprints) — 7 functions for CFP, email, announcements, classification |
+| Automation | Sanity Functions (Blueprints) — 9 functions for CFP, email, announcements, classification, person-lifecycle |
 | AI | Agent Actions (CFP screening), Content Agent (ops bot), Agent Context MCP (attendee bot) |
 | Bot | Telegram — dual-mode: ops (Content Agent read+write) + attendee (Anthropic Sonnet + MCP) |
 | Types | `sanity typegen` — schema to frontend type safety |
@@ -58,6 +58,7 @@ packages/
   sanity-queries/          → GROQ queries + TypeGen types
   email/                   → React Email templates + Resend integration
 
+docs/                      → Contributor-facing guides (accessibility, observability, screenshots)
 plans/                     → Architecture docs, decisions, specs
 scripts/                   → Seed data, migrations, utilities
 ```
@@ -172,7 +173,7 @@ The schema lives in `packages/sanity-schema/` and is consumed by all apps.
 
 ## Sanity Functions
 
-7 event-driven serverless functions deployed as Blueprints:
+9 event-driven serverless functions deployed as Blueprints:
 
 | Function | Trigger | What it does |
 |----------|---------|-------------|
@@ -183,6 +184,8 @@ The schema lives in `packages/sanity-schema/` and is consumed by all apps.
 | `send-announcement-email` | Announcement status → "published" | Distributes announcement via Resend |
 | `push-announcement-telegram` | Announcement status → "published" | Posts announcement to Telegram channel |
 | `classify-conversation` | Conversation created/updated | Auto-classifies bot conversations (Anthropic Haiku) |
+| `create-person-internal` | Person draft created | Provisions the paired `personInternal` record (travel, dietary, AV) |
+| `delete-person-internal` | Person deleted | Cleans up the paired `personInternal` record |
 
 ## Studio Customizations
 
@@ -265,6 +268,18 @@ Stega by default — ~80% of Visual Editing works automatically through CSM refe
 ### GROQ Queries
 
 All queries live in `packages/sanity-queries/` — never scattered in page components. TypeGen generates types for every query.
+
+### Sanity as the state store
+
+Operational state — rate-limit counters, chat subscriptions, distributed locks, conversation history — lives in Sanity, not an external KV. Path-based document IDs (`chat.state.ratelimit.*`, `chat.state.lock.*`, `agent.conversation.web-*`) plus `ifRevisionId` optimistic concurrency. See `apps/web/src/lib/rate-limit-sanity.ts` and `apps/bot/src/state/sanity-state-adapter.ts`.
+
+### Accessibility + design tokens
+
+Typography via self-hosted InterVariable with OpenType features (`cv02`, `cv03`, `cv04`, `cv11`, `ss01`, `ss03`) for optical sizing and stylistic sets. Color tokens use `neutral-*` (warmer than `gray-*`) with `color-mix()` opacity-on-text borders that auto-adapt across light/dark. A dedicated `text-on-muted` role token prevents low-contrast pairings on `surface-muted`/`surface-alt` backgrounds. Full contrast contract + grep recipes in [`docs/accessibility.md`](docs/accessibility.md).
+
+### Dark mode
+
+System-prefers by default, user override persisted to `localStorage`. Three-state footer toggle (System / Light / Dark). Pre-hydration inline script in `layout.tsx` prevents flash. Tokens defined once in `@theme` and overridden in a `.dark` block — most components need zero dark-specific classes.
 
 ## AI-Powered Experiences
 
@@ -402,11 +417,12 @@ Implemented following the [Markdown Routes with Next.js](https://www.sanity.io/l
 
 | Route | Method | Purpose |
 |-------|--------|---------|
+| `/api/chat` | POST | AI concierge — MCP-backed, rate-limited via Sanity `chat.state.ratelimit.*`, persists to `agent.conversation.web-*` |
 | `/api/og` | GET | Dynamic OG image generation via `@vercel/og` — session, speaker, and default cards |
 | `/api/cfp/submit` | POST | CFP form submission with honeypot validation |
 | `/api/email-preview` | GET | Email template preview (used by Studio) |
-| `/api/send-test-email` | POST | Send test email to current user |
-| `/api/webhooks/resend` | POST | Resend delivery event webhook (bounces, complaints) |
+| `/api/send-test-email` | POST | Send test email to current user — gated by `STUDIO_SEND_SECRET` header |
+| `/api/webhooks/resend` | POST | Resend delivery event webhook (bounces, complaints) — svix signature verified |
 | `/api/draft-mode/enable` | GET | Enable Visual Editing draft mode |
 | `/api/draft-mode/disable` | GET | Exit draft mode |
 
@@ -434,7 +450,7 @@ Detailed specs live in `plans/`:
 - **`brief.md`** — Project brief, architecture, sprint plan
 - **`masterplan.md`** — Vision, content model overview, feature roadmap
 - **`content-model-spec.md`** — Complete schema specification with GROQ patterns
-- **`decisions.md`** — 22 architecture decisions (D-001 through D-022)
+- **`decisions.md`** — 26 architecture decisions (D-001 through D-026)
 - **`sanity-live-use-cache-docs.md`** — Three-layer cache component pattern
 - **`content-agent-headless-api.md`** — AI concierge integration reference
 
@@ -449,6 +465,9 @@ Key decisions from `plans/decisions.md`:
 - **D-015**: AI enhances, doesn't enable — platform works without AI features
 - **D-016**: Next.js 16 + `use cache` with guardrails
 - **D-021**: TypeGen in CI + targeted integration tests (no blanket UI testing)
+- **D-023**: Sanity-backed rate limiting — no Redis/KV, reuse the bot's `chat.state.*` + `ifRevisionId` pattern
+- **D-024**: Platform-agnostic AI provider wiring — direct `@ai-sdk/anthropic`, AI Gateway is optional
+- **D-025**: Observability as a pluggable hook — `instrumentation.ts` no-op default, see [docs/observability.md](docs/observability.md)
 
 ## License
 

@@ -173,6 +173,13 @@ html {
     border-radius: var(--radius-md);
     background: var(--color-surface);
     color: var(--color-text-primary);
+    /* 16px on mobile prevents iOS Safari zoom on focus. */
+    font-size: 1rem;
+  }
+  @media (min-width: 640px) {
+    .form-input {
+      font-size: 0.875rem;
+    }
   }
 
   .form-input:hover {

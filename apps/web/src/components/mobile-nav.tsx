@@ -38,7 +38,7 @@ export function MobileNav({children}: {children: React.ReactNode}) {
   const toggle = useCallback(() => setOpen((prev) => !prev), [])
 
   return (
-    <div className="sm:hidden">
+    <div className="lg:hidden">
       <button
         ref={buttonRef}
         type="button"

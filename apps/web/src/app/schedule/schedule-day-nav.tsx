@@ -14,8 +14,8 @@ export function ScheduleDayNav({days}: ScheduleDayNavProps) {
   if (days.length <= 1) return null
 
   return (
-    <nav aria-label="Conference days" className="mt-6">
-      <ul className="flex gap-1" role="list">
+    <nav aria-label="Conference days" className="mt-6 -mx-6 overflow-x-auto px-6 lg:mx-0 lg:px-0">
+      <ul className="flex gap-1 whitespace-nowrap" role="list">
         {days.map((day, i) => {
           const isActive = day.date === activeDay
           return (

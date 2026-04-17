@@ -29,7 +29,7 @@ export function Header({data}: {data: NavData}) {
 
         <div className="flex items-center gap-3">
           {navItems && (
-            <ul className="hidden items-center gap-1 sm:flex">
+            <ul className="hidden items-center gap-1 lg:flex">
               {navItems.map((item) => (
                 <li key={item._key}>
                   <NavLink item={item} />
@@ -42,7 +42,7 @@ export function Header({data}: {data: NavData}) {
               href={data.registrationUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-primary hidden sm:inline-flex"
+              className="btn btn-primary hidden lg:inline-flex"
             >
               {data.registrationLabel || 'Register'}
             </a>

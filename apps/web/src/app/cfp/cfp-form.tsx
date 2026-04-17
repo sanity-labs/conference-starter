@@ -78,7 +78,7 @@ export function CfpForm() {
 
         <div className="mt-4 space-y-4">
           <div>
-            <label htmlFor="sessionTitle" className="block text-sm font-medium">
+            <label htmlFor="sessionTitle" className="block text-base font-medium sm:text-sm">
               Session Title
             </label>
             <input
@@ -95,7 +95,7 @@ export function CfpForm() {
           </div>
 
           <div>
-            <label htmlFor="sessionType" className="block text-sm font-medium">
+            <label htmlFor="sessionType" className="block text-base font-medium sm:text-sm">
               Session Type
             </label>
             <select
@@ -116,7 +116,7 @@ export function CfpForm() {
           </div>
 
           <div>
-            <label htmlFor="abstract" className="block text-sm font-medium">
+            <label htmlFor="abstract" className="block text-base font-medium sm:text-sm">
               Abstract
             </label>
             <textarea
@@ -130,12 +130,12 @@ export function CfpForm() {
               aria-invalid={state.errors?.abstract ? 'true' : undefined}
               aria-describedby="abstract-hint abstract-error"
             />
-            <p id="abstract-hint" className="mt-1 text-xs text-text-muted">100-2000 characters</p>
+            <p id="abstract-hint" className="mt-1 text-sm text-text-muted sm:text-xs">100-2000 characters</p>
             <FieldError id="abstract-error" errors={state.errors?.abstract} />
           </div>
 
           <div>
-            <label htmlFor="level" className="block text-sm font-medium">
+            <label htmlFor="level" className="block text-base font-medium sm:text-sm">
               Level
             </label>
             <select
@@ -155,7 +155,7 @@ export function CfpForm() {
           </div>
 
           <div>
-            <label htmlFor="topics" className="block text-sm font-medium">
+            <label htmlFor="topics" className="block text-base font-medium sm:text-sm">
               Topics
             </label>
             <input
@@ -167,7 +167,7 @@ export function CfpForm() {
               aria-invalid={state.errors?.topics ? 'true' : undefined}
               aria-describedby="topics-hint topics-error"
             />
-            <p id="topics-hint" className="mt-1 text-xs text-text-muted">Comma-separated (e.g., React, AI, Design Systems)</p>
+            <p id="topics-hint" className="mt-1 text-sm text-text-muted sm:text-xs">Comma-separated (e.g., React, AI, Design Systems)</p>
             <FieldError id="topics-error" errors={state.errors?.topics} />
           </div>
         </div>
@@ -178,7 +178,7 @@ export function CfpForm() {
 
         <div className="mt-4 space-y-4">
           <div>
-            <label htmlFor="submitterName" className="block text-sm font-medium">
+            <label htmlFor="submitterName" className="block text-base font-medium sm:text-sm">
               Name
             </label>
             <input
@@ -194,7 +194,7 @@ export function CfpForm() {
           </div>
 
           <div>
-            <label htmlFor="submitterEmail" className="block text-sm font-medium">
+            <label htmlFor="submitterEmail" className="block text-base font-medium sm:text-sm">
               Email
             </label>
             <input
@@ -210,7 +210,7 @@ export function CfpForm() {
           </div>
 
           <div>
-            <label htmlFor="company" className="block text-sm font-medium">
+            <label htmlFor="company" className="block text-base font-medium sm:text-sm">
               Company / Organization
             </label>
             <input
@@ -222,7 +222,7 @@ export function CfpForm() {
           </div>
 
           <div>
-            <label htmlFor="bio" className="block text-sm font-medium">
+            <label htmlFor="bio" className="block text-base font-medium sm:text-sm">
               Speaker Bio
             </label>
             <textarea
@@ -236,7 +236,7 @@ export function CfpForm() {
               aria-invalid={state.errors?.bio ? 'true' : undefined}
               aria-describedby="bio-hint bio-error"
             />
-            <p id="bio-hint" className="mt-1 text-xs text-text-muted">50-500 characters</p>
+            <p id="bio-hint" className="mt-1 text-sm text-text-muted sm:text-xs">50-500 characters</p>
             <FieldError id="bio-error" errors={state.errors?.bio} />
           </div>
         </div>

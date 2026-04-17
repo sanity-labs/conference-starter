@@ -69,15 +69,15 @@ export function ConciergeChat() {
       )}
 
       {isOpen && (
-        <div className="fixed right-4 bottom-4 z-50 flex max-h-[80dvh] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-lg sm:right-6 sm:bottom-6 sm:max-h-[32rem]">
+        <div className="fixed inset-0 z-50 flex flex-col overflow-hidden border border-border bg-surface sm:inset-auto sm:right-6 sm:bottom-6 sm:max-h-[32rem] sm:w-[calc(100vw-2rem)] sm:max-w-sm sm:rounded-xl sm:shadow-lg">
           <header className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
-            <p className="text-sm font-semibold text-text-primary">Concierge</p>
-            <div className="flex items-center gap-2">
+            <p className="text-base font-semibold text-text-primary sm:text-sm">Concierge</p>
+            <div className="flex items-center gap-1">
               <button
                 type="button"
                 onClick={handleNewConversation}
                 aria-label="New conversation"
-                className="text-xs text-text-muted hover:text-text-primary"
+                className="min-h-11 min-w-11 px-3 text-sm text-text-muted hover:text-text-primary sm:min-h-0 sm:min-w-0 sm:px-2 sm:text-xs"
               >
                 New chat
               </button>
@@ -85,7 +85,7 @@ export function ConciergeChat() {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close chat"
-                className="text-lg/none text-text-muted hover:text-text-primary"
+                className="flex min-h-11 min-w-11 items-center justify-center text-2xl text-text-muted hover:text-text-primary sm:min-h-0 sm:min-w-0 sm:px-2 sm:text-lg/none"
               >
                 &times;
               </button>

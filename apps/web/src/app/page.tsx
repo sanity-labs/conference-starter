@@ -223,25 +223,30 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
   return (
     <section className="mx-auto max-w-content-max px-6 py-16 lg:px-8 sm:py-20">
       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Speakers</h2>
-      <ul role="list" className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+      <ul role="list" className="mt-8 grid gap-6 sm:grid-cols-3 lg:grid-cols-4">
         {featured.map((speaker) => (
           <li key={speaker._id} className="group">
-            <Link href={`/speakers/${speaker.slug}`}>
+            <Link
+              href={`/speakers/${speaker.slug}`}
+              className="flex items-center gap-4 sm:block"
+            >
               {speaker.photo && (
                 <SanityImage
                   value={speaker.photo}
-                  className="aspect-square w-full rounded-lg object-cover outline-1 -outline-offset-1 outline-[color-mix(in_oklab,var(--color-text-primary)_10%,transparent)] group-hover:opacity-90"
+                  className="size-20 shrink-0 rounded-lg object-cover outline-1 -outline-offset-1 outline-[color-mix(in_oklab,var(--color-text-primary)_10%,transparent)] group-hover:opacity-90 sm:aspect-square sm:size-auto sm:w-full"
                   width={400}
                   height={400}
-                  sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
+                  sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 80px"
                 />
               )}
-              <p className="mt-3 font-medium">{speaker.name}</p>
-              {(speaker.role || speaker.company) && (
-                <p className="text-base text-text-muted sm:text-sm">
-                  {[speaker.role, speaker.company].filter(Boolean).join(', ')}
-                </p>
-              )}
+              <div className="min-w-0 sm:mt-3">
+                <p className="font-medium">{speaker.name}</p>
+                {(speaker.role || speaker.company) && (
+                  <p className="text-base text-text-muted sm:text-sm">
+                    {[speaker.role, speaker.company].filter(Boolean).join(', ')}
+                  </p>
+                )}
+              </div>
             </Link>
           </li>
         ))}

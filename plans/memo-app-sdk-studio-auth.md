@@ -1,5 +1,8 @@
 # Memo: App SDK Authentication in Studio Tools
 
+> [!NOTE]
+> The `studio: {}` cookie-auth workaround this memo documents is still in place. Removal is tracked in decision [D-026](decisions.md) — replace with native `SDKStudioContext` once `sanity@>=5.12` ships it (Studio PR #12157).
+
 **Date**: 2026-02-22
 **Author**: Knut + Claude
 **Context**: Building the Schedule Builder — a custom Studio tool using `@sanity/sdk-react` hooks inside Sanity Studio

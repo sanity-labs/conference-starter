@@ -18,6 +18,7 @@ Sanity Studio for ContentOps Conf. Includes custom structure, a drag-and-drop sc
 | `visionTool` | GROQ query playground |
 | `colorInput` | Color picker for track colors |
 | `presentationTool` | Visual Editing with Next.js preview |
+| `agentContextPlugin` | `@sanity/agent-context` — registers the MCP endpoint used by the attendee bot + web concierge |
 | `scheduleBuilder` | Custom tool — drag-and-drop schedule management |
 
 ## Studio Structure
@@ -37,13 +38,15 @@ The sidebar is organized for conference operations:
 
 ## Custom Document Actions
 
-Submission workflow actions (only appear on `submission` documents):
+Document-specific actions wired up in `sanity.config.ts`:
 
-| Action | What it does |
-|--------|-------------|
-| **Accept Submission** | Creates a `person` doc from submitter, creates a `session` doc, creates a `scheduleSlot`, sends acceptance email |
-| **Reject Submission** | Sends rejection email, updates status |
-| **Re-screen Submission** | Resets status to "screening" to trigger AI re-evaluation |
+| Action | Schema type | What it does |
+|--------|------------|-------------|
+| **Accept Submission** | `submission` | Creates a `person` doc from submitter, creates a `session` doc, creates a `scheduleSlot`, sends acceptance email |
+| **Reject Submission** | `submission` | Sends rejection email, updates status |
+| **Re-screen Submission** | `submission` | Resets status to "screening" to trigger AI re-evaluation |
+| **Send Test Email** | `emailTemplate` | POSTs the rendered template to `/api/send-test-email` on the web app (sends to the current user's email) |
+| **Send Update** | `announcement` | Publishes the document — downstream Functions fan it out to email + Telegram |
 
 ## Schedule Builder
 
@@ -77,7 +80,7 @@ tools/schedule-builder/
 
 ## Sanity Functions (Blueprints)
 
-Seven document event handlers defined in `sanity.blueprint.ts`:
+Nine document event handlers defined in `apps/functions/sanity.blueprint.ts`:
 
 | Function | Trigger | Action |
 |----------|---------|--------|
@@ -88,13 +91,19 @@ Seven document event handlers defined in `sanity.blueprint.ts`:
 | `send-announcement-email` | Announcement status → "published" | Distributes announcement via Resend |
 | `push-announcement-telegram` | Announcement status → "published" | Posts announcement to Telegram channel |
 | `classify-conversation` | Bot conversation created/updated | Classifies conversation topic via AI |
+| `create-person-internal` | Person draft created | Provisions the paired `personInternal` record (travel, dietary, AV) |
+| `delete-person-internal` | Person deleted | Cleans up the paired `personInternal` record |
+
+Scheduled functions (`daily-digest`, `reminder-cron`) are commented out in the blueprint — re-enable once the stack is org-scoped.
 
 ### Deploying Functions
 
 ```bash
-# From apps/studio/
-pnpx sanity@latest blueprints deploy
+# From apps/functions/
+pnpm dlx sanity@latest blueprints deploy
 ```
+
+First time only: run `pnpm dlx sanity@latest blueprints init` from `apps/functions/` to generate `.sanity/blueprint.config.json` with the stack ID.
 
 ### Setting Function Environment Variables
 
@@ -117,6 +126,10 @@ pnpx sanity@latest schema deploy
 # Required
 SANITY_STUDIO_PROJECT_ID=yjorde43
 SANITY_STUDIO_DATASET=production
+
+# Optional
+SANITY_STUDIO_PREVIEW_URL=http://localhost:3000   # Base URL for presentation + email preview
+SANITY_STUDIO_SEND_SECRET=                         # Sent as x-studio-secret to /api/send-test-email; must match STUDIO_SEND_SECRET on the web app
 ```
 
 Copy from the example:
@@ -154,7 +167,6 @@ Note: must use project-local `npx sanity exec` (not `pnpx`) for token injection 
 
 ```
 sanity.config.ts          → Studio configuration (plugins, schema, document actions)
-sanity.blueprint.ts       → Sanity Functions manifest (7 event handlers)
 structure.ts              → Custom sidebar structure
 resolve.ts                → Presentation tool URL resolver
 
@@ -162,15 +174,8 @@ actions/
   acceptSubmission.ts     → Accept CFP → create person + session
   rejectSubmission.ts     → Reject CFP → send email
   rescreenSubmission.ts   → Re-screen CFP → trigger AI re-evaluation
-
-functions/
-  screen-cfp/             → AI screening with Agent Actions
-  rescreen-cfp/           → Re-screening handler
-  send-cfp-confirmation/  → Confirmation email on submission
-  send-status-email/      → Status change emails
-  send-announcement-email/→ Announcement distribution via Resend
-  push-announcement-telegram/ → Announcement posting to Telegram
-  classify-conversation/  → Bot conversation classification
+  sendTestEmail.ts        → Email template → POST to /api/send-test-email (with shared secret)
+  sendUpdate.ts           → Announcement → publish (Functions distribute it downstream)
 
 tools/
   schedule-builder/       → Drag-and-drop schedule management
@@ -179,3 +184,5 @@ components/
   EmailPreview.tsx        → Email template preview in Studio
   OgPreview.tsx           → Social share (OG image) preview in Studio
 ```
+
+Sanity Functions live in a sibling workspace at `apps/functions/` (blueprint + function sources), not here.

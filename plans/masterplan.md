@@ -1,5 +1,8 @@
 # The Complete Conference/Event Backend
 
+> [!NOTE]
+> **Historical planning artifact.** The vision and feature breakdown below captures the intent at project kickoff. Some framing (generic "event platform" language, pre-rename references) predates the narrowing to ContentOps Conf. For current capabilities see the root [README](../README.md); for architectural decisions taken since, see [decisions.md](decisions.md).
+
 ## Vision
 
 A **reference architecture** that shows how Sanity can power every aspect of running a conference — from the first CFP to the post-event follow-up. Not just a website with a CMS behind it, but a true **content operating system** for events, where structured content drives the site, emails, schedules, sponsor fulfillment, and AI-powered attendee experiences.

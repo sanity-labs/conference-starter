@@ -1,6 +1,11 @@
 # Detailed Project Brief: ContentOps Conf Conference Platform
 
-> **Status:** READY FOR REVIEW — All team input incorporated
+> [!NOTE]
+> **Historical planning artifact.** This brief captures the sprint plan, team assignments, and scope-of-work agreements from the project's kickoff. It is preserved as a record of how the project was planned, not as a description of current state. For what's shipped today see the root [README](../README.md); for architectural decisions taken since (including ones not covered here), see [decisions.md](decisions.md).
+>
+> Sprint reality check: Sprints 0–4 and the Polish Sprint are complete. Sprint 5 (Content Releases / archive) and Sprint 6 (Luma) remain open. The `@forger` / `@anvil` / `@sentinel` / `@beacon` / `@catalyst` names are AI-agent personas from the planning phase.
+
+> **Status (at authoring):** READY FOR REVIEW — All team input incorporated
 > **Goal:** Build the definitive conference platform on Sanity — both a real product for ContentOps Conf and a showcase/demo of Sanity's full capabilities.
 > **MVP Launch:** Landing page + CFP submission page. Full site builds out from there.
 > **URL Structure:** Current year at root (`contentopsconf.dev/`), past years at `/YYYY/` paths. Post-conference, content becomes an archive with recordings attached.

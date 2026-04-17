@@ -24,43 +24,20 @@ function saveMessages(messages: UIMessage[]) {
   }
 }
 
-// Elements the floating button must never overlap. The footer is the
-// default (holds the theme toggle, copyright, nav, social). Any page-
-// level CTA that should stay unblocked can opt in with
-// `data-concierge-avoid` and this observer picks it up automatically.
-const AVOID_SELECTOR = 'footer, [data-concierge-avoid]'
-
-function useAvoidCollision(): boolean {
-  const [blocked, setBlocked] = useState(false)
-
-  useEffect(() => {
-    const targets = document.querySelectorAll(AVOID_SELECTOR)
-    if (targets.length === 0) return
-
-    const visible = new Set<Element>()
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) visible.add(entry.target)
-          else visible.delete(entry.target)
-        }
-        setBlocked(visible.size > 0)
-      },
-      // Trigger slightly before the element hits the edge so the
-      // button fades out before it would visually overlap.
-      {rootMargin: '0px 0px -24px 0px', threshold: 0.01},
-    )
-    targets.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
-
-  return blocked
-}
-
 export function ConciergeChat() {
   const [isOpen, setIsOpen] = useState(false)
   const [chatKey, setChatKey] = useState(0)
-  const avoidCollision = useAvoidCollision()
+  const [footerVisible, setFooterVisible] = useState(false)
+
+  useEffect(() => {
+    const footer = document.querySelector('footer')
+    if (!footer) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setFooterVisible(entry.isIntersecting),
+    )
+    observer.observe(footer)
+    return () => observer.disconnect()
+  }, [])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -81,15 +58,11 @@ export function ConciergeChat() {
 
   return (
     <aside aria-label="Conference concierge chat">
-      {!isOpen && (
+      {!isOpen && !footerVisible && (
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          aria-hidden={avoidCollision || undefined}
-          tabIndex={avoidCollision ? -1 : 0}
-          className={`fixed right-6 bottom-6 z-50 rounded-full border border-border bg-surface px-5 py-3 text-sm text-text-primary shadow-md hover:bg-surface-alt motion-safe:transition-opacity ${
-            avoidCollision ? 'pointer-events-none opacity-0' : 'opacity-100'
-          }`}
+          className="fixed right-6 bottom-6 z-50 rounded-full border border-border bg-surface px-5 py-3 text-sm text-text-primary shadow-md hover:bg-surface-alt"
         >
           Ask the Concierge
         </button>

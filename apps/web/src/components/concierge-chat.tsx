@@ -129,7 +129,7 @@ function ChatMessages() {
             className={
               message.role === 'user'
                 ? 'self-end max-w-[85%] whitespace-pre-wrap rounded-lg bg-text-primary px-3 py-2 text-sm text-surface'
-                : 'prose prose-sm self-start max-w-[85%] rounded-lg bg-surface-muted px-3 py-2 text-sm text-text-primary'
+                : 'prose prose-sm self-start max-w-[85%] rounded-lg bg-surface-muted px-3 py-2 text-sm text-text-primary [&_code]:!bg-surface [&_code]:!text-text-primary [&_a]:!text-text-primary [&_a]:!underline [&_strong]:!text-text-primary'
             }
           >
             {message.parts

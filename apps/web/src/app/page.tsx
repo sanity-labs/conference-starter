@@ -230,7 +230,7 @@ function SpeakersPreview({speakers}: {speakers: SPEAKERS_QUERY_RESULT}) {
               {speaker.photo && (
                 <SanityImage
                   value={speaker.photo}
-                  className="aspect-square w-full rounded-lg object-cover outline-1 -outline-offset-1 outline-black/5 group-hover:opacity-90"
+                  className="aspect-square w-full rounded-lg object-cover outline-1 -outline-offset-1 outline-[color-mix(in_oklab,var(--color-text-primary)_10%,transparent)] group-hover:opacity-90"
                   width={400}
                   height={400}
                   sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"

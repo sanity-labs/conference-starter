@@ -10,7 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@sanity/client": "^7.17.0",
+    "@sanity/client": "^7.20.0",
     "groq": "^3.99.0"
   },
   "devDependencies": {

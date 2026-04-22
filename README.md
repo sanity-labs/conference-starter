@@ -8,6 +8,12 @@
 
 A conference operations platform built on [Sanity](https://www.sanity.io) as a reference architecture. Not just a CMS-backed website — a **content operating system** for events where the Content Lake drives the website, emails, AI screening, Telegram bot, and automation.
 
+## Resources
+
+- **Organizer agent walkthrough** — [Build a Telegram agent that reads and writes your Sanity content](https://www.sanity.io/blog/build-a-telegram-agent-that-reads-and-writes-your-sanity-content)
+- **Attendee agent walkthrough** — [Build a conference concierge with Agent Context and Anthropic](https://www.sanity.io/blog/build-a-conference-concierge-with-agent-context-and-anthropic)
+- **Video walkthrough** — [youtu.be/urDoRSWXEtM](https://youtu.be/urDoRSWXEtM)
+
 ## Features
 
 - **Conference website** — Next.js 16 with App Router, `use cache`, and Visual Editing. Pages for speakers, sessions, schedule, sponsors, venue, FAQ, announcements, CFP, and dynamic content pages. Every entity mention is a link to its canonical page. Dynamic OG images generated from structured content via `@vercel/og`.

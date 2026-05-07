@@ -131,7 +131,7 @@ export const UPCOMING_SPEAKERS_QUERY = defineQuery(
 )
 
 export const SIGNAGE_SPONSORS_QUERY = defineQuery(
-  `*[_type == "sponsor" && defined(logo)] | order(
+  `*[_type == "sponsor"] | order(
     select(
       tier == "platinum" => 0,
       tier == "gold" => 1,
@@ -161,7 +161,7 @@ export const WELCOME_HERO_QUERY = defineQuery(
     endDate,
     logo { ..., alt },
     venue->{name, address},
-    "sponsors": *[_type == "sponsor" && defined(logo)] | order(
+    "sponsors": *[_type == "sponsor"] | order(
       select(
         tier == "platinum" => 0,
         tier == "gold" => 1,

@@ -40,6 +40,38 @@ export function Carousel({
           {item}
         </div>
       ))}
+      <CarouselProgress index={index} total={items.length} dwellSeconds={dwellSeconds} />
+    </div>
+  )
+}
+
+function CarouselProgress({
+  index,
+  total,
+  dwellSeconds,
+}: {
+  index: number
+  total: number
+  dwellSeconds: number
+}) {
+  return (
+    <div className="carousel-progress" aria-hidden>
+      <div className="carousel-progress-track">
+        {Array.from({length: total}).map((_, i) => (
+          <div
+            key={i}
+            className="carousel-progress-segment"
+            data-state={i < index ? 'past' : i === index ? 'active' : 'future'}
+            style={
+              i === index
+                ? ({['--dwell' as string]: `${Math.max(2, dwellSeconds)}s`} as React.CSSProperties)
+                : undefined
+            }
+          >
+            <div className="carousel-progress-fill" key={`fill-${index}-${i}`} />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

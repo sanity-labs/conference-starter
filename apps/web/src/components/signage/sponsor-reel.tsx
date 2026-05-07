@@ -74,23 +74,25 @@ function SponsorFrame({sponsor}: {sponsor: Sponsor}) {
     >
       <p className="signage-eyebrow">{tierLabel}</p>
       {url ? (
-        <img
-          src={url}
-          alt={sponsor.logo?.alt ?? sponsor.name ?? ''}
-          style={{
-            maxWidth: '70vmin',
-            maxHeight: '50vmin',
-            width: 'auto',
-            height: 'auto',
-            objectFit: 'contain',
-          }}
-        />
+        <>
+          <img
+            src={url}
+            alt={sponsor.logo?.alt ?? sponsor.name ?? ''}
+            style={{
+              maxWidth: '70vmin',
+              maxHeight: '50vmin',
+              width: 'auto',
+              height: 'auto',
+              objectFit: 'contain',
+            }}
+          />
+          <p className="signage-meta" style={{fontWeight: 500}}>
+            {sponsor.name}
+          </p>
+        </>
       ) : (
         <h2 className="signage-title">{sponsor.name}</h2>
       )}
-      <p className="signage-meta" style={{fontWeight: 500}}>
-        {sponsor.name}
-      </p>
     </div>
   )
 }

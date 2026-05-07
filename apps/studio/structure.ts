@@ -16,6 +16,7 @@ import {
   CommentIcon,
   HelpCircleIcon,
   LockIcon,
+  DesktopIcon,
 } from '@sanity/icons'
 import {AGENT_CONTEXT_SCHEMA_TYPE_NAME} from '@sanity/agent-context/studio'
 import {EmailPreview} from './components/EmailPreview'
@@ -142,6 +143,36 @@ export const structure: StructureResolver = (S) =>
           S.documentTypeList('scheduleSlot')
             .title('Schedule Slots')
             .defaultOrdering([{field: 'startTime', direction: 'asc'}]),
+        ),
+
+      // Signage
+      S.listItem()
+        .title('Signage')
+        .icon(DesktopIcon)
+        .child(
+          S.list()
+            .title('Signage')
+            .items([
+              S.listItem()
+                .title('All Displays')
+                .icon(DesktopIcon)
+                .child(S.documentTypeList('signageDisplay').title('All Signage Displays')),
+              S.divider(),
+              S.listItem()
+                .title('Active')
+                .child(
+                  S.documentList()
+                    .title('Active Displays')
+                    .filter('_type == "signageDisplay" && active == true'),
+                ),
+              S.listItem()
+                .title('Paused')
+                .child(
+                  S.documentList()
+                    .title('Paused Displays')
+                    .filter('_type == "signageDisplay" && active == false'),
+                ),
+            ]),
         ),
 
       // Venue & Rooms

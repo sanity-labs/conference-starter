@@ -176,13 +176,21 @@ export const signageDisplay = defineType({
       initialValue: true,
     }),
     defineField({
-      name: 'showAnnouncementOverlay',
-      title: 'Show Announcement Overlay',
-      type: 'boolean',
+      name: 'announcementMode',
+      title: 'Announcement Mode',
+      type: 'string',
       group: 'presentation',
       description:
-        'When ON: published announcements flagged for screen broadcast appear as a high-contrast overlay on top of this display. When OFF: this screen is opted out (e.g. a sponsor reel that contractually cannot be interrupted).',
-      initialValue: true,
+        'How this display reacts to announcements flagged for screen broadcast. Banner is the right default — a slim strip at the top that keeps the underlying content visible. Takeover puts a full-screen card on top, suitable for emergencies. None opts the screen out entirely (e.g. a sponsor reel that contractually cannot be interrupted).',
+      options: {
+        list: [
+          {title: 'Banner (top strip)', value: 'banner'},
+          {title: 'Takeover (full screen)', value: 'takeover'},
+          {title: 'None (suppressed)', value: 'none'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'banner',
     }),
     defineField({
       name: 'active',

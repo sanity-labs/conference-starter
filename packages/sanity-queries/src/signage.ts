@@ -12,7 +12,8 @@ export const SIGNAGE_DISPLAY_QUERY = defineQuery(
     transition,
     showClock,
     showConferenceBranding,
-    showAnnouncementOverlay,
+    announcementMode,
+    "legacyShowAnnouncementOverlay": showAnnouncementOverlay,
     active,
     lookaheadMinutes,
     room->{

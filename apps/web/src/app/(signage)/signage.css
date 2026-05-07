@@ -227,7 +227,58 @@
   padding: 2rem;
 }
 
-/* Announcement overlay */
+/* Announcement banner — slim strip at the top of the screen. Doesn't block
+   underlying content; auto-dismisses on a timer. */
+.signage-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: baseline;
+  gap: clamp(0.5rem, 1.5vmin, 1.5rem);
+  padding: clamp(0.75rem, 1.6vmin, 1.5rem) clamp(1rem, 3vmin, 3rem);
+  background: var(--color-accent);
+  color: #ffffff;
+  box-shadow: 0 0.4vmin 1.5vmin color-mix(in oklab, #000 30%, transparent);
+  animation: bannerSlide 320ms ease;
+  font-size: clamp(1rem, 2vmin, 2rem);
+  line-height: 1.3;
+  flex-wrap: wrap;
+}
+
+.signage-banner-eyebrow {
+  font-size: clamp(0.75rem, 1.3vmin, 1.25rem);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.signage-banner-title {
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+.signage-banner-body {
+  opacity: 0.85;
+  font-weight: 400;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@keyframes bannerSlide {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Announcement takeover overlay (escalation mode) */
 .signage-overlay {
   position: fixed;
   inset: 0;

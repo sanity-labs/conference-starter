@@ -66,7 +66,7 @@ async function DisplayLoader({slug, hideChrome}: {slug: string; hideChrome: bool
       data-kind={display.kind ?? 'unknown'}
     >
       <DisplayBody display={display} hideChrome={hideChrome} />
-      {display.showAnnouncementOverlay !== false && <AnnouncementOverlay />}
+      <AnnouncementOverlay mode={resolveAnnouncementMode(display)} />
     </main>
   )
 }
@@ -97,4 +97,15 @@ function DisplayBody({display, hideChrome}: {display: Display; hideChrome: boole
 
 function StageShell({theme}: {theme: 'dark' | 'light'}) {
   return <main className="signage-stage" data-theme={theme} />
+}
+
+type AnnouncementMode = 'none' | 'banner' | 'takeover'
+
+function resolveAnnouncementMode(display: Display): AnnouncementMode {
+  const mode = display.announcementMode
+  if (mode === 'none' || mode === 'takeover' || mode === 'banner') return mode
+  // Back-compat with the previous boolean field. Pre-migration documents
+  // expressed "do not interrupt" as showAnnouncementOverlay: false.
+  if (display.legacyShowAnnouncementOverlay === false) return 'none'
+  return 'banner'
 }

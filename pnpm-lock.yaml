@@ -179,6 +179,9 @@ importers:
       '@repo/sanity-schema':
         specifier: workspace:*
         version: link:../../packages/sanity-schema
+      '@sanity-labs/logo-soup':
+        specifier: ^1.2.2
+        version: 1.2.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       '@sanity/client':
         specifier: ^7.17.0
         version: 7.17.0(debug@4.4.3)
@@ -2440,6 +2443,7 @@ packages:
   '@react-email/components@1.0.9':
     resolution: {integrity: sha512-2vi1w423KdjGa9rLUJAq8daTq5xVvB5VHDuI8fRu3/JfqqihzUu5r0bET3qWDw9QpKOIXcZzWO3jN2+yMVtzUw==}
     engines: {node: '>=20.0.0'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
 
@@ -2715,6 +2719,38 @@ packages:
     resolution: {integrity: sha512-2HRCml6OztYXyJXAvdDXPKcawukWY2GpR5/nxKp4iBgiO3wcoEGkAaqctIbZcNB6KlUQBIqt8VYkNSj2397EfA==}
     cpu: [x64]
     os: [win32]
+
+  '@sanity-labs/logo-soup@1.2.2':
+    resolution: {integrity: sha512-7a4d1EWxddzEmy5jx/GqN3C0pAruR+Dpy1vLOg6ADPClGhVO2sCXG+6XPM51ajGlvWIslJVEEEyoTQtOLRRRjQ==}
+    peerDependencies:
+      '@angular/core': ^19 || ^20 || ^21
+      '@napi-rs/canvas': ^0.1.90
+      jquery: ^4
+      react: ^18 || ^19
+      react-dom: ^18 || ^19
+      solid-js: ^1.9
+      svelte: ^5
+      typescript: ^5
+      vue: ^3.5
+    peerDependenciesMeta:
+      '@angular/core':
+        optional: true
+      '@napi-rs/canvas':
+        optional: true
+      jquery:
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      solid-js:
+        optional: true
+      svelte:
+        optional: true
+      typescript:
+        optional: true
+      vue:
+        optional: true
 
   '@sanity/agent-context@0.3.5':
     resolution: {integrity: sha512-XpU5Csuu3aQuKPSMvX40qeBSw2WISj2IBOlCPd4rr0WXumFZIvKbvFHu6wyht9++vTD0QklaTN0+iCPRHMO2Gw==}
@@ -9507,6 +9543,12 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.59.0':
     optional: true
+
+  '@sanity-labs/logo-soup@1.2.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)':
+    optionalDependencies:
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+      typescript: 5.9.3
 
   '@sanity/agent-context@0.3.5(@sanity/icons@3.7.4(react@19.2.4))(@sanity/ui@3.1.13(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.4(react@19.2.4))(react-is@19.2.4)(react@19.2.4)(styled-components@6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sanity@5.16.0(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@oclif/core@4.9.0)(@sanity/cli-core@1.1.2(@noble/hashes@2.0.1)(@sanity/telemetry@0.8.1(react@19.2.4))(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.31.1)(yaml@2.8.2))(@types/node@25.5.0)(@types/react@19.2.14)(immer@10.2.0)(jiti@2.6.1)(lightningcss@1.31.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(styled-components@6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(typescript@5.9.3))(styled-components@6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4))':
     dependencies:

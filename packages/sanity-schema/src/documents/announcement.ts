@@ -96,6 +96,25 @@ export const announcement = defineType({
       description: 'Auto-set when first published by the distribution function.',
     }),
     defineField({
+      name: 'signageOverlay',
+      title: 'Broadcast on Signage',
+      type: 'boolean',
+      description:
+        'When ON, this announcement appears as a high-contrast overlay on every active signage display (unless the display has opted out). Use for schedule changes, lunch calls, or anything attendees on the floor need to see right now. Toggling this updates the screens within seconds via SanityLive.',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'signageOverlayDurationSeconds',
+      title: 'Signage Overlay Duration (seconds)',
+      type: 'number',
+      description:
+        'How long the overlay stays on screen before auto-dismissing. Default 90 seconds. Increase for safety-critical messages, decrease for short calls like "lunch is open."',
+      initialValue: 90,
+      hidden: ({document}) => document?.signageOverlay !== true,
+      validation: (rule) =>
+        rule.min(10).max(600).error('Pick a duration between 10 and 600 seconds'),
+    }),
+    defineField({
       name: 'distributionLog',
       title: 'Distribution Log',
       type: 'array',

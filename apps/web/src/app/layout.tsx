@@ -12,6 +12,7 @@ import {JsonLd} from '@/components/json-ld'
 import type {WebSite} from 'schema-dts'
 import {SITE_URL, SITE_NAME, getDefaultOgImage} from '@/lib/metadata'
 import {ConciergeChat} from '@/components/concierge-chat'
+import {MainChrome} from '@/components/main-chrome'
 import './globals.css'
 
 // Self-hosted InterVariable with full OpenType feature-settings + Display
@@ -79,16 +80,24 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-surface text-text-primary antialiased">
-        <a href="#main-content" className="skip-nav">
-          Skip to content
-        </a>
+        <Suspense>
+          <MainChrome>
+            <a href="#main-content" className="skip-nav">
+              Skip to content
+            </a>
+          </MainChrome>
+        </Suspense>
         <Suspense>
           <DynamicShell>{children}</DynamicShell>
         </Suspense>
         <Suspense>
           <DraftModeShell />
         </Suspense>
-        <ConciergeChat />
+        <Suspense>
+          <MainChrome>
+            <ConciergeChat />
+          </MainChrome>
+        </Suspense>
       </body>
     </html>
   )
@@ -116,9 +125,21 @@ async function CachedNav({
 
   return (
     <>
-      {navData && <Header data={navData} />}
+      {navData && (
+        <Suspense>
+          <MainChrome>
+            <Header data={navData} />
+          </MainChrome>
+        </Suspense>
+      )}
       {children}
-      {navData && <Footer data={navData} />}
+      {navData && (
+        <Suspense>
+          <MainChrome>
+            <Footer data={navData} />
+          </MainChrome>
+        </Suspense>
+      )}
     </>
   )
 }

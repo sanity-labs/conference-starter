@@ -20,6 +20,7 @@
     "@repo/email": "workspace:*",
     "@repo/sanity-queries": "workspace:*",
     "@repo/sanity-schema": "workspace:*",
+    "@sanity-labs/logo-soup": "^1.2.2",
     "@sanity/client": "^7.17.0",
     "@sanity/image-url": "^2.0.3",
     "@vercel/og": "^0.11.1",

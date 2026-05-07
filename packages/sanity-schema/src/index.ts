@@ -6,6 +6,7 @@ import {track} from './documents/track'
 import {venue} from './documents/venue'
 import {room} from './documents/room'
 import {scheduleSlot} from './documents/scheduleSlot'
+import {signageDisplay} from './documents/signageDisplay'
 import {sponsor} from './documents/sponsor'
 import {page} from './documents/page'
 import {announcement} from './documents/announcement'
@@ -39,6 +40,7 @@ export const schemaTypes = [
   venue,
   room,
   scheduleSlot,
+  signageDisplay,
   sponsor,
   page,
   announcement,

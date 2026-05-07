@@ -61,6 +61,8 @@ export async function SpeakerSpotlight({
         lookaheadMinutes={display.lookaheadMinutes ?? 30}
         dwellSeconds={display.dwellSeconds ?? 8}
         transition={(display.transition as 'fade' | 'slide' | 'none') ?? 'fade'}
+        dayStart={day.dayStart}
+        dayEnd={day.dayEnd}
       />
     </Stage>
   )

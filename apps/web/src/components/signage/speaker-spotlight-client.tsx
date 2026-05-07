@@ -1,10 +1,10 @@
 'use client'
 
-import {useEffect, useState} from 'react'
 import type {SCHEDULE_DAY_QUERY_RESULT} from '@repo/sanity-queries'
 import {urlForImage} from '@/sanity/image'
 import {Carousel} from './carousel'
 import {formatTime} from './conference-day'
+import {useEffectiveNow} from './now-cursor'
 
 type Slot = SCHEDULE_DAY_QUERY_RESULT[number]
 
@@ -13,19 +13,17 @@ export function SpeakerSpotlightClient({
   lookaheadMinutes,
   dwellSeconds,
   transition,
+  dayStart,
+  dayEnd,
 }: {
   slots: Slot[]
   lookaheadMinutes: number
   dwellSeconds: number
   transition: 'fade' | 'slide' | 'none'
+  dayStart?: string
+  dayEnd?: string
 }) {
-  const [now, setNow] = useState<number>(() => Date.now())
-
-  useEffect(() => {
-    setNow(Date.now())
-    const id = setInterval(() => setNow(Date.now()), 60_000)
-    return () => clearInterval(id)
-  }, [])
+  const now = useEffectiveNow({dayStart, dayEnd})
 
   const cutoff = now + lookaheadMinutes * 60_000
 

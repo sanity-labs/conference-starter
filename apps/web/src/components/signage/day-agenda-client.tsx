@@ -6,8 +6,16 @@ import {formatTime} from './conference-day'
 
 type Slot = SCHEDULE_DAY_QUERY_RESULT[number]
 
-export function DayAgendaClient({slots}: {slots: Slot[]}) {
-  const {current, done} = useNowCursor(slots)
+export function DayAgendaClient({
+  slots,
+  dayStart,
+  dayEnd,
+}: {
+  slots: Slot[]
+  dayStart?: string
+  dayEnd?: string
+}) {
+  const {current, done} = useNowCursor(slots, {dayStart, dayEnd})
   const doneIds = new Set(done.map((s) => s._id))
   const currentId = current?._id
 

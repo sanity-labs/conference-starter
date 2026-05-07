@@ -7,8 +7,18 @@ import {formatTime} from './conference-day'
 
 type Slot = ROOM_DAY_SLOTS_QUERY_RESULT[number]
 
-export function NowNextClient({slots, roomName}: {slots: Slot[]; roomName: string}) {
-  const {current, next} = useNowCursor(slots)
+export function NowNextClient({
+  slots,
+  roomName,
+  dayStart,
+  dayEnd,
+}: {
+  slots: Slot[]
+  roomName: string
+  dayStart?: string
+  dayEnd?: string
+}) {
+  const {current, next} = useNowCursor(slots, {dayStart, dayEnd})
 
   if (!current && !next) {
     return (

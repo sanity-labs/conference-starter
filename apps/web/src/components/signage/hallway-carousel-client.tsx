@@ -1,9 +1,10 @@
 'use client'
 
-import {useEffect, useMemo, useState} from 'react'
+import {useMemo} from 'react'
 import type {MULTI_ROOM_DAY_SLOTS_QUERY_RESULT} from '@repo/sanity-queries'
 import {Carousel} from './carousel'
 import {formatTime} from './conference-day'
+import {useEffectiveNow} from './now-cursor'
 
 type Slot = MULTI_ROOM_DAY_SLOTS_QUERY_RESULT[number]
 
@@ -19,19 +20,17 @@ export function HallwayCarouselClient({
   lookaheadMinutes,
   dwellSeconds,
   transition,
+  dayStart,
+  dayEnd,
 }: {
   slots: Slot[]
   lookaheadMinutes: number
   dwellSeconds: number
   transition: 'fade' | 'slide' | 'none'
+  dayStart?: string
+  dayEnd?: string
 }) {
-  const [now, setNow] = useState<number>(() => Date.now())
-
-  useEffect(() => {
-    setNow(Date.now())
-    const id = setInterval(() => setNow(Date.now()), 30_000)
-    return () => clearInterval(id)
-  }, [])
+  const now = useEffectiveNow({dayStart, dayEnd})
 
   const cutoff = now + lookaheadMinutes * 60_000
 

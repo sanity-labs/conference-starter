@@ -54,7 +54,12 @@ export async function NowNext({display, hideChrome}: {display: Display; hideChro
       hideChrome={hideChrome}
       footnote={day.date}
     >
-      <NowNextClient slots={slots} roomName={display.room.name ?? ''} />
+      <NowNextClient
+        slots={slots}
+        roomName={display.room.name ?? ''}
+        dayStart={day.dayStart}
+        dayEnd={day.dayEnd}
+      />
     </Stage>
   )
 }

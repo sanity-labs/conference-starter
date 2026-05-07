@@ -49,7 +49,7 @@ export async function DayAgenda({display, hideChrome}: {display: Display; hideCh
       hideChrome={hideChrome}
       footnote={`Today's schedule · ${day.date}`}
     >
-      <DayAgendaClient slots={slots} />
+      <DayAgendaClient slots={slots} dayStart={day.dayStart} dayEnd={day.dayEnd} />
     </Stage>
   )
 }

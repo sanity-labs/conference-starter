@@ -73,52 +73,39 @@ function SpeakerFrame({
   const time = formatTime(slot.startTime)
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'auto 1fr',
-        gap: 'clamp(2rem, 5vmin, 6rem)',
-        alignItems: 'center',
-        width: '100%',
-        height: '100%',
-        padding: 'clamp(1rem, 3vmin, 4rem)',
-      }}
-    >
+    <div className="signage-grid" style={{alignContent: 'center'}}>
       <div
         style={{
-          width: 'clamp(14rem, 36vmin, 36rem)',
-          height: 'clamp(14rem, 36vmin, 36rem)',
-          borderRadius: '50%',
-          overflow: 'hidden',
-          backgroundColor: 'var(--color-surface-alt)',
-          flexShrink: 0,
+          gridColumn: 'span 4',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
         }}
       >
-        {url ? (
-          <img
-            src={url}
-            alt={speaker.photo?.alt ?? speaker.name ?? ''}
-            style={{width: '100%', height: '100%', objectFit: 'cover'}}
-          />
-        ) : (
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 'clamp(4rem, 12vmin, 12rem)',
-              fontWeight: 600,
-              color: 'var(--color-text-muted)',
-            }}
-          >
-            {speaker.name?.[0] ?? '?'}
-          </div>
-        )}
+        <div
+          className="signage-avatar"
+          style={{
+            width: 'clamp(14rem, 36vmin, 36rem)',
+            height: 'clamp(14rem, 36vmin, 36rem)',
+          }}
+        >
+          {url ? (
+            <img src={url} alt={speaker.photo?.alt ?? speaker.name ?? ''} />
+          ) : (
+            <div className="signage-avatar-fallback">{speaker.name?.[0] ?? '?'}</div>
+          )}
+        </div>
       </div>
-      <div style={{display: 'flex', flexDirection: 'column', gap: 'clamp(0.5rem, 1.5vmin, 1.5rem)', minWidth: 0}}>
-        <p className="signage-eyebrow">
+      <div
+        style={{
+          gridColumn: 'span 8',
+          display: 'grid',
+          gap: 'clamp(0.5rem, 1.5vmin, 1.5rem)',
+          alignContent: 'center',
+          minWidth: 0,
+        }}
+      >
+        <p className="signage-eyebrow signage-time">
           {time}
           {slot.room?.name ? ` · ${slot.room.name}` : ''}
         </p>
@@ -136,6 +123,7 @@ function SpeakerFrame({
               color: 'var(--color-text-secondary)',
               marginTop: 'clamp(0.5rem, 1.5vmin, 1.5rem)',
               textWrap: 'balance',
+              maxWidth: '40ch',
             }}
           >
             {session.title}

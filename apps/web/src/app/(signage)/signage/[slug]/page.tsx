@@ -58,16 +58,19 @@ async function DisplayLoader({slug, hideChrome}: {slug: string; hideChrome: bool
     )
   }
 
+  const announcementMode = resolveAnnouncementMode(display)
   return (
-    <main
-      className="signage-stage"
-      data-theme={display.theme ?? 'dark'}
-      data-orientation={display.orientation ?? 'landscape'}
-      data-kind={display.kind ?? 'unknown'}
-    >
-      <DisplayBody display={display} hideChrome={hideChrome} />
-      <AnnouncementOverlay mode={resolveAnnouncementMode(display)} />
-    </main>
+    <>
+      <AnnouncementOverlay mode={announcementMode} />
+      <main
+        className="signage-stage"
+        data-theme={display.theme ?? 'dark'}
+        data-orientation={display.orientation ?? 'landscape'}
+        data-kind={display.kind ?? 'unknown'}
+      >
+        <DisplayBody display={display} hideChrome={hideChrome} />
+      </main>
+    </>
   )
 }
 

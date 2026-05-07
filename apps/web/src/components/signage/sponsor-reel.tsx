@@ -4,6 +4,7 @@ import type {SIGNAGE_DISPLAY_QUERY_RESULT, SIGNAGE_SPONSORS_QUERY_RESULT} from '
 import {urlForImage} from '@/sanity/image'
 import {Stage} from './stage'
 import {Carousel} from './carousel'
+import {SponsorSoup} from './sponsor-soup'
 
 type Display = NonNullable<SIGNAGE_DISPLAY_QUERY_RESULT>
 type Sponsor = SIGNAGE_SPONSORS_QUERY_RESULT[number]
@@ -61,38 +62,44 @@ function SponsorFrame({sponsor}: {sponsor: Sponsor}) {
   const tierLabel = TIER_LABELS[(sponsor.tier as string) ?? ''] ?? 'Sponsor'
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 'clamp(1rem, 2.5vmin, 3rem)',
-        padding: 'clamp(2rem, 6vmin, 6rem)',
-        textAlign: 'center',
-      }}
-    >
-      <p className="signage-eyebrow">{tierLabel}</p>
-      {url ? (
-        <>
-          <img
-            src={url}
-            alt={sponsor.logo?.alt ?? sponsor.name ?? ''}
-            style={{
-              maxWidth: '70vmin',
-              maxHeight: '50vmin',
-              width: 'auto',
-              height: 'auto',
-              objectFit: 'contain',
-            }}
-          />
-          <p className="signage-meta" style={{fontWeight: 500}}>
+    <div className="signage-grid" style={{alignContent: 'center'}}>
+      <div
+        style={{
+          gridColumn: '3 / -3',
+          display: 'grid',
+          justifyItems: 'center',
+          textAlign: 'center',
+          rowGap: 'clamp(1rem, 2.5vmin, 3rem)',
+        }}
+      >
+        <p className="signage-eyebrow">{tierLabel}</p>
+        {url ? (
+          <>
+            <SponsorSoup
+              items={[
+                {
+                  id: sponsor._id,
+                  name: sponsor.name ?? '',
+                  src: url,
+                  alt: sponsor.logo?.alt ?? sponsor.name ?? '',
+                },
+              ]}
+              baseSize={420}
+              gap={0}
+            />
+            <p className="signage-meta" style={{fontWeight: 500}}>
+              {sponsor.name}
+            </p>
+          </>
+        ) : (
+          <h2
+            className="signage-title"
+            style={{fontSize: 'clamp(3rem, 9vmin, 9rem)', maxWidth: '24ch'}}
+          >
             {sponsor.name}
-          </p>
-        </>
-      ) : (
-        <h2 className="signage-title">{sponsor.name}</h2>
-      )}
+          </h2>
+        )}
+      </div>
     </div>
   )
 }

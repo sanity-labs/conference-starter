@@ -93,41 +93,39 @@ export function HallwayCarouselClient({
 
 function RoomFrameView({frame}: {frame: RoomFrame}) {
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateRows: 'auto 1fr 1fr',
-        gap: 'clamp(1rem, 2.5vmin, 2.5rem)',
-        width: '100%',
-        height: '100%',
-        padding: 'clamp(1rem, 3vmin, 4rem)',
-      }}
-    >
-      <p className="signage-eyebrow" style={{fontSize: 'clamp(1rem, 2vmin, 2.25rem)'}}>
-        {frame.roomName}
-      </p>
-      <SlotLine label="Now" slot={frame.current} />
-      <SlotLine label="Next" slot={frame.next} />
+    <div className="signage-grid" style={{alignContent: 'stretch'}}>
+      <div
+        style={{
+          gridColumn: '1 / -1',
+          display: 'grid',
+          gridTemplateRows: 'auto auto 1fr auto 1fr',
+          rowGap: 'clamp(0.5rem, 1.4vmin, 1.5rem)',
+          height: '100%',
+        }}
+      >
+        <p className="signage-eyebrow">{frame.roomName}</p>
+        <SlotLine label="Now" slot={frame.current} accent />
+        <hr className="signage-divider" />
+        <SlotLine label="Next" slot={frame.next} />
+      </div>
     </div>
   )
 }
 
-function SlotLine({label, slot}: {label: string; slot: Slot | null}) {
+function SlotLine({
+  label,
+  slot,
+  accent = false,
+}: {
+  label: string
+  slot: Slot | null
+  accent?: boolean
+}) {
   if (!slot || !slot.session) {
     return (
-      <div style={{opacity: 0.45}}>
-        <p
-          style={{
-            fontSize: 'clamp(0.875rem, 1.5vmin, 1.5rem)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            color: 'var(--color-text-muted)',
-            margin: 0,
-          }}
-        >
-          {label}
-        </p>
-        <p className="signage-title" style={{marginTop: '0.25rem'}}>
+      <div style={{opacity: 0.45, display: 'grid', gap: 'clamp(0.25rem, 0.75vmin, 0.75rem)'}}>
+        <p className="signage-eyebrow">{label}</p>
+        <p className="signage-title" style={{fontSize: 'clamp(1.5rem, 4vmin, 4rem)'}}>
           —
         </p>
       </div>
@@ -138,14 +136,11 @@ function SlotLine({label, slot}: {label: string; slot: Slot | null}) {
   const speakers = slot.session.speakers ?? []
 
   return (
-    <div>
+    <div style={{display: 'grid', gap: 'clamp(0.4rem, 0.9vmin, 0.9rem)'}}>
       <p
+        className="signage-eyebrow signage-time"
         style={{
-          fontSize: 'clamp(0.875rem, 1.5vmin, 1.5rem)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-          color: label === 'Now' ? 'var(--color-accent)' : 'var(--color-text-muted)',
-          margin: 0,
+          color: accent ? 'var(--color-accent)' : 'var(--color-text-muted)',
           fontWeight: 700,
         }}
       >
@@ -153,15 +148,12 @@ function SlotLine({label, slot}: {label: string; slot: Slot | null}) {
       </p>
       <p
         className="signage-title"
-        style={{fontSize: 'clamp(1.5rem, 4vmin, 4rem)', marginTop: 'clamp(0.25rem, 0.75vmin, 0.75rem)'}}
+        style={{fontSize: 'clamp(1.5rem, 4.5vmin, 4.5rem)'}}
       >
         {slot.session.title}
       </p>
       {speakers.length > 0 && (
-        <p
-          className="signage-meta"
-          style={{fontSize: 'clamp(0.875rem, 1.6vmin, 1.5rem)', marginTop: '0.25rem'}}
-        >
+        <p className="signage-meta" style={{fontSize: 'clamp(0.875rem, 1.6vmin, 1.5rem)'}}>
           {speakers.map((s) => s.name).filter(Boolean).join(', ')}
         </p>
       )}

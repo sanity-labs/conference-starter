@@ -1,4 +1,6 @@
-/* Signage rendering surface — full-bleed, no scrollbars, no hover bumps. */
+/* Signage rendering surface — full-bleed, no scrollbars, no hover bumps.
+   Flex column so an in-flow announcement banner (when configured) takes
+   its natural height at the top and the stage shrinks to fill the rest. */
 
 .signage-root {
   position: fixed;
@@ -8,13 +10,16 @@
   overflow: hidden;
   background: var(--color-surface);
   color: var(--color-text-primary);
+  display: flex;
+  flex-direction: column;
 }
 
 /* Stage wraps each display kind. Theme is applied here so it overrides the
    document-level theme cookie chosen by the visitor. */
 .signage-stage {
-  position: absolute;
-  inset: 0;
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
   display: grid;
   grid-template-rows: auto 1fr auto;
   padding: clamp(1rem, 2vmin, 2.5rem);
@@ -92,6 +97,24 @@
   min-height: 0;
 }
 
+/* 12-column grid foundation for display kinds that need disciplined column
+   alignment. Vmin-scaled gutter so rhythm scales with the screen. */
+.signage-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(0.75rem, 2vmin, 2.5rem);
+  align-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.signage-divider {
+  border: 0;
+  border-top: 1px solid color-mix(in oklab, var(--color-text-primary) 12%, transparent);
+  margin: 0;
+  width: 100%;
+}
+
 .signage-footer {
   display: flex;
   align-items: center;
@@ -102,19 +125,22 @@
   letter-spacing: 0.04em;
 }
 
-/* Headings scale with viewport */
+/* Type ramp scales with viewport. Use these as the canonical voices —
+   eyebrow → title → meta — rather than ad-hoc inline font-size values
+   on individual displays. */
 .signage-eyebrow {
-  font-size: clamp(0.875rem, 1.6vmin, 1.5rem);
+  font-size: clamp(0.875rem, 1.5vmin, 1.5rem);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   font-weight: 600;
   color: var(--color-text-muted);
+  margin: 0;
 }
 
 .signage-title {
   font-size: clamp(2rem, 6vmin, 6rem);
   line-height: 1.05;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   font-weight: 600;
   text-wrap: balance;
   margin: 0;
@@ -123,6 +149,42 @@
 .signage-meta {
   font-size: clamp(1rem, 2vmin, 2rem);
   color: var(--color-text-secondary);
+  text-wrap: pretty;
+  margin: 0;
+}
+
+.signage-time {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Avatar — circular with subtle outline per ui.sh avatar guidance. */
+.signage-avatar {
+  border-radius: 9999px;
+  overflow: hidden;
+  background-color: var(--color-surface-alt);
+  outline: 1px solid color-mix(in oklab, var(--color-text-primary) 12%, transparent);
+  outline-offset: -1px;
+  flex-shrink: 0;
+}
+
+.signage-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.signage-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: clamp(2rem, 8vmin, 8rem);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: -0.02em;
 }
 
 /* Carousel transitions */
@@ -227,14 +289,11 @@
   padding: 2rem;
 }
 
-/* Announcement banner — slim strip at the top of the screen. Doesn't block
-   underlying content; auto-dismisses on a timer. */
+/* Announcement banner — slim strip at the top of the screen as a flex
+   sibling of the stage, so the stage shrinks to fit beneath it.
+   Auto-dismisses on a timer. */
 .signage-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9998;
+  flex: 0 0 auto;
   display: flex;
   align-items: baseline;
   gap: clamp(0.5rem, 1.5vmin, 1.5rem);
@@ -246,6 +305,7 @@
   font-size: clamp(1rem, 2vmin, 2rem);
   line-height: 1.3;
   flex-wrap: wrap;
+  z-index: 1;
 }
 
 .signage-banner-eyebrow {

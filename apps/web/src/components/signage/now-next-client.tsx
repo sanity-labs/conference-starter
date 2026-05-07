@@ -22,14 +22,20 @@ export function NowNextClient({
 
   if (!current && !next) {
     return (
-      <div style={{textAlign: 'center'}}>
-        <p className="signage-eyebrow">{roomName}</p>
-        <p className="signage-title" style={{marginTop: 'clamp(0.5rem, 1vmin, 1rem)'}}>
-          No more sessions today
-        </p>
-        <p className="signage-meta" style={{marginTop: 'clamp(0.5rem, 1vmin, 1rem)'}}>
-          Thanks for coming.
-        </p>
+      <div className="signage-grid">
+        <div
+          style={{
+            gridColumn: '2 / -2',
+            display: 'grid',
+            gap: 'clamp(0.5rem, 1.5vmin, 1.5rem)',
+            justifyItems: 'start',
+            alignContent: 'center',
+          }}
+        >
+          <p className="signage-eyebrow">{roomName}</p>
+          <p className="signage-title">No more sessions today</p>
+          <p className="signage-meta">Thanks for coming.</p>
+        </div>
       </div>
     )
   }
@@ -38,33 +44,33 @@ export function NowNextClient({
     <div
       style={{
         display: 'grid',
-        gridTemplateRows: '1fr auto 1fr',
+        gridTemplateRows: current ? '1fr auto 1fr' : 'auto auto 1fr',
         gap: 'clamp(1rem, 2.5vmin, 3rem)',
         width: '100%',
         height: '100%',
+        alignContent: 'stretch',
       }}
     >
-      <SlotPanel label="Now" slot={current} dim={!current} />
-      <hr
-        style={{
-          border: 'none',
-          borderTop: '1px solid var(--color-border)',
-          margin: 0,
-        }}
-      />
-      <SlotPanel label="Next" slot={next} dim={!next} />
+      <SlotPanel label="Now" slot={current} />
+      <hr className="signage-divider" />
+      <SlotPanel label="Next" slot={next} />
     </div>
   )
 }
 
-function SlotPanel({label, slot, dim}: {label: string; slot: Slot | null; dim: boolean}) {
+function SlotPanel({label, slot}: {label: string; slot: Slot | null}) {
   if (!slot || !slot.session) {
     return (
-      <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', opacity: dim ? 0.5 : 1}}>
-        <p className="signage-eyebrow">{label}</p>
-        <p className="signage-title" style={{marginTop: '0.5rem'}}>
-          —
-        </p>
+      <div
+        className="signage-grid"
+        style={{opacity: 0.55, alignContent: 'center'}}
+      >
+        <div style={{gridColumn: '1 / -1', display: 'grid', gap: 'clamp(0.5rem, 1vmin, 1rem)'}}>
+          <p className="signage-eyebrow">{label}</p>
+          <p className="signage-title" style={{fontSize: 'clamp(1.25rem, 3vmin, 3rem)'}}>
+            —
+          </p>
+        </div>
       </div>
     )
   }
@@ -72,23 +78,36 @@ function SlotPanel({label, slot, dim}: {label: string; slot: Slot | null; dim: b
   const session = slot.session
   const speakers = session.speakers ?? []
   const time = `${formatTime(slot.startTime)}${slot.endTime ? ` – ${formatTime(slot.endTime)}` : ''}`
+  const hasSpeakers = speakers.length > 0
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: speakers.length > 0 ? 'auto 1fr' : '1fr',
-        gap: 'clamp(1rem, 3vmin, 4rem)',
-        alignItems: 'center',
-      }}
-    >
-      {speakers.length > 0 && <SpeakerStack speakers={speakers} />}
-      <div style={{display: 'flex', flexDirection: 'column', gap: 'clamp(0.5rem, 1vmin, 1rem)', minWidth: 0}}>
-        <p className="signage-eyebrow">
+    <div className="signage-grid" style={{alignContent: 'center'}}>
+      {hasSpeakers && (
+        <div
+          style={{
+            gridColumn: 'span 3',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+          }}
+        >
+          <SpeakerStack speakers={speakers} />
+        </div>
+      )}
+      <div
+        style={{
+          gridColumn: hasSpeakers ? 'span 9' : '1 / -1',
+          display: 'grid',
+          gap: 'clamp(0.5rem, 1.2vmin, 1.5rem)',
+          alignContent: 'center',
+          minWidth: 0,
+        }}
+      >
+        <p className="signage-eyebrow signage-time">
           {label} · {time}
         </p>
         <h2 className="signage-title">{session.title}</h2>
-        {speakers.length > 0 && (
+        {hasSpeakers && (
           <p className="signage-meta">
             {speakers
               .map((s) => [s.name, s.company].filter(Boolean).join(' · '))
@@ -114,16 +133,11 @@ function SpeakerStack({
         return (
           <div
             key={speaker._id}
+            className="signage-avatar"
             style={{
               width: 'clamp(8rem, 16vmin, 16rem)',
               height: 'clamp(8rem, 16vmin, 16rem)',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              border: '3px solid var(--color-surface)',
-              backgroundColor: 'var(--color-surface-alt)',
               marginLeft: idx === 0 ? 0 : '-2.5vmin',
-              flexShrink: 0,
-              position: 'relative',
             }}
           >
             {url ? (
@@ -132,23 +146,9 @@ function SpeakerStack({
                 alt={speaker.photo?.alt ?? speaker.name ?? ''}
                 width={400}
                 height={400}
-                style={{width: '100%', height: '100%', objectFit: 'cover'}}
               />
             ) : (
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 'clamp(2rem, 5vmin, 5rem)',
-                  fontWeight: 600,
-                  color: 'var(--color-text-muted)',
-                }}
-              >
-                {speaker.name?.[0] ?? '?'}
-              </div>
+              <div className="signage-avatar-fallback">{speaker.name?.[0] ?? '?'}</div>
             )}
           </div>
         )

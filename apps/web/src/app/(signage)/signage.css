@@ -1,0 +1,223 @@
+/* Signage rendering surface — full-bleed, no scrollbars, no hover bumps. */
+
+.signage-root {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+/* Stage wraps each display kind. Theme is applied here so it overrides the
+   document-level theme cookie chosen by the visitor. */
+.signage-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: clamp(1rem, 2vmin, 2.5rem);
+  gap: clamp(0.75rem, 1.5vmin, 1.75rem);
+  font-feature-settings: 'ss01', 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+.signage-stage[data-theme='dark'] {
+  --color-surface: #0c0a09;
+  --color-surface-alt: #1c1917;
+  --color-surface-muted: #292524;
+  --color-border: color-mix(in oklab, #fafaf9 12%, transparent);
+  --color-border-strong: color-mix(in oklab, #fafaf9 22%, transparent);
+  --color-text-primary: #fafaf9;
+  --color-text-secondary: #d6d3d1;
+  --color-text-muted: #a8a29e;
+  --color-accent: #60a5fa;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  color-scheme: dark;
+}
+
+.signage-stage[data-theme='light'] {
+  --color-surface: #ffffff;
+  --color-surface-alt: #fafaf9;
+  --color-surface-muted: #f5f5f4;
+  --color-border: color-mix(in oklab, #0c0a09 8%, transparent);
+  --color-border-strong: color-mix(in oklab, #0c0a09 16%, transparent);
+  --color-text-primary: #0c0a09;
+  --color-text-secondary: #44403c;
+  --color-text-muted: #57534e;
+  --color-accent: #2563eb;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  color-scheme: light;
+}
+
+/* Branding chrome — small strip at top */
+.signage-chrome {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: clamp(0.875rem, 1.4vmin, 1.25rem);
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+}
+
+.signage-chrome-name {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.signage-chrome-clock {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* Body — main content area for each kind */
+.signage-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0; /* lets children shrink in grid */
+}
+
+.signage-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: clamp(0.75rem, 1.1vmin, 1rem);
+  color: var(--color-text-muted);
+  letter-spacing: 0.04em;
+}
+
+/* Headings scale with viewport */
+.signage-eyebrow {
+  font-size: clamp(0.875rem, 1.6vmin, 1.5rem);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.signage-title {
+  font-size: clamp(2rem, 6vmin, 6rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.signage-meta {
+  font-size: clamp(1rem, 2vmin, 2rem);
+  color: var(--color-text-secondary);
+}
+
+/* Carousel transitions */
+.carousel-frame {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 600ms ease, transform 600ms ease;
+}
+
+.carousel-frame[data-state='active'] {
+  opacity: 1;
+  transform: translateX(0);
+  z-index: 2;
+}
+
+.carousel-frame[data-state='hidden'] {
+  opacity: 0;
+  z-index: 1;
+}
+
+.carousel-root[data-transition='slide'] .carousel-frame[data-state='hidden'] {
+  transform: translateX(-3vmin);
+}
+
+.carousel-root[data-transition='none'] .carousel-frame {
+  transition: none;
+}
+
+.carousel-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Paused / inactive state */
+.signage-paused {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 1rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Announcement overlay */
+.signage-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in oklab, #0c0a09 88%, transparent);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  padding: clamp(1.5rem, 4vmin, 4rem);
+  animation: overlayFade 400ms ease;
+}
+
+.signage-overlay-card {
+  max-width: 90%;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  padding: clamp(2rem, 5vmin, 5rem);
+  border-radius: clamp(0.75rem, 1.5vmin, 2rem);
+  border: 2px solid var(--color-accent);
+  box-shadow: 0 0 0 8px color-mix(in oklab, #60a5fa 15%, transparent);
+}
+
+.signage-overlay-eyebrow {
+  font-size: clamp(0.875rem, 1.5vmin, 1.5rem);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.signage-overlay-title {
+  font-size: clamp(2rem, 5vmin, 5.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  margin: clamp(0.5rem, 1.5vmin, 1.5rem) 0;
+  text-wrap: balance;
+}
+
+.signage-overlay-body {
+  font-size: clamp(1rem, 2.4vmin, 2.5rem);
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+@keyframes overlayFade {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

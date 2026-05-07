@@ -277,6 +277,36 @@
   }
 }
 
+/* Demo-mode indicator — slim badge in the bottom-right corner so it's
+   obvious the wall clock is being faked. Only renders when ?at= or
+   ?lookahead= are present. */
+.signage-demo-badge {
+  position: absolute;
+  bottom: clamp(0.75rem, 1.5vmin, 1.5rem);
+  right: clamp(0.75rem, 1.5vmin, 1.5rem);
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.4rem, 0.8vmin, 0.8rem);
+  padding: clamp(0.35rem, 0.8vmin, 0.75rem) clamp(0.6rem, 1.2vmin, 1rem);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+  outline: 1px solid color-mix(in oklab, var(--color-text-primary) 16%, transparent);
+  outline-offset: -1px;
+  color: var(--color-text-secondary);
+  font-size: clamp(0.7rem, 1.2vmin, 1rem);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.signage-demo-badge > :first-child {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
 /* Paused / inactive state */
 .signage-paused {
   display: flex;

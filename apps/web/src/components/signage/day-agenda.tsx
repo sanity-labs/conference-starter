@@ -4,10 +4,19 @@ import type {SIGNAGE_DISPLAY_QUERY_RESULT, SCHEDULE_DAY_QUERY_RESULT} from '@rep
 import {Stage} from './stage'
 import {DayAgendaClient} from './day-agenda-client'
 import {resolveConferenceDay} from './conference-day'
+import type {DemoOptions} from './demo'
 
 type Display = NonNullable<SIGNAGE_DISPLAY_QUERY_RESULT>
 
-export async function DayAgenda({display, hideChrome}: {display: Display; hideChrome: boolean}) {
+export async function DayAgenda({
+  display,
+  hideChrome,
+  demo,
+}: {
+  display: Display
+  hideChrome: boolean
+  demo: DemoOptions
+}) {
   const {data: conference} = await sanityFetch({
     query: CONFERENCE_QUERY,
     perspective: 'published',
@@ -49,7 +58,12 @@ export async function DayAgenda({display, hideChrome}: {display: Display; hideCh
       hideChrome={hideChrome}
       footnote={`Today's schedule · ${day.date}`}
     >
-      <DayAgendaClient slots={slots} dayStart={day.dayStart} dayEnd={day.dayEnd} />
+      <DayAgendaClient
+        slots={slots}
+        dayStart={day.dayStart}
+        dayEnd={day.dayEnd}
+        demoNowISO={demo.demoNowISO}
+      />
     </Stage>
   )
 }

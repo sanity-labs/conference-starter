@@ -7,15 +7,18 @@ import type {
 import {Stage} from './stage'
 import {HallwayCarouselClient} from './hallway-carousel-client'
 import {resolveConferenceDay} from './conference-day'
+import type {DemoOptions} from './demo'
 
 type Display = NonNullable<SIGNAGE_DISPLAY_QUERY_RESULT>
 
 export async function HallwayCarousel({
   display,
   hideChrome,
+  demo,
 }: {
   display: Display
   hideChrome: boolean
+  demo: DemoOptions
 }) {
   const {data: conference} = await sanityFetch({
     query: CONFERENCE_QUERY,
@@ -63,11 +66,12 @@ export async function HallwayCarousel({
     >
       <HallwayCarouselClient
         slots={slots}
-        lookaheadMinutes={display.lookaheadMinutes ?? 30}
+        lookaheadMinutes={demo.demoLookaheadMinutes ?? display.lookaheadMinutes ?? 30}
         dwellSeconds={display.dwellSeconds ?? 8}
         transition={(display.transition as 'fade' | 'slide' | 'none') ?? 'fade'}
         dayStart={day.dayStart}
         dayEnd={day.dayEnd}
+        demoNowISO={demo.demoNowISO}
       />
     </Stage>
   )

@@ -12,13 +12,15 @@ export function NowNextClient({
   roomName,
   dayStart,
   dayEnd,
+  demoNowISO,
 }: {
   slots: Slot[]
   roomName: string
   dayStart?: string
   dayEnd?: string
+  demoNowISO?: string | null
 }) {
-  const {current, next} = useNowCursor(slots, {dayStart, dayEnd})
+  const {current, next} = useNowCursor(slots, {dayStart, dayEnd, demoNowISO})
 
   if (!current && !next) {
     return (

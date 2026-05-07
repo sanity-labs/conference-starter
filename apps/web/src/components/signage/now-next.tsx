@@ -4,10 +4,19 @@ import type {SIGNAGE_DISPLAY_QUERY_RESULT, ROOM_DAY_SLOTS_QUERY_RESULT} from '@r
 import {Stage} from './stage'
 import {NowNextClient} from './now-next-client'
 import {resolveConferenceDay} from './conference-day'
+import type {DemoOptions} from './demo'
 
 type Display = NonNullable<SIGNAGE_DISPLAY_QUERY_RESULT>
 
-export async function NowNext({display, hideChrome}: {display: Display; hideChrome: boolean}) {
+export async function NowNext({
+  display,
+  hideChrome,
+  demo,
+}: {
+  display: Display
+  hideChrome: boolean
+  demo: DemoOptions
+}) {
   if (!display.room?._id) {
     return (
       <Stage hideChrome={hideChrome} eyebrow="Configuration needed">
@@ -59,6 +68,7 @@ export async function NowNext({display, hideChrome}: {display: Display; hideChro
         roomName={display.room.name ?? ''}
         dayStart={day.dayStart}
         dayEnd={day.dayEnd}
+        demoNowISO={demo.demoNowISO}
       />
     </Stage>
   )

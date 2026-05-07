@@ -4,15 +4,18 @@ import type {SIGNAGE_DISPLAY_QUERY_RESULT, SCHEDULE_DAY_QUERY_RESULT} from '@rep
 import {Stage} from './stage'
 import {SpeakerSpotlightClient} from './speaker-spotlight-client'
 import {resolveConferenceDay} from './conference-day'
+import type {DemoOptions} from './demo'
 
 type Display = NonNullable<SIGNAGE_DISPLAY_QUERY_RESULT>
 
 export async function SpeakerSpotlight({
   display,
   hideChrome,
+  demo,
 }: {
   display: Display
   hideChrome: boolean
+  demo: DemoOptions
 }) {
   const {data: conference} = await sanityFetch({
     query: CONFERENCE_QUERY,
@@ -58,11 +61,12 @@ export async function SpeakerSpotlight({
     >
       <SpeakerSpotlightClient
         slots={slots}
-        lookaheadMinutes={display.lookaheadMinutes ?? 30}
+        lookaheadMinutes={demo.demoLookaheadMinutes ?? display.lookaheadMinutes ?? 30}
         dwellSeconds={display.dwellSeconds ?? 8}
         transition={(display.transition as 'fade' | 'slide' | 'none') ?? 'fade'}
         dayStart={day.dayStart}
         dayEnd={day.dayEnd}
+        demoNowISO={demo.demoNowISO}
       />
     </Stage>
   )

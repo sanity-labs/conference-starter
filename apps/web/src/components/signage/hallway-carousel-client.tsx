@@ -22,6 +22,7 @@ export function HallwayCarouselClient({
   transition,
   dayStart,
   dayEnd,
+  demoNowISO,
 }: {
   slots: Slot[]
   lookaheadMinutes: number
@@ -29,8 +30,9 @@ export function HallwayCarouselClient({
   transition: 'fade' | 'slide' | 'none'
   dayStart?: string
   dayEnd?: string
+  demoNowISO?: string | null
 }) {
-  const now = useEffectiveNow({dayStart, dayEnd})
+  const now = useEffectiveNow({dayStart, dayEnd, demoNowISO})
 
   const cutoff = now + lookaheadMinutes * 60_000
 

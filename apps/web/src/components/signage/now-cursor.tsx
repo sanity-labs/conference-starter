@@ -18,16 +18,26 @@ export type NowCursorState<T extends SlotLike> = {
 export type NowCursorOptions = {
   dayStart?: string
   dayEnd?: string
+  /** Demo override — if set, the cursor is pinned to this ISO timestamp
+   *  and the wall-clock tick is ignored. Useful for previews, screenshots,
+   *  and walkthroughs outside the conference window. */
+  demoNowISO?: string | null
 }
 
-export function useEffectiveNow({dayStart, dayEnd}: NowCursorOptions = {}): number {
+export function useEffectiveNow({dayStart, dayEnd, demoNowISO}: NowCursorOptions = {}): number {
   const [now, setNow] = useState<number>(() => Date.now())
 
   useEffect(() => {
+    if (demoNowISO) return
     setNow(Date.now())
     const id = setInterval(() => setNow(Date.now()), 30_000)
     return () => clearInterval(id)
-  }, [])
+  }, [demoNowISO])
+
+  if (demoNowISO) {
+    const fixed = new Date(demoNowISO).getTime()
+    if (Number.isFinite(fixed)) return fixed
+  }
 
   if (!dayStart) return now
   const start = new Date(dayStart).getTime()
@@ -41,7 +51,7 @@ export function useNowCursor<T extends SlotLike>(
   slots: T[],
   options?: NowCursorOptions,
 ): NowCursorState<T> {
-  const now = useEffectiveNow(options)
+  const now = useEffectiveNow(options ?? {})
 
   const sorted = [...slots]
     .filter((slot) => Boolean(slot.startTime))

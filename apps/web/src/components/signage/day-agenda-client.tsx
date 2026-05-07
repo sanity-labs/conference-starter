@@ -10,12 +10,14 @@ export function DayAgendaClient({
   slots,
   dayStart,
   dayEnd,
+  demoNowISO,
 }: {
   slots: Slot[]
   dayStart?: string
   dayEnd?: string
+  demoNowISO?: string | null
 }) {
-  const {current, done} = useNowCursor(slots, {dayStart, dayEnd})
+  const {current, done} = useNowCursor(slots, {dayStart, dayEnd, demoNowISO})
   const doneIds = new Set(done.map((s) => s._id))
   const currentId = current?._id
 

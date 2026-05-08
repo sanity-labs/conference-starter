@@ -2,7 +2,7 @@
 
 > [!NOTE]
 > **Status — reference architecture, not a turnkey starter (yet).**
-> Demo-ready today: content model, Studio, website, CFP pipeline, email system, AI concierge, dual-mode Telegram bot, 9 Sanity Functions, dynamic OG, llms.txt + markdown mirror, dark mode, Sanity-backed rate limiting, CSP headers, route-level error boundaries, auth-gated admin endpoints, pluggable observability hook, self-hosted InterVariable typography with AA-audited contrast.
+> Demo-ready today: content model, Studio, website, CFP pipeline, email system, AI concierge, dual-mode Telegram bot, 9 Sanity Functions, **digital signage with six display kinds**, dynamic OG, llms.txt + markdown mirror, dark mode, Sanity-backed rate limiting, CSP headers, route-level error boundaries, auth-gated admin endpoints, pluggable observability hook, self-hosted InterVariable typography with AA-audited contrast.
 > Not yet built: Content Releases / year-based archive (Sprint 5), Luma registration sync (Sprint 6), AI Elements for the concierge UI, end-to-end Playwright smoke tests. See `plans/` for backlog.
 > APIs and patterns may still change — version-pin before building on top.
 
@@ -19,7 +19,8 @@ A conference operations platform built on [Sanity](https://www.sanity.io) as a r
 - **Conference website** — Next.js 16 with App Router, `use cache`, and Visual Editing. Pages for speakers, sessions, schedule, sponsors, venue, FAQ, announcements, CFP, and dynamic content pages. Every entity mention is a link to its canonical page. Dynamic OG images generated from structured content via `@vercel/og`.
 - **Call for Proposals** — Public submission form with honeypot spam protection. AI-powered screening scores submissions using Agent Actions. Studio actions to accept (auto-creates speaker + session), reject, or re-screen.
 - **Email pipeline** — Portable Text email templates with variable interpolation (`sanity-plugin-pte-interpolation`). Automated emails for CFP confirmation, acceptance/rejection, and announcement distribution. Preview and test-send from Studio.
-- **Multi-channel announcements** — Publish an announcement in Studio and it distributes to email subscribers and a Telegram channel simultaneously, with per-channel delivery tracking.
+- **Multi-channel announcements** — Publish an announcement in Studio and it distributes to email subscribers and a Telegram channel simultaneously, with per-channel delivery tracking. Flag `signageOverlay` to broadcast to every active TV at the venue too.
+- **Digital signage** — A `signageDisplay` document type drives `/signage/[slug]` routes designed for full-bleed TV screens at the venue. Six display kinds (`now-next`, `day-agenda`, `sponsor-reel`, `speaker-spotlight`, `hallway-carousel`, `welcome-hero`), tri-state announcement broadcast (`none` / `banner` / `takeover`), URL-driven demo mode, and logo normalisation via [`@sanity-labs/logo-soup`](https://www.sanity.io/blog/the-logo-soup-problem). Real-time updates via SanityLive — schedule changes propagate to every screen in seconds.
 - **Telegram bot (dual-mode)** — Organizer bot with Content Agent (read+write access to the Content Lake) for ops queries. Attendee bot with Anthropic Sonnet + Agent Context MCP (read-only) for public Q&A. Conversation persistence and auto-classification.
 - **Schedule builder** — Custom Studio tool with drag-and-drop slot assignment and conflict detection.
 - **9 serverless functions** — Event-driven Sanity Functions (Blueprints) for CFP screening, email sends, announcement distribution (email + Telegram), conversation classification, re-screening, and person-lifecycle sync.
@@ -29,13 +30,13 @@ A conference operations platform built on [Sanity](https://www.sanity.io) as a r
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                   Sanity Content Lake                    │
-│         17 document types · GROQ · TypeGen               │
-└────┬──────────┬──────────┬──────────┬──────────┬─────────┘
-     │          │          │          │          │
-  Studio    Next.js    Functions   Bot      Emails
-  (admin)   (public)   (events)  (Telegram) (Resend)
+┌──────────────────────────────────────────────────────────────────┐
+│                     Sanity Content Lake                          │
+│            18 document types · GROQ · TypeGen                    │
+└──┬──────────┬──────────┬──────────┬──────────┬──────────┬────────┘
+   │          │          │          │          │          │
+ Studio    Next.js    Signage   Functions    Bot       Emails
+ (admin)   (public)   (TVs)     (events)   (Telegram)  (Resend)
 ```
 
 | Layer | Technology |
@@ -153,7 +154,7 @@ pnpm type-check
 
 ## Content Model
 
-17 document types organized around conference operations:
+18 document types organized around conference operations:
 
 | Type | Purpose |
 |------|---------|
@@ -165,6 +166,7 @@ pnpm type-check
 | `venue` | Physical location with rooms |
 | `room` | Individual rooms within capacity and location |
 | `sponsor` | Sponsors with tier levels (platinum, gold, silver, bronze, community) |
+| `signageDisplay` | Per-screen configuration for venue TVs — kind, theme, orientation, dwell, announcement mode |
 | `page` | Dynamic content pages with composable sections |
 | `announcement` | Multi-channel updates — distributes to email + Telegram with delivery tracking |
 | `submission` | CFP submissions with AI screening (score, summary, scoredAt) |
@@ -214,7 +216,7 @@ The schema lives in `packages/sanity-schema/` and is consumed by all apps.
 
 ### Custom Structure
 
-Studio navigation groups content by workflow: People (with travel status filters), Sessions (by type), Sponsors (by tier), CFP Submissions (by status), Announcements (by status), FAQs (by category), Email Templates, AI Prompts (singletons), and Agent Context configuration.
+Studio navigation groups content by workflow: People (with travel status filters), Sessions (by type), Signage (active / paused), Sponsors (by tier), CFP Submissions (by status), Announcements (by status), FAQs (by category), Email Templates, AI Prompts (singletons), and Agent Context configuration.
 
 ## Key Patterns
 
@@ -356,6 +358,51 @@ Docs: [Agent Actions patterns](https://www.sanity.io/docs/agent-actions/agent-ac
 | **Agent Context (MCP)** | BYO (any provider) | MCP tools | No | Public-facing, cost control, custom models |
 | **Agent Actions** | Managed (Sanity) | Schema-aware | Optional | Single-shot tasks, serverless, document operations |
 
+## Digital Signage
+
+Venue TVs render directly from the Content Lake — no separate slide deck to keep in sync. A `signageDisplay` document configures one screen; the operator points the TV's browser at `/signage/<slug>?chrome=hide` and the screen stays live forever.
+
+### Display kinds
+
+| Kind | Job to be done | Where it goes |
+|---|---|---|
+| `now-next` | "What's playing in this room right now, and what's next?" | Outside session rooms |
+| `day-agenda` | "What's the full schedule for today, across all rooms?" | Lobby / hallway anchor screens |
+| `sponsor-reel` | "Rotate sponsor logos by tier" | Lobby, between-session filler |
+| `speaker-spotlight` | "Spotlight upcoming speakers — large photo, name, talk title, time" | High-traffic walkways before sessions |
+| `hallway-carousel` | "Cycle every room's next-up — ambient awareness across the venue" | Long hallways, between-room corridors |
+| `welcome-hero` | "Conference identity — name, tagline, dates, sponsor strip" | Lobby / entrance backdrop |
+
+### Real-time, two ways
+
+- **SanityLive push** — schedule edits in Studio propagate to every screen within seconds, no manual refresh.
+- **Wall-clock tick** — a 30s client tick advances the "now" cursor on time-aware kinds (`now-next`, `day-agenda`, `speaker-spotlight`, `hallway-carousel`) so the right session is highlighted as the day moves.
+
+### Announcement modes
+
+The existing `announcement` type gets a `signageOverlay` boolean. When ticked on a published announcement, every active display reacts according to its own `announcementMode`:
+
+- **`banner`** (default) — slim accent strip pushes content down. Right for routine notices like "lunch is open" or schedule changes.
+- **`takeover`** — full-screen card with backdrop blur. Reserved for emergencies or anything that must interrupt all viewing.
+- **`none`** — screen suppresses the broadcast entirely. For sponsor reels that contractually can't be interrupted.
+
+### Demo mode
+
+Append URL params for previews, screenshots, and walkthroughs without needing real conference timing:
+
+```
+/signage/<slug>?at=2026-10-15T09:30:00-04:00&lookahead=600&chrome=hide
+```
+
+- `?at=<ISO>` pins the wall clock to a fixed instant
+- `?lookahead=<minutes>` overrides `display.lookaheadMinutes` (used by `speaker-spotlight` and `hallway-carousel`)
+- A subtle pill in the bottom-right corner reads `DEMO · Oct 15, 9:30 AM · lookahead 600m` so it's obvious the screen is not live
+- The `/signage` operator index links every display three ways: `Open · Open · kiosk · Open · demo`. The demo link auto-anchors at the conference's first day.
+
+### Logo soup
+
+Sponsor logos arrive in a chaotic mix of aspect ratios and visual weights. Rather than cropping, padding, or grayscaling them by hand, this project uses [`@sanity-labs/logo-soup`](https://www.sanity.io/blog/the-logo-soup-problem) to normalise them via PINF (Proportional Image Normalisation Formula). Both the `welcome-hero` strip and `sponsor-reel` frames render through it so a wide wordmark and a square logomark feel evenly weighted side-by-side.
+
 ## Website Pages
 
 | Route | Description |
@@ -372,6 +419,8 @@ Docs: [Agent Actions patterns](https://www.sanity.io/docs/agent-actions/agent-ac
 | `/cfp` | Call for Proposals submission form |
 | `/announcements` | Announcement listing |
 | `/announcements/[slug]` | Announcement detail |
+| `/signage` | Operator index — every configured display with `Open · kiosk · demo` links |
+| `/signage/[slug]` | Full-bleed signage renderer for venue TVs. Six kinds dispatched on `signageDisplay.kind`. Supports `?chrome=hide` (kiosk), `?at=<ISO>&lookahead=<min>` (demo) |
 | `/[slug]` | Dynamic catch-all for CMS-managed pages |
 
 ## Markdown Routes

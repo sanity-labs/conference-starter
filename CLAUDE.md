@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ContentOps Conf — a conference operations platform built on Sanity as a reference architecture. Not just a CMS-backed website, but a **content operating system** for events: the Content Lake drives the website, emails, registration (Luma), AI concierge, and automation.
 
-Sprints 0–4 are complete. The platform has a working Studio, content model, website, email pipeline, CFP screening, and Telegram bot. Planning docs in `plans/` describe the original architecture.
+Sprints 0–4 plus signage are complete. The platform has a working Studio, content model, website, email pipeline, CFP screening, Telegram bot, and digital signage (six display kinds at `/signage/[slug]` with tri-state announcement broadcast and URL-driven demo mode). Planning docs in `plans/` describe the original architecture.
 
 ## Planned Tech Stack
 

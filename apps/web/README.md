@@ -28,6 +28,8 @@ Next.js 16 public-facing website for ContentOps Conf. Uses the App Router with `
 | `/sponsors` | Sponsor grid grouped by tier (with anchor IDs for inbound linking) |
 | `/venue` | Venue info, rooms with per-room schedules |
 | `/faq` | FAQ grouped by category with `FAQPage` JSON-LD |
+| `/signage` | Operator index of configured signage displays — `Open · kiosk · demo` links per display |
+| `/signage/[slug]` | Full-bleed signage renderer for venue TVs. Six kinds (`now-next`, `day-agenda`, `sponsor-reel`, `speaker-spotlight`, `hallway-carousel`, `welcome-hero`). Query params: `?chrome=hide` (kiosk), `?at=<ISO>` + `?lookahead=<min>` (demo) |
 
 ### API Routes
 

@@ -29,9 +29,10 @@ The sidebar is organized for conference operations:
 - **People** — All speakers/organizers + filters by travel status
 - **Sessions** — All + grouped by type (keynote, talk, panel, workshop, etc.)
 - **Schedule** — Slots by day with assignment UI
+- **Signage** — Per-screen `signageDisplay` config for venue TVs, filtered by Active / Paused
 - **Tracks** — Color-coded session categories
 - **Submissions** — CFP submissions filtered by status (submitted, screening, scored, accepted, rejected)
-- **Announcements** — News items
+- **Announcements** — News items (toggle `signageOverlay` to broadcast to every active TV)
 - **Email** — Templates + delivery audit log
 - **AI Prompts** — Editable instructions for AI features (live-edit singletons)
 - **Conversations** — Telegram bot message history

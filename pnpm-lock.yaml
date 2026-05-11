@@ -299,8 +299,8 @@ importers:
         specifier: ^7.17.0
         version: 7.17.0(debug@4.4.3)
       groq:
-        specifier: ^3.99.0
-        version: 3.99.0
+        specifier: ^5.24.0
+        version: 5.24.0
     devDependencies:
       typescript:
         specifier: ^5.9.3
@@ -4795,12 +4795,12 @@ packages:
     resolution: {integrity: sha512-6TZD6H1y3P7zk0BQharjFa7BOivV9nFL6KKVZbRZRH0yOSSyu2xHglTO48b1/2mCEdYoBQpvE7rjCDUf6XmQYQ==}
     engines: {node: '>=18'}
 
-  groq@3.99.0:
-    resolution: {integrity: sha512-ZwKAWzvVCw51yjmIf5484KgsAzZAlGTM4uy9lki4PjAYxcEME2Xf93d31LhHzgUAr2JI79H+cNKoRjDHdv1BXQ==}
-    engines: {node: '>=18'}
-
   groq@5.15.0:
     resolution: {integrity: sha512-BMpzWlECyi7jLl7VIn3ceeOX6YupRsewusJoX52la0nws0xLMs7tZT68HnmgOtqu+cL6LkI6HKW25p3SBD+GeQ==}
+    engines: {node: '>=20.19 <22 || >=22.12'}
+
+  groq@5.24.0:
+    resolution: {integrity: sha512-YMumFhEJjROiE4czCBMbno/xbQSz/phlosTJhGM/gJg7ZiR/dqAhx5nfUUt0p7ytiRokyEFc/sHT4xKIPo6HJA==}
     engines: {node: '>=20.19 <22 || >=22.12'}
 
   gunzip-maybe@1.4.2:
@@ -9803,7 +9803,7 @@ snapshots:
       chokidar: 3.6.0
       debug: 4.4.3(supports-color@8.1.1)
       globby: 11.1.0
-      groq: 5.15.0
+      groq: 5.24.0
       groq-js: 1.29.0
       json5: 2.2.3
       lodash-es: 4.17.23
@@ -12123,9 +12123,9 @@ snapshots:
 
   groq@3.88.1-typegen-experimental.0: {}
 
-  groq@3.99.0: {}
-
   groq@5.15.0: {}
+
+  groq@5.24.0: {}
 
   gunzip-maybe@1.4.2:
     dependencies:

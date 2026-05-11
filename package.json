@@ -8,9 +8,14 @@
     "lint": "turbo lint",
     "typegen": "pnpm --filter @repo/studio exec sanity schema extract --enforce-required-fields && pnpm --filter @repo/studio exec sanity typegen generate",
     "predev": "tsx scripts/check-next-version.ts",
-    "clean": "rm -rf .turbo node_modules/.cache apps/*/.next apps/*/.turbo apps/*/dist packages/*/.turbo packages/*/dist"
+    "clean": "rm -rf .turbo node_modules/.cache apps/*/.next apps/*/.turbo apps/*/dist packages/*/.turbo packages/*/dist",
+    "blueprints:plan": "pnpm dlx sanity@latest blueprints plan",
+    "blueprints:deploy": "pnpm dlx sanity@latest blueprints deploy",
+    "blueprints:info": "pnpm dlx sanity@latest blueprints info",
+    "blueprints:logs": "pnpm dlx sanity@latest blueprints logs --watch"
   },
   "devDependencies": {
+    "@sanity/blueprints": "^0.15.0",
     "tsx": "^4.21.0",
     "turbo": "^2.8.16",
     "typescript": "^5.9.3"

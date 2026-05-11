@@ -5,7 +5,7 @@ export default defineBlueprint({
   resources: [
     defineDocumentFunction({
       name: 'screen-cfp',
-      src: './screen-cfp',
+      src: './apps/functions/screen-cfp',
       event: {
         on: ['create'],
         filter: '_type == "submission" && status == "submitted"',
@@ -17,7 +17,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'send-cfp-confirmation',
-      src: './send-cfp-confirmation',
+      src: './apps/functions/send-cfp-confirmation',
       event: {
         on: ['create'],
         filter: '_type == "submission"',
@@ -28,7 +28,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'send-status-email',
-      src: './send-status-email',
+      src: './apps/functions/send-status-email',
       event: {
         on: ['update'],
         filter: '_type == "submission" && delta::changedAny(status)',
@@ -39,7 +39,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'rescreen-cfp',
-      src: './rescreen-cfp',
+      src: './apps/functions/rescreen-cfp',
       event: {
         on: ['update'],
         filter:
@@ -52,7 +52,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'classify-conversation',
-      src: './classify-conversation',
+      src: './apps/functions/classify-conversation',
       event: {
         on: ['create', 'update'],
         filter:
@@ -64,7 +64,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'send-announcement-email',
-      src: './send-announcement-email',
+      src: './apps/functions/send-announcement-email',
       event: {
         on: ['update'],
         filter:
@@ -77,7 +77,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'push-announcement-telegram',
-      src: './push-announcement-telegram',
+      src: './apps/functions/push-announcement-telegram',
       event: {
         on: ['update'],
         filter:
@@ -91,7 +91,7 @@ export default defineBlueprint({
     // ─── Person Internal Lifecycle ─────────────────────────────────────────
     defineDocumentFunction({
       name: 'create-person-internal',
-      src: './create-person-internal',
+      src: './apps/functions/create-person-internal',
       event: {
         on: ['create'],
         filter: '_type == "person" && _id match "drafts.*"',
@@ -102,7 +102,7 @@ export default defineBlueprint({
     }),
     defineDocumentFunction({
       name: 'delete-person-internal',
-      src: './delete-person-internal',
+      src: './apps/functions/delete-person-internal',
       event: {
         on: ['delete'],
         filter: '_type == "person"',
@@ -115,7 +115,7 @@ export default defineBlueprint({
     // TODO: Re-enable once stack is org-scoped (required for scheduled functions)
     // defineScheduleFunction({
     //   name: 'daily-digest',
-    //   src: './daily-digest',
+    //   src: './apps/functions/daily-digest',
     //   event: {
     //     minute: '0',
     //     hour: '7',
@@ -127,7 +127,7 @@ export default defineBlueprint({
     // }),
     // defineScheduleFunction({
     //   name: 'reminder-cron',
-    //   src: './reminder-cron',
+    //   src: './apps/functions/reminder-cron',
     //   event: {
     //     minute: '0',
     //     hour: '8',

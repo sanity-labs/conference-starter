@@ -1,6 +1,6 @@
-# Functions — Sanity Functions (Blueprints)
+# Functions — Sanity Functions
 
-Event-driven serverless functions deployed to the Sanity platform via Blueprints. The blueprint manifest + function sources live together in this workspace; deploys run from here.
+Event-driven serverless functions deployed to the Sanity platform via Blueprints. **Function source lives here; the manifest lives at the repo root** (`/sanity.blueprint.ts`, next to `pnpm-lock.yaml`). This workspace owns the runtime deps; the manifest references each function via `src: './apps/functions/<name>'`.
 
 ## Functions
 
@@ -16,7 +16,7 @@ Event-driven serverless functions deployed to the Sanity platform via Blueprints
 | `create-person-internal` | `person` draft created | Provisions paired `personInternal` record (travel, dietary, AV) |
 | `delete-person-internal` | `person` deleted | Cleans up paired `personInternal` record |
 
-Scheduled functions (`daily-digest`, `reminder-cron`) exist as source but are commented out in `sanity.blueprint.ts` — re-enable once the stack is org-scoped.
+Scheduled functions (`daily-digest`, `reminder-cron`) exist as source but are commented out in `/sanity.blueprint.ts` — re-enable once the stack is org-scoped.
 
 ## Shared utilities
 
@@ -29,25 +29,26 @@ Scheduled functions (`daily-digest`, `reminder-cron`) exist as source but are co
 
 ## Deploying
 
-First time on a new environment:
+All blueprint commands run from the **repo root** (where `sanity.blueprint.ts` and `pnpm-lock.yaml` sit). Convenience scripts in root `package.json`:
 
 ```bash
-pnpm dlx sanity@latest blueprints init
+pnpm blueprints:plan      # preview changes — always run this before deploy
+pnpm blueprints:deploy    # apply changes to the stack
+pnpm blueprints:info      # current stack status
+pnpm blueprints:logs      # tail logs (--watch)
 ```
 
-Creates `.sanity/blueprint.config.json` with the stack ID.
-
-Subsequent deploys:
+First time on a new environment, run from the repo root:
 
 ```bash
-pnpm dlx sanity@latest blueprints deploy
+pnpm dlx sanity@latest blueprints init --project-id yjorde43 --stack-id ST-3ntyuc4apf --blueprint-type ts
 ```
 
-If pnpm lockfile detection fails, add `--fn-installer pnpm`.
+This creates `.sanity/blueprint.config.json` at root pointing at the existing remote stack — no resource churn.
 
 ## Function environment variables
 
-Set per-function:
+Set per-function (run from repo root):
 
 ```bash
 pnpm dlx sanity@latest functions env add <function-name> RESEND_API_KEY re_...
@@ -57,7 +58,7 @@ pnpm dlx sanity@latest functions env add <function-name> SANITY_SCHEMA_ID _.sche
 Agent Actions require the Studio schema to be deployed:
 
 ```bash
-cd ../studio && pnpx sanity@latest schema deploy
+pnpm --filter @repo/studio exec sanity schema deploy
 ```
 
 ## Event filters
@@ -80,19 +81,21 @@ filter: '_type == "agent.conversation" && (delta::changedAny(messages) || delta:
 Functions don't run locally — they run in Sanity's runtime on real document events. For iterating:
 
 1. Edit function source under `<name>/`
-2. `pnpm dlx sanity@latest blueprints deploy` from this directory
+2. From repo root: `pnpm blueprints:deploy`
 3. Trigger by creating/updating the relevant document in Studio or via API
 4. Tail logs: `pnpm dlx sanity@latest functions logs <function-name>`
 
 ## Key files
 
 ```
-sanity.blueprint.ts      → Blueprint manifest (event bindings, resource refs, timeouts)
-_shared/
-  email-render.ts        → PT → HTML + layout wrapping + subject interpolation
-  email-layout.ts        → Pre-generated layout HTML
-_fixtures/               → Test fixtures for local function invocation
-<function-name>/
-  index.ts               → Entry point (documentEventHandler from @sanity/functions)
-  package.json           → Function-scoped deps if any
+/sanity.blueprint.ts                   → Blueprint manifest (at repo root, next to pnpm-lock.yaml)
+/.sanity/blueprint.config.json         → Local stack binding (gitignored)
+apps/functions/
+  package.json                         → Workspace deps (Application Package in Turborepo terms)
+  _shared/
+    email-render.ts                    → PT → HTML + layout wrapping + subject interpolation
+    email-layout.ts                    → Pre-generated layout HTML
+  _fixtures/                           → Test fixtures for local function invocation
+  <function-name>/
+    index.ts                           → Entry point (documentEventHandler from @sanity/functions)
 ```

@@ -48,8 +48,8 @@ importers:
         specifier: ^4.20.1
         version: 4.20.1
       content-agent:
-        specifier: ^0.4.7
-        version: 0.4.7(ai@6.0.177(zod@3.25.76))(zod@3.25.76)
+        specifier: ^1.0.0
+        version: 1.0.0(ai@6.0.177(zod@3.25.76))
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -2796,8 +2796,8 @@ packages:
       sanity: ^5
       styled-components: ^6
 
-  '@sanity/agent-types@0.0.87':
-    resolution: {integrity: sha512-9NDiZMJWJQo4D2HKzzvAqIDuC5kcPMYz9GpPqDcKQDkRUWw0setuTNpOjYjEuIgxfm3k5mIITGBJpJsXHqI0LQ==}
+  '@sanity/agent-types@0.1.1':
+    resolution: {integrity: sha512-KX5PhWHz9oxjJ7WFlG6wOO+vN+yN3ZH7nONdexwU9qmaaH+t6q8N/z6ffXCnS4ku447zYoRyRJ8yeGKhn/E5nQ==}
     engines: {node: '>=18.0.0'}
 
   '@sanity/asset-utils@2.3.0':
@@ -4043,8 +4043,8 @@ packages:
   console-table-printer@2.15.0:
     resolution: {integrity: sha512-SrhBq4hYVjLCkBVOWaTzceJalvn5K1Zq5aQA6wXC/cYjI3frKWNPEMK3sZsJfNNQApvCQmgBcc13ZKmFj8qExw==}
 
-  content-agent@0.4.7:
-    resolution: {integrity: sha512-E06v25dPsH24J70ijXdTBDsP6YPMp0XOVlP+xbrSmWo2HKVoo/a5xIel/I/l4QrP+jQq7fQbnJACE5YTVQNzog==}
+  content-agent@1.0.0:
+    resolution: {integrity: sha512-Stbqh6jBOrogJx3eALkeDVFpcUuRnee5ulPi6ij0k6K/1YNMHeXHE5M8egSEsAW0wzuXHD0B4thHblmSJFi20Q==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       ai: '>=6.0.0'
@@ -9627,7 +9627,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sanity/agent-types@0.0.87':
+  '@sanity/agent-types@0.1.1':
     dependencies:
       zod: 3.25.76
 
@@ -11281,16 +11281,15 @@ snapshots:
     dependencies:
       simple-wcswidth: 1.1.2
 
-  content-agent@0.4.7(ai@6.0.177(zod@3.25.76))(zod@3.25.76):
+  content-agent@1.0.0(ai@6.0.177(zod@3.25.76)):
     dependencies:
       '@ai-sdk/provider': 3.0.10
       '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
-      '@sanity/agent-types': 0.0.87
+      '@sanity/agent-types': 0.1.1
       es-toolkit: 1.45.1
+      zod: 3.25.76
     optionalDependencies:
       ai: 6.0.177(zod@3.25.76)
-    transitivePeerDependencies:
-      - zod
 
   convert-source-map@2.0.0: {}
 

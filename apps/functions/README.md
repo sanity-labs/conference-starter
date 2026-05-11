@@ -15,8 +15,10 @@ Event-driven serverless functions deployed to the Sanity platform via Blueprints
 | `classify-conversation` | `agent.conversation` created/updated | Auto-classifies (topic, sentiment) via Anthropic Haiku |
 | `create-person-internal` | `person` draft created | Provisions paired `personInternal` record (travel, dietary, AV) |
 | `delete-person-internal` | `person` deleted | Cleans up paired `personInternal` record |
+| `daily-digest` | Cron — daily 07:00 America/New_York | Day-before preview + day-of schedule digest via Resend + Telegram |
+| `reminder-cron` | Cron — daily 08:00 America/New_York | CFP-closing + event-reminder + post-event thank-you milestones |
 
-Scheduled functions (`daily-digest`, `reminder-cron`) exist as source but are commented out in `/sanity.blueprint.ts` — re-enable once the stack is org-scoped.
+Scheduled functions authenticate via the shared `scheduled-functions-robot` (viewer role) declared in `/sanity.blueprint.ts`. They require the blueprint stack to be organization-scoped — see [promote-stack docs](https://www.sanity.io/docs/blueprints/promote-stack-to-organization-scope).
 
 ## Shared utilities
 

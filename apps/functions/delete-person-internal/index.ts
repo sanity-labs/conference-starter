@@ -5,7 +5,7 @@ import {getPublishedId} from '@sanity/id-utils'
 export const handler = documentEventHandler<{_id: string}>(async ({context, event}) => {
   const client = createClient({
     ...context.clientOptions,
-    apiVersion: '2026-04-01',
+    apiVersion: '2026-04-29',
     perspective: 'raw',
     useCdn: false,
   })

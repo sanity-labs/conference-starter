@@ -9,7 +9,7 @@ import {
 export const handler = documentEventHandler<AnnouncementData>(async ({context, event}) => {
   const {data} = event
   const dryRun = Boolean(context.local)
-  const client = createClient({...context.clientOptions, apiVersion: '2025-08-15'})
+  const client = createClient({...context.clientOptions, apiVersion: '2026-04-29'})
 
   const isResend = Array.isArray(data.distributionLog) &&
     data.distributionLog.some((e) => e.channel === 'telegram')

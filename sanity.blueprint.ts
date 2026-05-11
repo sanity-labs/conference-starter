@@ -1,5 +1,9 @@
-import {defineBlueprint, defineDocumentFunction} from '@sanity/blueprints'
-// import {defineScheduleFunction} from '@sanity/blueprints' // TODO: Re-enable with org-scoped stack
+import {
+  defineBlueprint,
+  defineDocumentFunction,
+  defineRobotToken,
+  defineScheduledFunction,
+} from '@sanity/blueprints'
 
 export default defineBlueprint({
   resources: [
@@ -111,31 +115,40 @@ export default defineBlueprint({
         resource: {type: 'dataset', id: 'yjorde43.production'},
       },
     }),
+    // ─── Robot token (shared by scheduled functions) ──────────────────────
+    defineRobotToken({
+      name: 'scheduled-functions-robot',
+      label: 'Scheduled Functions (read-only)',
+      memberships: [
+        {resourceType: 'project', resourceId: 'yjorde43', roleNames: ['viewer']},
+      ],
+    }),
     // ─── Scheduled Functions ──────────────────────────────────────────────
-    // TODO: Re-enable once stack is org-scoped (required for scheduled functions)
-    // defineScheduleFunction({
-    //   name: 'daily-digest',
-    //   src: './apps/functions/daily-digest',
-    //   event: {
-    //     minute: '0',
-    //     hour: '7',
-    //     dayOfWeek: '*',
-    //     month: '*',
-    //     dayOfMonth: '*',
-    //   },
-    //   timezone: 'America/New_York',
-    // }),
-    // defineScheduleFunction({
-    //   name: 'reminder-cron',
-    //   src: './apps/functions/reminder-cron',
-    //   event: {
-    //     minute: '0',
-    //     hour: '8',
-    //     dayOfWeek: '*',
-    //     month: '*',
-    //     dayOfMonth: '*',
-    //   },
-    //   timezone: 'America/New_York',
-    // }),
+    defineScheduledFunction({
+      name: 'daily-digest',
+      src: './apps/functions/daily-digest',
+      event: {
+        minute: '0',
+        hour: '7',
+        dayOfWeek: '*',
+        month: '*',
+        dayOfMonth: '*',
+      },
+      timezone: 'America/New_York',
+      robotToken: '$.resources.scheduled-functions-robot.token',
+    }),
+    defineScheduledFunction({
+      name: 'reminder-cron',
+      src: './apps/functions/reminder-cron',
+      event: {
+        minute: '0',
+        hour: '8',
+        dayOfWeek: '*',
+        month: '*',
+        dayOfMonth: '*',
+      },
+      timezone: 'America/New_York',
+      robotToken: '$.resources.scheduled-functions-robot.token',
+    }),
   ],
 })

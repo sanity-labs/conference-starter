@@ -7,11 +7,18 @@ on:
 permissions:
   issues: write
 
+# Serialize runs per author so a single account opening many issues at once
+# processes them one at a time instead of fanning out parallel API calls.
+concurrency:
+  group: ai-triage-${{ github.event.issue.user.login }}
+  cancel-in-progress: false
+
 jobs:
   triage:
-    # Only run on blank issues (no labels from templates)
+    # Only run on blank issues (no labels from templates).
     if: github.event.issue.labels[0] == null
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
       - uses: actions/github-script@v7
         env:

@@ -4,7 +4,7 @@
     "chat-sdk": {
       "source": "vercel/chat",
       "sourceType": "github",
-      "computedHash": "cdd25b149ccf824b029644cff565d04dd49f1743bb1a5e8a649a3adfe82e977c"
+      "computedHash": "f10f9eb1289aa7a1095d77954ea70c6ee6ab217f18af46a90d57a4b246d73af3"
     },
     "create-agent-with-sanity-context": {
       "source": "sanity-io/agent-context",
@@ -14,7 +14,7 @@
     "dial-your-context": {
       "source": "sanity-io/agent-context",
       "sourceType": "github",
-      "computedHash": "55e6e2224349f7ee5a74f1aa988eb37b163d4bc95413e75150c7983318529567"
+      "computedHash": "6457172cf80695a7563116847f68fa64d1bf48b77cac6a850b964e5dacdb5241"
     },
     "shape-your-agent": {
       "source": "sanity-io/agent-context",

@@ -53,7 +53,15 @@ interface ReminderMatch {
 
 export const handler = scheduledEventHandler(async ({context}) => {
   const dryRun = Boolean(context.local)
-  const client = createClient({...context.clientOptions, apiVersion: '2025-08-15'})
+  // Scheduled functions don't receive project/dataset/token in clientOptions —
+  // configure explicitly and pull the token injected via the blueprint robotToken.
+  const client = createClient({
+    projectId: 'yjorde43',
+    dataset: 'production',
+    apiVersion: '2025-08-15',
+    token: context.clientOptions?.token,
+    useCdn: false,
+  })
 
   // 1. Fetch conference config
   const conf = await client.fetch<ConferenceConfig | null>(CONFERENCE_CONFIG_QUERY)

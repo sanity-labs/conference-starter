@@ -27,7 +27,8 @@ Sprints 0–4 plus signage are complete. The platform has a working Studio, cont
 ```
 apps/web/                        # Next.js conference website
 apps/studio/                     # Sanity Studio
-apps/functions/                  # Sanity Functions (Blueprints) + sanity.blueprint.ts
+apps/functions/                  # Sanity Functions source (Application Package). Manifest sits at repo root.
+sanity.blueprint.ts              # Blueprint manifest at repo root, adjacent to pnpm-lock.yaml
 packages/sanity-schema/          # Content model + TypeScript types
 packages/sanity-queries/         # GROQ queries (colocated, not scattered in pages)
 packages/email/                  # React Email templates + Resend integration

@@ -1,0 +1,54 @@
+name: Dependabot pnpm lockfile sync
+
+# Dependabot only updates package.json, not pnpm-lock.yaml. Our CI uses
+# --frozen-lockfile (default on CI runners), so every dependabot PR fails
+# install before tests can run.
+#
+# This workflow regenerates the lockfile on dependabot PRs and pushes the
+# fix back to the PR branch. The push uses DEPENDABOT_LOCKFILE_TOKEN (a
+# fine-grained PAT with contents:write) so that the resulting `synchronize`
+# event re-triggers CI normally — a default GITHUB_TOKEN push would be
+# suppressed by GitHub's recursive-workflow protection.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  sync-lockfile:
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.DEPENDABOT_LOCKFILE_TOKEN }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Regenerate pnpm-lock.yaml
+        run: pnpm install --lockfile-only
+
+      - name: Commit and push if lockfile changed
+        run: |
+          if [[ -z "$(git status --porcelain pnpm-lock.yaml)" ]]; then
+            echo "Lockfile already in sync — nothing to do."
+            exit 0
+          fi
+          git config user.name "dependabot[bot]"
+          git config user.email "49699333+dependabot[bot]@users.noreply.github.com"
+          git add pnpm-lock.yaml
+          git commit -m "chore(deps): regenerate pnpm-lock.yaml"
+          git push

@@ -1,14 +1,15 @@
 import type {SanityClient} from '@sanity/client'
-import type {StateAdapter, Lock} from 'chat'
+import type {StateAdapter, Lock, QueueEntry} from 'chat'
 
 /**
  * Chat SDK StateAdapter backed by the Sanity Content Lake.
  *
  * Each piece of state is a document with a path-based ID:
- *   chat.state.sub.{threadId}   — subscription
- *   chat.state.lock.{threadId}  — distributed lock
- *   chat.state.cache.{key}      — key-value cache
- *   chat.state.list.{key}       — ordered list
+ *   chat.state.sub.{threadId}    — subscription
+ *   chat.state.lock.{threadId}   — distributed lock
+ *   chat.state.cache.{key}       — key-value cache
+ *   chat.state.list.{key}        — ordered list
+ *   chat.state.queue.{threadId}  — pending-message FIFO queue
  *
  * Distributed locking uses Sanity's `ifRevisionId` for optimistic
  * concurrency control — no external lock service needed.
@@ -33,6 +34,10 @@ function cacheId(key: string): string {
 
 function listId(key: string): string {
   return `chat.state.list.${sanitize(key)}`
+}
+
+function queueId(threadId: string): string {
+  return `chat.state.queue.${sanitize(threadId)}`
 }
 
 function randomToken(): string {
@@ -294,6 +299,117 @@ export function createSanityState(client: SanityClient): StateAdapter {
     return doc.items.map((item) => JSON.parse(item) as T)
   }
 
+  // ── Pending-message Queues ─────────────────────────────────
+
+  async function enqueue(
+    threadId: string,
+    entry: QueueEntry,
+    maxSize: number,
+  ): Promise<number> {
+    const id = queueId(threadId)
+    const serialized = JSON.stringify(entry)
+
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      const doc = await client.getDocument<StateDoc>(id)
+
+      if (!doc) {
+        try {
+          await client.createIfNotExists({
+            _id: id,
+            _type: 'chat.state',
+            kind: 'queue',
+            threadId,
+            items: [serialized],
+          })
+          return 1
+        } catch (err) {
+          if (isConflictError(err) && attempt < MAX_RETRIES) {
+            await sleep(RETRY_DELAYS[attempt])
+            continue
+          }
+          throw err
+        }
+      }
+
+      // Drop expired entries while we're here, then append + cap.
+      const now = Date.now()
+      const kept = (doc.items ?? []).filter((raw) => {
+        try {
+          return (JSON.parse(raw) as QueueEntry).expiresAt > now
+        } catch {
+          return false
+        }
+      })
+      let items = [...kept, serialized]
+      if (items.length > maxSize) items = items.slice(-maxSize)
+
+      try {
+        await client.patch(id).ifRevisionId(doc._rev).set({items}).commit()
+        return items.length
+      } catch (err) {
+        if (isConflictError(err) && attempt < MAX_RETRIES) {
+          await sleep(RETRY_DELAYS[attempt])
+          continue
+        }
+        throw err
+      }
+    }
+
+    throw new Error(`enqueue: exceeded ${MAX_RETRIES} retries for thread ${threadId}`)
+  }
+
+  async function dequeue(threadId: string): Promise<QueueEntry | null> {
+    const id = queueId(threadId)
+
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      const doc = await client.getDocument<StateDoc>(id)
+      if (!doc || !doc.items || doc.items.length === 0) return null
+
+      const now = Date.now()
+      const remaining = [...doc.items]
+      let popped: QueueEntry | null = null
+
+      while (remaining.length > 0) {
+        const raw = remaining.shift()!
+        try {
+          const entry = JSON.parse(raw) as QueueEntry
+          if (entry.expiresAt > now) {
+            popped = entry
+            break
+          }
+        } catch {
+          // malformed entry — drop and continue
+        }
+      }
+
+      try {
+        await client.patch(id).ifRevisionId(doc._rev).set({items: remaining}).commit()
+        return popped
+      } catch (err) {
+        if (isConflictError(err) && attempt < MAX_RETRIES) {
+          await sleep(RETRY_DELAYS[attempt])
+          continue
+        }
+        throw err
+      }
+    }
+
+    return null
+  }
+
+  async function queueDepth(threadId: string): Promise<number> {
+    const doc = await client.getDocument<StateDoc>(queueId(threadId))
+    if (!doc || !doc.items) return 0
+    const now = Date.now()
+    return doc.items.reduce((count, raw) => {
+      try {
+        return (JSON.parse(raw) as QueueEntry).expiresAt > now ? count + 1 : count
+      } catch {
+        return count
+      }
+    }, 0)
+  }
+
   // ── Adapter ────────────────────────────────────────────────
 
   return {
@@ -312,5 +428,8 @@ export function createSanityState(client: SanityClient): StateAdapter {
     setIfNotExists,
     appendToList,
     getList,
+    enqueue,
+    dequeue,
+    queueDepth,
   }
 }

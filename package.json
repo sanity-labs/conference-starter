@@ -25,6 +25,9 @@
     "onlyBuiltDependencies": [
       "esbuild",
       "sharp"
-    ]
+    ],
+    "patchedDependencies": {
+      "@sanity/workbench@0.1.0-alpha.15": "patches/@sanity__workbench@0.1.0-alpha.15.patch"
+    }
   }
 }

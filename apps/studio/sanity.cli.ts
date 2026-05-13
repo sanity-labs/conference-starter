@@ -21,4 +21,8 @@ export default defineCliConfig({
     generates: "../../packages/sanity-queries/src/sanity.types.ts",
     overloadClientMethods: true,
   },
+
+  federation: {
+    enabled: true,
+  },
 });

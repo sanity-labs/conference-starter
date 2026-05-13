@@ -1,0 +1,30 @@
+diff --git a/dist/_chunks-es/studio.js b/dist/_chunks-es/studio.js
+index 8f97eaa8739ac3f3057c3c758bd8256385fb2a0b..c8c7c5a7d72f413e9a1982fec983f7e8ecb6adfa 100644
+--- a/dist/_chunks-es/studio.js
++++ b/dist/_chunks-es/studio.js
+@@ -416,7 +416,9 @@ const Workspace = z.object({
+   }).nullable()
+ }), ExternalStudioUserApplication = StudioUserApplicationBase.extend({
+   urlType: z.literal("external"),
+-  activeDeployment: z.null()
++  activeDeployment: ActiveDeployment.extend({
++    manifest: ServerManifest.nullable()
++  }).nullable()
+ }), StudioUserApplication = z.discriminatedUnion("urlType", [
+   InternalStudioUserApplication,
+   ExternalStudioUserApplication
+diff --git a/src/core/user-applications/studios/schemas.ts b/src/core/user-applications/studios/schemas.ts
+index 1c59957a21db4c72bd6776c2ed4db1660f1f8488..a44ea0f4c55b628b5f40f249b66576e2202e2340 100644
+--- a/src/core/user-applications/studios/schemas.ts
++++ b/src/core/user-applications/studios/schemas.ts
+@@ -91,7 +91,9 @@ const InternalStudioUserApplication = StudioUserApplicationBase.extend({
+ 
+ const ExternalStudioUserApplication = StudioUserApplicationBase.extend({
+   urlType: z.literal("external"),
+-  activeDeployment: z.null(),
++  activeDeployment: ActiveDeployment.extend({
++    manifest: ServerManifest.nullable(),
++  }).nullable(),
+ });
+ 
+ /**

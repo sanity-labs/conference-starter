@@ -18,8 +18,8 @@ importers:
         specifier: ^2.9.12
         version: 2.9.12
       typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
 
   apps/bot:
     dependencies:
@@ -43,13 +43,13 @@ importers:
         version: 3.5.1
       ai:
         specifier: ^6.0.177
-        version: 6.0.178(zod@4.4.3)
+        version: 6.0.180(zod@4.4.3)
       chat:
         specifier: ^4.28.1
         version: 4.28.1
       content-agent:
         specifier: ^1.0.0
-        version: 1.0.0(ai@6.0.178(zod@4.4.3))
+        version: 1.0.0(ai@6.0.180(zod@4.4.3))
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -61,8 +61,8 @@ importers:
         specifier: ^4.21.0
         version: 4.21.0
       typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
 
   apps/functions:
     dependencies:
@@ -86,8 +86,8 @@ importers:
         specifier: ^24.10.1
         version: 24.12.4
       typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^4.1.2
         version: 4.1.6(@opentelemetry/api@1.9.0)(@types/node@24.12.4)(jsdom@29.1.1(@noble/hashes@2.0.1))(vite@7.3.3(@types/node@24.12.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.0))
@@ -102,7 +102,7 @@ importers:
         version: link:../../packages/sanity-schema
       '@sanity/agent-context':
         specifier: ^0.5.0
-        version: 0.5.0(@sanity/client@7.22.0)(@sanity/color@3.0.6)(@sanity/icons@3.7.4(react@19.2.6))(@sanity/ui@3.2.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.6(react@19.2.6))(react-is@19.2.4)(react@19.2.6)(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)))(ai@6.0.178(zod@4.4.3))(react-dom@19.2.6(react@19.2.6))(react-rx@4.2.2(react@19.2.6)(rxjs@7.8.2))(react@19.2.6)(rxjs@7.8.2)(sanity@5.25.0(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@oclif/core@4.11.2)(@sanity/cli-core@1.3.2(@noble/hashes@2.0.1)(@types/node@25.7.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.7.0)(@types/react@19.2.14)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3))(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(zod@4.4.3)
+        version: 0.5.0(@sanity/client@7.22.0)(@sanity/color@3.0.6)(@sanity/icons@3.7.4(react@19.2.6))(@sanity/ui@3.2.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.6(react@19.2.6))(react-is@19.2.4)(react@19.2.6)(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)))(ai@6.0.180(zod@4.4.3))(react-dom@19.2.6(react@19.2.6))(react-rx@4.2.2(react@19.2.6)(rxjs@7.8.2))(react@19.2.6)(rxjs@7.8.2)(sanity@5.25.0(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@oclif/core@4.11.2)(@sanity/cli-core@1.3.2(@noble/hashes@2.0.1)(@types/node@25.7.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.7.0)(@types/react@19.2.14)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3))(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(zod@4.4.3)
       '@sanity/client':
         specifier: ^7.17.0
         version: 7.22.0
@@ -160,7 +160,7 @@ importers:
         version: 1.0.42(zod@4.4.3)
       '@ai-sdk/react':
         specifier: ^3.0.156
-        version: 3.0.180(react@19.2.6)(zod@4.4.3)
+        version: 3.0.182(react@19.2.6)(zod@4.4.3)
       '@portabletext/markdown':
         specifier: ^1.2.0
         version: 1.2.0
@@ -196,7 +196,7 @@ importers:
         version: 0.11.1
       ai:
         specifier: ^6.0.116
-        version: 6.0.178(zod@4.4.3)
+        version: 6.0.180(zod@4.4.3)
       next:
         specifier: ^16.2.6
         version: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -354,8 +354,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/gateway@3.0.112':
-    resolution: {integrity: sha512-jiBao9pR4owWyjo0BnuNc7WSQBGOD0thysE4AFgZXaG+zMFbISQXUkJr7ePw/phBvePy7jE5FSA2Lf7lwqUiiQ==}
+  '@ai-sdk/gateway@3.0.114':
+    resolution: {integrity: sha512-MqkZ5sd+qiq6RgIxELkoFQXg2/JwK+WCMaot7U+rtrZpWJl3fSyYvc28SC03b256o4F7OXjQtdjTqs81B2w+dA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -386,8 +386,8 @@ packages:
     resolution: {integrity: sha512-Q3BZ27qfpYqnCYGvE3vt+Qi6LGOF9R5Nmzn+9JoM1lCRsD9mYaIhfJLkSunN48nfGXJ6n+XNV0J/XVpqGQl7Dw==}
     engines: {node: '>=18'}
 
-  '@ai-sdk/react@3.0.180':
-    resolution: {integrity: sha512-mIuQHLUqeKG0+UhV5/n5Eqb6A66Wt2u+GHK3MJIHG8aA6EFFmnVd1KfZW5+jSASpvrcIaRvb8G5bsGlRFWqLLw==}
+  '@ai-sdk/react@3.0.182':
+    resolution: {integrity: sha512-cnfF5N6XRsQ29VsSSoFqFpYQJx1y4sSCL3lGMIwgE0034aqn8i3+joRe52O9xV+EaJ7fziI7xn6ql7qjrf+Blw==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
@@ -3892,8 +3892,8 @@ packages:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
 
-  ai@6.0.178:
-    resolution: {integrity: sha512-8PcUmzAkco40EO4fTCij3mN+u/KmX8CZrLOuMrnM7UQvtdPW1W3OBb8RrJUamMD/yFtaLkSDL4DkFzkMJ3kkFg==}
+  ai@6.0.180:
+    resolution: {integrity: sha512-tOyRbwD0PEjMZKGvYQcTsv95K2zktwwNhQ49QOUAh0g8MNprO7ELIO1SgANMuPc0BFtkP6Ny6OAdjq3TtxLCbQ==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -6985,11 +6985,6 @@ packages:
   typeid-js@1.2.0:
     resolution: {integrity: sha512-t76ZucAnvGC60ea/HjVsB0TSoB0cw9yjnfurUgtInXQWUI/VcrlZGpO23KN3iSe8yOGUgb1zr7W7uEzJ3hSljA==}
 
-  typescript@5.9.3:
-    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-
   typescript@6.0.3:
     resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
@@ -7552,7 +7547,7 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.27(zod@4.4.3)
       zod: 4.4.3
 
-  '@ai-sdk/gateway@3.0.112(zod@4.4.3)':
+  '@ai-sdk/gateway@3.0.114(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 3.0.10
       '@ai-sdk/provider-utils': 4.0.27(zod@4.4.3)
@@ -7588,10 +7583,10 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@3.0.180(react@19.2.6)(zod@4.4.3)':
+  '@ai-sdk/react@3.0.182(react@19.2.6)(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider-utils': 4.0.27(zod@4.4.3)
-      ai: 6.0.178(zod@4.4.3)
+      ai: 6.0.180(zod@4.4.3)
       react: 19.2.6
       swr: 2.4.1(react@19.2.6)
       throttleit: 2.1.0
@@ -10037,7 +10032,7 @@ snapshots:
       react-dom: 19.2.6(react@19.2.6)
       typescript: 6.0.3
 
-  '@sanity/agent-context@0.5.0(@sanity/client@7.22.0)(@sanity/color@3.0.6)(@sanity/icons@3.7.4(react@19.2.6))(@sanity/ui@3.2.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.6(react@19.2.6))(react-is@19.2.4)(react@19.2.6)(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)))(ai@6.0.178(zod@4.4.3))(react-dom@19.2.6(react@19.2.6))(react-rx@4.2.2(react@19.2.6)(rxjs@7.8.2))(react@19.2.6)(rxjs@7.8.2)(sanity@5.25.0(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@oclif/core@4.11.2)(@sanity/cli-core@1.3.2(@noble/hashes@2.0.1)(@types/node@25.7.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.7.0)(@types/react@19.2.14)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3))(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(zod@4.4.3)':
+  '@sanity/agent-context@0.5.0(@sanity/client@7.22.0)(@sanity/color@3.0.6)(@sanity/icons@3.7.4(react@19.2.6))(@sanity/ui@3.2.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.6(react@19.2.6))(react-is@19.2.4)(react@19.2.6)(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)))(ai@6.0.180(zod@4.4.3))(react-dom@19.2.6(react@19.2.6))(react-rx@4.2.2(react@19.2.6)(rxjs@7.8.2))(react@19.2.6)(rxjs@7.8.2)(sanity@5.25.0(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@oclif/core@4.11.2)(@sanity/cli-core@1.3.2(@noble/hashes@2.0.1)(@types/node@25.7.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.7.0)(@types/react@19.2.14)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3))(styled-components@6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(zod@4.4.3)':
     dependencies:
       '@sanity/color': 3.0.6
       '@sanity/icons': 3.7.4(react@19.2.6)
@@ -10051,7 +10046,7 @@ snapshots:
       styled-components: 6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
     optionalDependencies:
       '@sanity/client': 7.22.0
-      ai: 6.0.178(zod@4.4.3)
+      ai: 6.0.180(zod@4.4.3)
       zod: 4.4.3
     transitivePeerDependencies:
       - supports-color
@@ -11290,9 +11285,9 @@ snapshots:
 
   agent-base@7.1.4: {}
 
-  ai@6.0.178(zod@4.4.3):
+  ai@6.0.180(zod@4.4.3):
     dependencies:
-      '@ai-sdk/gateway': 3.0.112(zod@4.4.3)
+      '@ai-sdk/gateway': 3.0.114(zod@4.4.3)
       '@ai-sdk/provider': 3.0.10
       '@ai-sdk/provider-utils': 4.0.27(zod@4.4.3)
       '@opentelemetry/api': 1.9.0
@@ -11679,7 +11674,7 @@ snapshots:
     dependencies:
       simple-wcswidth: 1.1.2
 
-  content-agent@1.0.0(ai@6.0.178(zod@4.4.3)):
+  content-agent@1.0.0(ai@6.0.180(zod@4.4.3)):
     dependencies:
       '@ai-sdk/provider': 3.0.10
       '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
@@ -11687,7 +11682,7 @@ snapshots:
       es-toolkit: 1.45.1
       zod: 3.25.76
     optionalDependencies:
-      ai: 6.0.178(zod@4.4.3)
+      ai: 6.0.180(zod@4.4.3)
 
   convert-source-map@2.0.0: {}
 
@@ -14967,8 +14962,6 @@ snapshots:
   typeid-js@1.2.0:
     dependencies:
       uuid: 10.0.0
-
-  typescript@5.9.3: {}
 
   typescript@6.0.3: {}
 

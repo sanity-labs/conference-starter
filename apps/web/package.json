@@ -39,7 +39,7 @@
     "@tailwindcss/typography": "^0.5.19",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "schema-dts": "^1.1.5",
+    "schema-dts": "^2.0.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3"
   }

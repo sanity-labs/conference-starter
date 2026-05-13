@@ -14,7 +14,7 @@
     "@chat-adapter/telegram": "^4.28.1",
     "@sanity/client": "^7.17.0",
     "@vercel/functions": "^3.4.3",
-    "ai": "^6.0.177",
+    "ai": "^6.0.180",
     "chat": "^4.28.1",
     "content-agent": "^1.0.0",
     "zod": "^4.4.3"

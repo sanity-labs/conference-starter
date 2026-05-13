@@ -138,7 +138,7 @@ importers:
         version: 6.4.1(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
     devDependencies:
       '@types/node':
-        specifier: ^25.5.0
+        specifier: ^25.7.0
         version: 25.7.0
       '@types/react':
         specifier: ^19.2.14

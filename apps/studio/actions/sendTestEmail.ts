@@ -2,6 +2,7 @@ import {useState} from 'react'
 import {useCurrentUser} from 'sanity'
 import type {DocumentActionComponent} from 'sanity'
 import {EnvelopeIcon} from '@sanity/icons'
+import {useToast} from '@sanity/ui'
 
 const PREVIEW_API_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
 const TEST_RECIPIENT_OVERRIDE = process.env.SANITY_STUDIO_TEST_RECIPIENT
@@ -17,6 +18,7 @@ export const sendTestEmail: DocumentActionComponent = (props) => {
   const {type, draft, published} = props
   const [isSending, setIsSending] = useState(false)
   const currentUser = useCurrentUser()
+  const toast = useToast()
 
   if (type !== 'emailTemplate') return null
 
@@ -51,13 +53,29 @@ export const sendTestEmail: DocumentActionComponent = (props) => {
         })
 
         if (!res.ok) {
-          const data = await res.json()
-          console.error('Send test email failed:', data.error)
+          const data = await res.json().catch(() => ({error: `HTTP ${res.status}`}))
+          toast.push({
+            status: 'error',
+            title: 'Test email failed',
+            description: data.error ?? `HTTP ${res.status}`,
+            closable: true,
+          })
         } else {
-          console.log(`Test email sent to ${recipient}`)
+          const data = await res.json().catch(() => ({id: undefined}))
+          toast.push({
+            status: 'success',
+            title: `Test email sent to ${recipient}`,
+            description: data.id ? `Resend id: ${data.id}` : undefined,
+            closable: true,
+          })
         }
       } catch (error) {
-        console.error('Send test email failed:', error)
+        toast.push({
+          status: 'error',
+          title: 'Test email failed',
+          description: error instanceof Error ? error.message : String(error),
+          closable: true,
+        })
       } finally {
         setIsSending(false)
         props.onComplete()

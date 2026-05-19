@@ -37,9 +37,9 @@ async function deleteAll() {
   const {projectId, dataset} = client.config()
   console.log(`Deleting all content from ${projectId}/${dataset}...\n`)
 
-  // Fetch all content document IDs, plus state/conversation docs
+  // Fetch all content document IDs, plus state/conversation docs (current + legacy)
   const ids: string[] = await client.fetch(
-    `*[_type in $types || _id match "agent.conversation.*" || _id match "chat.state.*"]._id`,
+    `*[_type in $types || _type == "sanity.agentContextConversation" || _id match "agent.conversation.*" || _id match "chat.state.*"]._id`,
     {types: contentTypes},
   )
 

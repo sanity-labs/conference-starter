@@ -23,9 +23,9 @@ async function resetDemo() {
   )
   console.log(`Found ${botAnnouncements.length} bot-created announcements`)
 
-  // 2. Find all conversation docs
+  // 2. Find all conversation docs (built-in Insights type + any legacy stragglers)
   const conversations = await client.fetch<string[]>(
-    `*[_type == "agent.conversation"]._id`,
+    `*[_type == "sanity.agentContextConversation" || _type == "agent.conversation"]._id`,
   )
   console.log(`Found ${conversations.length} conversation docs`)
 

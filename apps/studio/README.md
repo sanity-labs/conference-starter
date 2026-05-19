@@ -46,7 +46,7 @@ Document-specific actions wired up in `sanity.config.ts`:
 | **Accept Submission** | `submission` | Creates a `person` doc from submitter, creates a `session` doc, creates a `scheduleSlot`, sends acceptance email |
 | **Reject Submission** | `submission` | Sends rejection email, updates status |
 | **Re-screen Submission** | `submission` | Resets status to "screening" to trigger AI re-evaluation |
-| **Send Test Email** | `emailTemplate` | POSTs the rendered template to `/api/send-test-email` on the web app (sends to the current user's email) |
+| **Send Test Email** | `emailTemplate` | POSTs the rendered template to `/api/send-test-email` on the web app. Sends to the current user's email by default, or to `SANITY_STUDIO_TEST_RECIPIENT` if set (needed when the sender is `onboarding@resend.dev`, which only delivers to the Resend account owner). |
 | **Send Update** | `announcement` | Publishes the document — downstream Functions fan it out to email + Telegram |
 
 ## Schedule Builder

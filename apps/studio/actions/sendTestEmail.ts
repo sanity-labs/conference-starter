@@ -4,6 +4,7 @@ import type {DocumentActionComponent} from 'sanity'
 import {EnvelopeIcon} from '@sanity/icons'
 
 const PREVIEW_API_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
+const TEST_RECIPIENT_OVERRIDE = process.env.SANITY_STUDIO_TEST_RECIPIENT
 
 const sampleVariables: Record<string, string> = {
   submitterName: 'Alex Johnson',
@@ -26,9 +27,10 @@ export const sendTestEmail: DocumentActionComponent = (props) => {
     label: isSending ? 'Sending...' : 'Send Test Email',
     icon: EnvelopeIcon,
     tone: 'default' as const,
-    disabled: isSending || !currentUser?.email,
+    disabled: isSending || !(TEST_RECIPIENT_OVERRIDE || currentUser?.email),
     onHandle: async () => {
-      if (!currentUser?.email) return
+      const recipient = TEST_RECIPIENT_OVERRIDE || currentUser?.email
+      if (!recipient) return
 
       setIsSending(true)
 
@@ -41,7 +43,7 @@ export const sendTestEmail: DocumentActionComponent = (props) => {
           method: 'POST',
           headers,
           body: JSON.stringify({
-            to: currentUser.email,
+            to: recipient,
             subject: doc.subject,
             body: doc.body,
             variables: sampleVariables,
@@ -52,7 +54,7 @@ export const sendTestEmail: DocumentActionComponent = (props) => {
           const data = await res.json()
           console.error('Send test email failed:', data.error)
         } else {
-          console.log(`Test email sent to ${currentUser.email}`)
+          console.log(`Test email sent to ${recipient}`)
         }
       } catch (error) {
         console.error('Send test email failed:', error)

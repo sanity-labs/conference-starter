@@ -10,8 +10,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@sanity/client": "^7.17.0",
-    "groq": "^5.24.0"
+    "@sanity/client": "^7.22.0",
+    "groq": "^5.26.0"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

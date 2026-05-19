@@ -1,11 +1,12 @@
 import {streamText} from 'ai'
+import {sanityInsightsIntegration} from '@sanity/agent-context/ai-sdk'
 import {getContentAgentModel} from './ai/content-agent'
 import {fetchSystemPrompt} from './ai/prompts'
-import {saveConversation} from './conversation/save'
 import {loadConversationHistory} from './conversation/history'
-import {cleanMarkdownStream, stripMarkdown} from './format-telegram'
-import {sanitizeDocumentId} from './utils/sanitize'
+import {cleanMarkdownStream} from './format-telegram'
+import {sanityClient} from './sanity-client'
 
+const AGENT_ID = 'telegram-ops'
 const MAX_HISTORY_MESSAGES = 20
 
 export async function handleOpsMessage(
@@ -14,10 +15,8 @@ export async function handleOpsMessage(
 ) {
   const model = await getContentAgentModel(thread.id)
   const systemPrompt = await fetchSystemPrompt('prompt.botOps')
-  const chatId = `agent.conversation.bot-telegram-${sanitizeDocumentId(thread.id)}`
 
-  // Load prior messages for multi-turn context
-  const history = await loadConversationHistory(chatId, MAX_HISTORY_MESSAGES)
+  const history = await loadConversationHistory(AGENT_ID, thread.id, MAX_HISTORY_MESSAGES)
 
   const messages = [
     ...history.map((m) => ({role: m.role as 'user' | 'assistant', content: m.content})),
@@ -28,20 +27,18 @@ export async function handleOpsMessage(
     model,
     system: systemPrompt,
     messages,
+    experimental_telemetry: {
+      isEnabled: true,
+      integrations: [
+        sanityInsightsIntegration({
+          client: sanityClient,
+          agentId: AGENT_ID,
+          threadId: thread.id,
+        }),
+      ],
+    },
   })
 
-  // Stream response progressively to Telegram, stripping markdown for plain-text display
   await thread.post(cleanMarkdownStream(result.textStream))
-
-  // Wait for stream to complete and get final text for persistence
-  const finalText = stripMarkdown(await result.text)
-
-  // Append new turn to Content Lake
-  saveConversation({
-    chatId,
-    newMessages: [
-      {role: 'user', content: message.text},
-      {role: 'assistant', content: finalText},
-    ],
-  }).catch(console.error)
+  await result.text
 }

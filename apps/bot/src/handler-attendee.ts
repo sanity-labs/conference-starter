@@ -3,14 +3,15 @@ import {stepCountIs, streamText} from 'ai'
 // Gateway is a valid optional layer if you want provider failover, cost
 // tracking, and OIDC-issued tokens — swap this import to use the gateway.
 import {createAnthropic} from '@ai-sdk/anthropic'
+import {sanityInsightsIntegration} from '@sanity/agent-context/ai-sdk'
 import {createAgentContextClient} from './ai/agent-context'
 import {fetchSystemPrompt} from './ai/prompts'
-import {saveConversation} from './conversation/save'
 import {loadConversationHistory} from './conversation/history'
-import {cleanMarkdownStream, stripMarkdown} from './format-telegram'
-import {sanitizeDocumentId} from './utils/sanitize'
+import {cleanMarkdownStream} from './format-telegram'
+import {sanityClient} from './sanity-client'
 import {config} from './config'
 
+const AGENT_ID = 'telegram-attendee'
 const MAX_HISTORY_MESSAGES = 10
 
 export async function handleAttendeeMessage(
@@ -18,9 +19,7 @@ export async function handleAttendeeMessage(
   message: {text: string},
 ) {
   const systemPrompt = await fetchSystemPrompt('prompt.botAttendee')
-  const chatId = `agent.conversation.attendee-telegram-${sanitizeDocumentId(thread.id)}`
-
-  const history = await loadConversationHistory(chatId, MAX_HISTORY_MESSAGES)
+  const history = await loadConversationHistory(AGENT_ID, thread.id, MAX_HISTORY_MESSAGES)
 
   const messages = [
     ...history.map((m) => ({role: m.role as 'user' | 'assistant', content: m.content})),
@@ -33,7 +32,6 @@ export async function handleAttendeeMessage(
     readToken: config.readToken,
   })
 
-  let finalText = ''
   try {
     const result = streamText({
       model: anthropic('claude-sonnet-4-6'),
@@ -41,20 +39,21 @@ export async function handleAttendeeMessage(
       messages,
       tools,
       stopWhen: stepCountIs(10),
+      experimental_telemetry: {
+        isEnabled: true,
+        integrations: [
+          sanityInsightsIntegration({
+            client: sanityClient,
+            agentId: AGENT_ID,
+            threadId: thread.id,
+          }),
+        ],
+      },
     })
 
     await thread.post(cleanMarkdownStream(result.textStream))
-    finalText = stripMarkdown(await result.text)
+    await result.text
   } finally {
-    if (finalText) {
-      await saveConversation({
-        chatId,
-        newMessages: [
-          {role: 'user', content: message.text},
-          {role: 'assistant', content: finalText},
-        ],
-      }).catch(console.error)
-    }
     await mcpClient.close()
   }
 }

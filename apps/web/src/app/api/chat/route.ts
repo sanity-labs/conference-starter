@@ -5,6 +5,7 @@ import {streamText, stepCountIs, convertToModelMessages, type ToolSet, type UIMe
 // OIDC-issued tokens — swap this import for the gateway provider there.
 import {createAnthropic} from '@ai-sdk/anthropic'
 import {createMCPClient} from '@ai-sdk/mcp'
+import {sanityInsightsIntegration} from '@sanity/agent-context/ai-sdk'
 import type {SanityClient} from '@sanity/client'
 import {client} from '@/sanity/client'
 import {createClient} from 'next-sanity'
@@ -30,38 +31,6 @@ function getWriteClient(): SanityClient {
     useCdn: false,
   })
   return writeClientCache
-}
-
-const CONVERSATION_PREFIX = 'agent.conversation.web-'
-const CONVERSATION_MAX_MESSAGES = 100
-
-async function appendMessages(chatId: string, newMessages: Array<{role: string; content: string}>) {
-  const items = newMessages.filter((m) => m.content.trim() !== '')
-  if (items.length === 0) return
-
-  const docId = `${CONVERSATION_PREFIX}${chatId.replace(/[^a-zA-Z0-9._-]/g, '-')}`
-  try {
-    const w = getWriteClient()
-    await w
-      .transaction()
-      .createIfNotExists({
-        _id: docId,
-        _type: 'agent.conversation',
-        platform: 'web',
-        messages: [],
-      })
-      .patch(docId, (p) =>
-        p
-          .setIfMissing({messages: []})
-          .append('messages', items)
-          // Keep only the most recent N messages so conversation docs
-          // stay bounded for high-traffic threads.
-          .splice('messages', 0, -CONVERSATION_MAX_MESSAGES),
-      )
-      .commit({autoGenerateArrayKeys: true})
-  } catch (err) {
-    console.error('Failed to save conversation:', err)
-  }
 }
 
 const PROMPT_ID = 'prompt.webConcierge'
@@ -113,6 +82,7 @@ export async function POST(request: Request) {
   }
 
   const {messages, id: chatId} = (await request.json()) as {messages: UIMessage[]; id?: string}
+  const threadId = chatId ?? crypto.randomUUID()
 
   const [mcpClient, systemPrompt] = await Promise.all([
     createMCPClient({
@@ -136,28 +106,22 @@ export async function POST(request: Request) {
       messages: await convertToModelMessages(messages),
       tools,
       stopWhen: stepCountIs(10),
+      experimental_telemetry: {
+        isEnabled: true,
+        integrations: [
+          sanityInsightsIntegration({
+            client: getWriteClient(),
+            agentId: 'web-concierge',
+            threadId,
+          }),
+        ],
+      },
       onFinish: async () => {
         await mcpClient.close()
       },
     })
 
-    const existingCount = messages.length
-
-    return result.toUIMessageStreamResponse({
-      originalMessages: messages,
-      onFinish: chatId
-        ? async ({messages: allMessages}) => {
-            const newMessages = allMessages.slice(existingCount).map((m) => ({
-              role: m.role,
-              content: m.parts
-                .filter((p): p is {type: 'text'; text: string} => p.type === 'text')
-                .map((p) => p.text)
-                .join(''),
-            }))
-            await appendMessages(chatId, newMessages)
-          }
-        : undefined,
-    })
+    return result.toUIMessageStreamResponse({originalMessages: messages})
   } catch (error) {
     await mcpClient.close()
     throw error

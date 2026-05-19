@@ -16,7 +16,6 @@ export {emailVariables} from './documents/emailTemplate'
 import {emailLog} from './documents/emailLog'
 import {prompt} from './documents/prompt'
 import {faq} from './documents/faq'
-import {agentConversation} from './documents/agentConversation'
 import {chatState} from './documents/chatState'
 
 import {cta} from './objects/cta'
@@ -49,7 +48,6 @@ export const schemaTypes = [
   emailLog,
   prompt,
   faq,
-  agentConversation,
   chatState,
   // Objects
   cta,

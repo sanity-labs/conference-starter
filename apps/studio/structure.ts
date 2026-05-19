@@ -13,7 +13,6 @@ import {
   ComposeIcon,
   ActivityIcon,
   RobotIcon,
-  CommentIcon,
   HelpCircleIcon,
   LockIcon,
   DesktopIcon,
@@ -389,16 +388,6 @@ export const structure: StructureResolver = (S) =>
         .title('Agent Context')
         .icon(RobotIcon)
         .child(S.documentTypeList(AGENT_CONTEXT_SCHEMA_TYPE_NAME).title('Agent Context')),
-
-      // Conversations (bot)
-      S.listItem()
-        .title('Conversations')
-        .icon(CommentIcon)
-        .child(
-          S.documentTypeList('agent.conversation')
-            .title('Conversations')
-            .defaultOrdering([{field: '_createdAt', direction: 'desc'}]),
-        ),
     ])
 
 export const defaultDocumentNode: DefaultDocumentNodeResolver = (S, {schemaType}) => {

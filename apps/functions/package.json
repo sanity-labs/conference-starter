@@ -8,10 +8,13 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.76",
     "@portabletext/to-html": "^5.0.2",
+    "@sanity/agent-context": "^0.6.0",
     "@sanity/client": "^7.22.0",
     "@sanity/functions": "^1.2.1",
     "@sanity/id-utils": "^1.0.0",
+    "ai": "^6.0.177",
     "resend": "^6.9.3"
   },
   "devDependencies": {

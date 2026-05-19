@@ -1,8 +1,21 @@
-import {defineBlueprint, defineDocumentFunction} from '@sanity/blueprints'
-// import {defineScheduleFunction} from '@sanity/blueprints' // TODO: Re-enable with org-scoped stack
+import {
+  defineBlueprint,
+  defineDocumentFunction,
+  defineRobotToken,
+  defineScheduledFunction,
+} from '@sanity/blueprints'
+
+const PROJECT_ID = 'yjorde43'
 
 export default defineBlueprint({
   resources: [
+    defineRobotToken({
+      name: 'functions-editor',
+      memberships: [
+        {resourceType: 'project', resourceId: PROJECT_ID, roleNames: ['editor']},
+      ],
+    }),
+
     defineDocumentFunction({
       name: 'screen-cfp',
       src: './apps/functions/screen-cfp',
@@ -50,16 +63,12 @@ export default defineBlueprint({
       },
       timeout: 60,
     }),
-    defineDocumentFunction({
+    defineScheduledFunction({
       name: 'classify-conversation',
       src: './apps/functions/classify-conversation',
-      event: {
-        on: ['create', 'update'],
-        filter:
-          '_type == "agent.conversation" && (delta::changedAny(messages) || delta::operation() == "create") && defined(messages)',
-        projection: '{_id, messages, summary}',
-        resource: {type: 'dataset', id: 'yjorde43.production'},
-      },
+      event: {minute: '*/10', hour: '*', dayOfMonth: '*', month: '*', dayOfWeek: '*'},
+      timezone: 'UTC',
+      robotToken: '$.resources.functions-editor.token',
       timeout: 60,
     }),
     defineDocumentFunction({

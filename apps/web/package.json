@@ -32,7 +32,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "streamdown": "^2.5.0",
-    "svix": "^1.93.0",
+    "svix": "^1.94.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {

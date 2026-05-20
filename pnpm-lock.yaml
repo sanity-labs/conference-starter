@@ -42,8 +42,8 @@ importers:
         specifier: ^7.22.0
         version: 7.22.0
       '@vercel/functions':
-        specifier: ^3.4.3
-        version: 3.5.1
+        specifier: ^3.6.0
+        version: 3.6.0
       ai:
         specifier: ^6.0.177
         version: 6.0.178(zod@4.4.3)
@@ -3655,8 +3655,8 @@ packages:
   '@vercel/frameworks@3.21.1':
     resolution: {integrity: sha512-N8ciri8NSz4vlc8Dqfa9cr1rn2RRbmG3T8Q+8/QM/4af4d1UbSdBG8cBBo7jQSQfNobjURRGL/miGBe+dS2wOQ==}
 
-  '@vercel/functions@3.5.1':
-    resolution: {integrity: sha512-ndh5v+uhWqGA8033oD0i0KHvqUHcLlLCOaLOw5L+xx5zVsWUSQcZPKEYk2nm51aisnKhcnTylxnOmhx+w4UCRA==}
+  '@vercel/functions@3.6.0':
+    resolution: {integrity: sha512-Xj68JYqqJwtqFWJN7EWmFN7MOiUjv5whjw48UEKqQbg8r7hRkhuJhncTU0ba3jJCh/wxEuLWckrtsKcrHQraxw==}
     engines: {node: '>= 20'}
     peerDependencies:
       '@aws-sdk/credential-provider-web-identity': '*'
@@ -11494,7 +11494,7 @@ snapshots:
       '@vercel/error-utils': 2.0.3
       js-yaml: 3.13.1
 
-  '@vercel/functions@3.5.1':
+  '@vercel/functions@3.6.0':
     dependencies:
       '@vercel/oidc': 3.4.1
 

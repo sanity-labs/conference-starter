@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@sanity/client": "^7.22.0",
-    "groq": "^5.26.0"
+    "groq": "^6.1.0"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

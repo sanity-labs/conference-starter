@@ -314,8 +314,8 @@ importers:
         specifier: ^7.22.0
         version: 7.22.0
       groq:
-        specifier: ^5.26.0
-        version: 5.26.0
+        specifier: ^6.1.0
+        version: 6.1.0
     devDependencies:
       typescript:
         specifier: ^6.0.3
@@ -2858,6 +2858,7 @@ packages:
   '@sanity/agent-context@0.6.0':
     resolution: {integrity: sha512-rjNhQEm5VQR/CohSwMvpDbIZR0adNFmpzNykwnYytD19I8nEhLMGADQsI1tk6Ma+TL5NYe5TAEGIvIpqMNRyUA==}
     engines: {node: '>=20.19 <22 || >=22.12'}
+    deprecated: Renamed to @Sanity/context - https://www.sanity.io/docs/ai/agent-context
     peerDependencies:
       '@sanity/client': ^7
       '@sanity/color': ^3
@@ -4871,6 +4872,10 @@ packages:
     resolution: {integrity: sha512-lIXBDJjRBZckV7pzQ1Yt/PwiKLOiVkdZVDey6gLZS4cH2xB3saRBX0OCWdqX1sUbpeLDtWL5OSYpKXZaDxiPQg==}
     engines: {node: '>=20.19 <22 || >=22.12'}
 
+  groq@6.1.0:
+    resolution: {integrity: sha512-r4Bpy/onjT+Bdrn2zfN5C/iwXxhYe8xRoF8bOXUldTCxut1vNwXDCOxORsEDB9ws2btHU6dfhWuzu9rr6+NIbw==}
+    engines: {node: '>=22.12'}
+
   gunzip-maybe@1.4.2:
     resolution: {integrity: sha512-4haO1M4mLO91PW57BMsDFf75UmwoRX0GkdD+Faw+Lr+r/OZrOCS0pIBwOL1xCKQqnQzbNFGgK2V2CpBUPeFNTw==}
     hasBin: true
@@ -5234,6 +5239,7 @@ packages:
   json-2-csv@5.5.10:
     resolution: {integrity: sha512-Dep8wO3Fr5wNjQevO2Z8Y7yeee/nYSGRsi7q6zJDKEVHxXkXT+v21vxHmDX923UzmCXXkSo62HaTz6eTWzFLaw==}
     engines: {node: '>= 16'}
+    deprecated: A security vulnerability has been reported with the preventCsvInjection option which has been fixed in version 5.5.11. Please upgrade as soon as possible.
 
   json-lexer@1.2.0:
     resolution: {integrity: sha512-7otpx5UPFeSELoF8nkZPHCfywg86wOsJV0WNOaysuO7mfWj1QFp2vlqESRRCeJKBXr+tqDgHh4HgqUFKTLcifQ==}
@@ -6774,6 +6780,7 @@ packages:
   tsconfck@3.1.6:
     resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
     engines: {node: ^18 || >=20}
+    deprecated: unmaintained
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
@@ -12808,6 +12815,8 @@ snapshots:
   groq@3.88.1-typegen-experimental.0: {}
 
   groq@5.26.0: {}
+
+  groq@6.1.0: {}
 
   gunzip-maybe@1.4.2:
     dependencies:

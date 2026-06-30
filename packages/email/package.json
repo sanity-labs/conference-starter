@@ -17,7 +17,7 @@
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "react-email": "^6.1.1",
+    "react-email": "^6.6.5",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3"
   },

@@ -1,5 +1,5 @@
 import {streamText} from 'ai'
-import {sanityInsightsIntegration} from '@sanity/agent-context/ai-sdk'
+import {sanityInsightsIntegration} from '@sanity/context/ai-sdk'
 import {getContentAgentModel} from './ai/content-agent'
 import {fetchSystemPrompt} from './ai/prompts'
 import {loadConversationHistory} from './conversation/history'

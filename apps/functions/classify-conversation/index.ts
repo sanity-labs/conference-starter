@@ -1,6 +1,6 @@
 import {scheduledEventHandler} from '@sanity/functions'
 import {createClient} from '@sanity/client'
-import {classifyConversations} from '@sanity/agent-context/insights'
+import {classifyConversations} from '@sanity/context/insights'
 import {createAnthropic} from '@ai-sdk/anthropic'
 
 const PROJECT_ID = 'yjorde43'

@@ -21,7 +21,7 @@
     "@repo/sanity-queries": "workspace:*",
     "@repo/sanity-schema": "workspace:*",
     "@sanity-labs/logo-soup": "^1.2.2",
-    "@sanity/agent-context": "^0.6.0",
+    "@sanity/context": "^0.7.1",
     "@sanity/client": "^7.24.0",
     "@sanity/image-url": "^2.1.1",
     "@vercel/og": "^0.11.1",

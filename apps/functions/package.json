@@ -10,7 +10,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.101",
     "@portabletext/to-html": "^5.0.2",
-    "@sanity/agent-context": "^0.6.0",
+    "@sanity/context": "^0.7.1",
     "@sanity/client": "^7.24.0",
     "@sanity/functions": "^1.4.0",
     "@sanity/id-utils": "^1.0.0",

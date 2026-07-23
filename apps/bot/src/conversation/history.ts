@@ -1,4 +1,4 @@
-import {generateConversationId} from '@sanity/agent-context/insights'
+import {generateConversationId} from '@sanity/context/insights'
 import {sanityClient} from '../sanity-client'
 
 export async function loadConversationHistory(

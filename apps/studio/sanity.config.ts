@@ -11,7 +11,7 @@ import { rejectSubmission } from "./actions/rejectSubmission";
 import { rescreenSubmission } from "./actions/rescreenSubmission";
 import { sendTestEmail } from "./actions/sendTestEmail";
 import { sendUpdate } from "./actions/sendUpdate";
-import { agentContextPlugin } from "@sanity/agent-context/studio";
+import { contextPlugin } from "@sanity/context/studio";
 import { scheduleBuilder } from "./tools/schedule-builder";
 
 export default defineConfig({
@@ -35,7 +35,7 @@ export default defineConfig({
       },
     }),
     scheduleBuilder(),
-    agentContextPlugin(),
+    contextPlugin(),
   ],
 
   schema: {

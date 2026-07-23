@@ -12,7 +12,7 @@
     "@ai-sdk/mcp": "^1.0.64",
     "@ai-sdk/provider": "^3.0.14",
     "@chat-adapter/telegram": "^4.34.0",
-    "@sanity/agent-context": "^0.6.0",
+    "@sanity/context": "^0.7.1",
     "@sanity/client": "^7.24.0",
     "@vercel/functions": "^3.7.5",
     "ai": "^6.0.235",

@@ -35,12 +35,12 @@ importers:
       '@chat-adapter/telegram':
         specifier: ^4.34.0
         version: 4.34.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)
-      '@sanity/agent-context':
-        specifier: ^0.6.0
-        version: 0.6.0(57c0fa3a0db21268b2af9cfad52e83ae)
       '@sanity/client':
         specifier: ^7.24.0
         version: 7.24.0
+      '@sanity/context':
+        specifier: ^0.7.1
+        version: 0.7.1(b35be982b554789331da2c4850ef5a21)
       '@vercel/functions':
         specifier: ^3.7.5
         version: 3.7.5(ws@8.21.1)
@@ -75,12 +75,12 @@ importers:
       '@portabletext/to-html':
         specifier: ^5.0.2
         version: 5.0.2
-      '@sanity/agent-context':
-        specifier: ^0.6.0
-        version: 0.6.0(99d0bf9a03b2b04ab9b882192df6b764)
       '@sanity/client':
         specifier: ^7.24.0
         version: 7.24.0
+      '@sanity/context':
+        specifier: ^0.7.1
+        version: 0.7.1(4f52da5bc9ecb922f1c092abbd0754c2)
       '@sanity/functions':
         specifier: ^1.4.0
         version: 1.4.0(@aws-lite/client@0.23.7)(@aws-lite/dynamodb@0.3.9)(@aws-lite/lambda@0.1.5)(@aws-lite/sns@0.0.8)(@aws-lite/sqs@0.2.4)
@@ -112,15 +112,15 @@ importers:
       '@repo/sanity-schema':
         specifier: workspace:*
         version: link:../../packages/sanity-schema
-      '@sanity/agent-context':
-        specifier: ^0.6.0
-        version: 0.6.0(0e959a929c6f1cc985dd0db2a6dc1a97)
       '@sanity/client':
         specifier: ^7.24.0
         version: 7.24.0
       '@sanity/color-input':
         specifier: ^6.0.19
         version: 6.0.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(sanity@5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.9.5)(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3))(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
+      '@sanity/context':
+        specifier: ^0.7.1
+        version: 0.7.1(0e959a929c6f1cc985dd0db2a6dc1a97)
       '@sanity/icons':
         specifier: ^3.8.0
         version: 3.8.0(react@19.2.8)
@@ -197,12 +197,12 @@ importers:
       '@sanity-labs/logo-soup':
         specifier: ^1.2.2
         version: 1.2.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)
-      '@sanity/agent-context':
-        specifier: ^0.6.0
-        version: 0.6.0(d14f34a88b3bd35c285408a8ab137995)
       '@sanity/client':
         specifier: ^7.24.0
         version: 7.24.0
+      '@sanity/context':
+        specifier: ^0.7.1
+        version: 0.7.1(52da6b2fa5d2b5646afdb3555c317fc3)
       '@sanity/image-url':
         specifier: ^2.1.1
         version: 2.1.1
@@ -2708,49 +2708,6 @@ packages:
       vue:
         optional: true
 
-  '@sanity/agent-context@0.6.0':
-    resolution: {integrity: sha512-rjNhQEm5VQR/CohSwMvpDbIZR0adNFmpzNykwnYytD19I8nEhLMGADQsI1tk6Ma+TL5NYe5TAEGIvIpqMNRyUA==}
-    engines: {node: '>=20.19 <22 || >=22.12'}
-    deprecated: Renamed to @sanity/context — https://www.sanity.io/docs/ai/sanity-context
-    peerDependencies:
-      '@sanity/client': ^7
-      '@sanity/color': ^3
-      '@sanity/icons': ^3
-      '@sanity/ui': ^3
-      ai: ^6.0.175
-      react: ^19
-      react-dom: ^19
-      react-rx: ^4
-      rxjs: ^7
-      sanity: ^5
-      styled-components: ^6
-      zod: ^3.20 || ^4
-    peerDependenciesMeta:
-      '@sanity/client':
-        optional: true
-      '@sanity/color':
-        optional: true
-      '@sanity/icons':
-        optional: true
-      '@sanity/ui':
-        optional: true
-      ai:
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
-      react-rx:
-        optional: true
-      rxjs:
-        optional: true
-      sanity:
-        optional: true
-      styled-components:
-        optional: true
-      zod:
-        optional: true
-
   '@sanity/agent-types@0.1.4':
     resolution: {integrity: sha512-QknW5Rp4XtR3U7ge/t96mr0abKOgzoWe20+VAJgxcwwXYixPs5s5SO6uV5hogImbbDfGzYrAMLBaWdMzyTDQ/g==}
     engines: {node: '>=18.0.0'}
@@ -2838,6 +2795,28 @@ packages:
   '@sanity/comlink@4.0.1':
     resolution: {integrity: sha512-vdGOd6sxNjqTo2H3Q3L2/Gepy+cDBiQ1mr9ck7c/A9o4NnmBLoDliifsNHIwgNwBUz37oH4+EIz/lIjNy8hSew==}
     engines: {node: '>=20.19 <22 || >=22.12'}
+
+  '@sanity/context@0.7.1':
+    resolution: {integrity: sha512-ZXE6v1t7sw3pxqLhsieOY0GYEndRlXFNh0AZlv3o+iFCg2vGF4lAD/qvg7BAbXqZV/d2t6FXNLpin1BLjn76Aw==}
+    engines: {node: '>=20.19 <22 || >=22.12'}
+    peerDependencies:
+      '@sanity/client': ^7
+      '@sanity/color': ^3
+      '@sanity/icons': ^3
+      '@sanity/ui': ^3
+      ai: ^6.0.175
+      react: ^19
+      react-dom: ^19
+      react-rx: ^4
+      rxjs: ^7
+      sanity: ^5
+      styled-components: ^6
+      zod: ^3.20 || ^4
+    peerDependenciesMeta:
+      ai:
+        optional: true
+      zod:
+        optional: true
 
   '@sanity/descriptors@1.3.0':
     resolution: {integrity: sha512-S2KYYGRUVZy+FDjPp3meoyczbCjobSQvZcgNayo3oYlYS9Qz0E+6RezGxi/KOb6iF52Oir3LEXp9SVfIgEwNjg==}
@@ -8583,7 +8562,6 @@ snapshots:
       yoctocolors-cjs: 2.1.3
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/checkbox@4.3.2(@types/node@25.9.5)':
     dependencies:
@@ -8603,7 +8581,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/checkbox@5.2.1(@types/node@25.9.5)':
     dependencies:
@@ -8620,7 +8597,6 @@ snapshots:
       '@inquirer/type': 3.0.10(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/confirm@5.1.21(@types/node@25.9.5)':
     dependencies:
@@ -8635,7 +8611,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/confirm@6.1.1(@types/node@25.9.5)':
     dependencies:
@@ -8656,7 +8631,6 @@ snapshots:
       yoctocolors-cjs: 2.1.3
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/core@10.3.2(@types/node@25.9.5)':
     dependencies:
@@ -8682,7 +8656,6 @@ snapshots:
       signal-exit: 4.1.0
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/core@11.2.1(@types/node@25.9.5)':
     dependencies:
@@ -8703,7 +8676,6 @@ snapshots:
       '@inquirer/type': 3.0.10(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/editor@4.2.23(@types/node@25.9.5)':
     dependencies:
@@ -8720,7 +8692,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/editor@5.2.2(@types/node@25.9.5)':
     dependencies:
@@ -8737,7 +8708,6 @@ snapshots:
       yoctocolors-cjs: 2.1.3
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/expand@4.0.23(@types/node@25.9.5)':
     dependencies:
@@ -8753,7 +8723,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/expand@5.1.1(@types/node@25.9.5)':
     dependencies:
@@ -8768,7 +8737,6 @@ snapshots:
       iconv-lite: 0.7.3
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/external-editor@1.0.3(@types/node@25.9.5)':
     dependencies:
@@ -8783,7 +8751,6 @@ snapshots:
       iconv-lite: 0.7.3
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/external-editor@3.0.3(@types/node@25.9.5)':
     dependencies:
@@ -8802,7 +8769,6 @@ snapshots:
       '@inquirer/type': 3.0.10(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/input@4.3.1(@types/node@25.9.5)':
     dependencies:
@@ -8817,7 +8783,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/input@5.1.2(@types/node@25.9.5)':
     dependencies:
@@ -8832,7 +8797,6 @@ snapshots:
       '@inquirer/type': 3.0.10(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/number@3.0.23(@types/node@25.9.5)':
     dependencies:
@@ -8847,7 +8811,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/number@4.1.1(@types/node@25.9.5)':
     dependencies:
@@ -8863,7 +8826,6 @@ snapshots:
       '@inquirer/type': 3.0.10(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/password@4.0.23(@types/node@25.9.5)':
     dependencies:
@@ -8880,7 +8842,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/password@5.1.1(@types/node@25.9.5)':
     dependencies:
@@ -8904,7 +8865,6 @@ snapshots:
       '@inquirer/select': 4.4.2(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/prompts@7.10.1(@types/node@25.9.5)':
     dependencies:
@@ -8935,7 +8895,6 @@ snapshots:
       '@inquirer/select': 5.2.1(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/prompts@8.5.2(@types/node@25.9.5)':
     dependencies:
@@ -8959,7 +8918,6 @@ snapshots:
       yoctocolors-cjs: 2.1.3
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/rawlist@4.1.11(@types/node@25.9.5)':
     dependencies:
@@ -8975,7 +8933,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/rawlist@5.3.1(@types/node@25.9.5)':
     dependencies:
@@ -8992,7 +8949,6 @@ snapshots:
       yoctocolors-cjs: 2.1.3
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/search@3.2.2(@types/node@25.9.5)':
     dependencies:
@@ -9010,7 +8966,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/search@4.2.1(@types/node@25.9.5)':
     dependencies:
@@ -9029,7 +8984,6 @@ snapshots:
       yoctocolors-cjs: 2.1.3
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/select@4.4.2(@types/node@25.9.5)':
     dependencies:
@@ -9049,7 +9003,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@24.13.3)
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/select@5.2.1(@types/node@25.9.5)':
     dependencies:
@@ -9063,7 +9016,6 @@ snapshots:
   '@inquirer/type@3.0.10(@types/node@24.13.3)':
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/type@3.0.10(@types/node@25.9.5)':
     optionalDependencies:
@@ -9072,7 +9024,6 @@ snapshots:
   '@inquirer/type@4.0.7(@types/node@24.13.3)':
     optionalDependencies:
       '@types/node': 24.13.3
-    optional: true
 
   '@inquirer/type@4.0.7(@types/node@25.9.5)':
     optionalDependencies:
@@ -9274,7 +9225,6 @@ snapshots:
       fast-levenshtein: 3.0.0
     transitivePeerDependencies:
       - '@types/node'
-    optional: true
 
   '@oclif/plugin-not-found@3.2.88(@types/node@25.9.5)':
     dependencies:
@@ -9705,82 +9655,6 @@ snapshots:
       react-dom: 19.2.8(react@19.2.8)
       typescript: 6.0.3
 
-  '@sanity/agent-context@0.6.0(0e959a929c6f1cc985dd0db2a6dc1a97)':
-    dependencies:
-      groq-js: 1.30.3
-    optionalDependencies:
-      '@sanity/client': 7.24.0
-      '@sanity/color': 3.0.7
-      '@sanity/icons': 3.8.0(react@19.2.8)
-      '@sanity/ui': 3.4.3(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
-      ai: 6.0.235(zod@4.4.3)
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-      react-rx: 4.2.3(react@19.2.8)(rxjs@7.8.2)
-      rxjs: 7.8.2
-      sanity: 5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.9.5)(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3)
-      styled-components: 6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      zod: 4.4.3
-    transitivePeerDependencies:
-      - supports-color
-
-  '@sanity/agent-context@0.6.0(57c0fa3a0db21268b2af9cfad52e83ae)':
-    dependencies:
-      groq-js: 1.30.3
-    optionalDependencies:
-      '@sanity/client': 7.24.0
-      '@sanity/color': 3.0.7
-      '@sanity/icons': 3.8.0(react@19.2.8)
-      '@sanity/ui': 3.4.3(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
-      ai: 6.0.235(zod@4.4.3)
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-      react-rx: 4.2.3(react@19.2.8)(rxjs@7.8.2)
-      rxjs: 7.8.2
-      sanity: 5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.9.5)(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.9.3)
-      styled-components: 6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      zod: 4.4.3
-    transitivePeerDependencies:
-      - supports-color
-
-  '@sanity/agent-context@0.6.0(99d0bf9a03b2b04ab9b882192df6b764)':
-    dependencies:
-      groq-js: 1.30.3
-    optionalDependencies:
-      '@sanity/client': 7.24.0
-      '@sanity/color': 3.0.7
-      '@sanity/icons': 3.8.0(react@19.2.8)
-      '@sanity/ui': 3.4.3(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
-      ai: 6.0.235(zod@4.4.3)
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-      react-rx: 4.2.3(react@19.2.8)(rxjs@7.8.2)
-      rxjs: 7.8.2
-      sanity: 5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@24.13.3)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@24.13.3)(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.9.3)
-      styled-components: 6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      zod: 4.4.3
-    transitivePeerDependencies:
-      - supports-color
-
-  '@sanity/agent-context@0.6.0(d14f34a88b3bd35c285408a8ab137995)':
-    dependencies:
-      groq-js: 1.30.3
-    optionalDependencies:
-      '@sanity/client': 7.24.0
-      '@sanity/color': 3.0.7
-      '@sanity/icons': 3.8.0(react@19.2.8)
-      '@sanity/ui': 3.4.3(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
-      ai: 6.0.235(zod@4.4.3)
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-      react-rx: 4.2.3(react@19.2.8)(rxjs@7.8.2)
-      rxjs: 7.8.2
-      sanity: 5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.9.5)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3)
-      styled-components: 6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      zod: 4.4.3
-    transitivePeerDependencies:
-      - supports-color
-
   '@sanity/agent-types@0.1.4':
     dependencies:
       zod: 3.25.76
@@ -9836,7 +9710,6 @@ snapshots:
       - terser
       - tsx
       - yaml
-    optional: true
 
   '@sanity/cli-build@0.2.2(@noble/hashes@2.2.0)(@types/node@25.9.5)(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.1)(yaml@2.9.0)':
     dependencies:
@@ -9913,7 +9786,6 @@ snapshots:
       - supports-color
       - terser
       - yaml
-    optional: true
 
   '@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0)':
     dependencies:
@@ -10043,7 +9915,6 @@ snapshots:
       - typescript
       - utf-8-validate
       - xstate
-    optional: true
 
   '@sanity/cli@6.7.2(@noble/hashes@2.2.0)(@types/node@25.9.5)(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(typescript@5.9.3)(xstate@5.32.5)':
     dependencies:
@@ -10136,7 +10007,6 @@ snapshots:
       - typescript
       - utf-8-validate
       - xstate
-    optional: true
 
   '@sanity/cli@6.7.2(@noble/hashes@2.2.0)(@types/node@25.9.5)(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(typescript@6.0.3)(xstate@5.32.5)':
     dependencies:
@@ -10265,7 +10135,6 @@ snapshots:
     transitivePeerDependencies:
       - react
       - supports-color
-    optional: true
 
   '@sanity/codegen@6.1.2(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(react@19.2.8)':
     dependencies:
@@ -10317,6 +10186,82 @@ snapshots:
       rxjs: 7.8.2
       uuid: 13.0.2
       xstate: 5.32.5
+
+  '@sanity/context@0.7.1(0e959a929c6f1cc985dd0db2a6dc1a97)':
+    dependencies:
+      '@sanity/client': 7.24.0
+      '@sanity/color': 3.0.7
+      '@sanity/icons': 3.8.0(react@19.2.8)
+      '@sanity/ui': 3.4.3(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
+      groq-js: 1.30.3
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      react-rx: 4.2.3(react@19.2.8)(rxjs@7.8.2)
+      rxjs: 7.8.2
+      sanity: 5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.9.5)(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3)
+      styled-components: 6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    optionalDependencies:
+      ai: 6.0.235(zod@4.4.3)
+      zod: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@sanity/context@0.7.1(4f52da5bc9ecb922f1c092abbd0754c2)':
+    dependencies:
+      '@sanity/client': 7.24.0
+      '@sanity/color': 3.0.7
+      '@sanity/icons': 5.2.1(react@19.2.8)
+      '@sanity/ui': 3.4.3(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
+      groq-js: 1.30.3
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      react-rx: 4.2.3(react@19.2.8)(rxjs@7.8.2)
+      rxjs: 7.8.2
+      sanity: 5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@24.13.3)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@24.13.3)(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.9.3)
+      styled-components: 6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    optionalDependencies:
+      ai: 6.0.235(zod@4.4.3)
+      zod: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@sanity/context@0.7.1(52da6b2fa5d2b5646afdb3555c317fc3)':
+    dependencies:
+      '@sanity/client': 7.24.0
+      '@sanity/color': 3.0.7
+      '@sanity/icons': 5.2.1(react@19.2.8)
+      '@sanity/ui': 3.4.3(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
+      groq-js: 1.30.3
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      react-rx: 4.2.3(react@19.2.8)(rxjs@7.8.2)
+      rxjs: 7.8.2
+      sanity: 5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.9.5)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3)
+      styled-components: 6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    optionalDependencies:
+      ai: 6.0.235(zod@4.4.3)
+      zod: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@sanity/context@0.7.1(b35be982b554789331da2c4850ef5a21)':
+    dependencies:
+      '@sanity/client': 7.24.0
+      '@sanity/color': 3.0.7
+      '@sanity/icons': 5.2.1(react@19.2.8)
+      '@sanity/ui': 3.4.3(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
+      groq-js: 1.30.3
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      react-rx: 4.2.3(react@19.2.8)(rxjs@7.8.2)
+      rxjs: 7.8.2
+      sanity: 5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.9.5)(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@5.9.3)
+      styled-components: 6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    optionalDependencies:
+      ai: 6.0.235(zod@4.4.3)
+      zod: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
 
   '@sanity/descriptors@1.3.0':
     dependencies:
@@ -10455,7 +10400,6 @@ snapshots:
       - '@types/react'
       - supports-color
       - xstate
-    optional: true
 
   '@sanity/migrate@6.1.2(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/react@19.2.17)(xstate@5.32.5)':
     dependencies:
@@ -10593,7 +10537,6 @@ snapshots:
       - typescript
       - utf-8-validate
       - yaml
-    optional: true
 
   '@sanity/runtime-cli@15.2.1(@types/node@25.9.5)(lightningcss@1.32.0)(tsx@4.23.1)(typescript@5.9.3)(yaml@2.9.0)':
     dependencies:
@@ -10638,7 +10581,6 @@ snapshots:
       - typescript
       - utf-8-validate
       - yaml
-    optional: true
 
   '@sanity/runtime-cli@15.2.1(@types/node@25.9.5)(lightningcss@1.32.0)(tsx@4.23.1)(typescript@6.0.3)(yaml@2.9.0)':
     dependencies:
@@ -11391,7 +11333,6 @@ snapshots:
       vite: 7.3.6(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.1)(yaml@2.9.0)
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   '@vitejs/plugin-react@5.2.0(vite@7.3.6(@types/node@25.9.5)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.1)(yaml@2.9.0))':
     dependencies:
@@ -12820,7 +12761,6 @@ snapshots:
   i18next@26.3.6(typescript@5.9.3):
     optionalDependencies:
       typescript: 5.9.3
-    optional: true
 
   i18next@26.3.6(typescript@6.0.3):
     optionalDependencies:
@@ -14166,7 +14106,6 @@ snapshots:
     optionalDependencies:
       react-dom: 19.2.8(react@19.2.8)
       typescript: 5.9.3
-    optional: true
 
   react-i18next@17.0.11(i18next@26.3.6(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3):
     dependencies:
@@ -14571,7 +14510,6 @@ snapshots:
       - terser
       - typescript
       - utf-8-validate
-    optional: true
 
   sanity@5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.9.5)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3):
     dependencies:
@@ -14844,7 +14782,6 @@ snapshots:
       - terser
       - typescript
       - utf-8-validate
-    optional: true
 
   sanity@5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.13.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.2.0)(@types/node@25.9.5)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.32.0)(yaml@2.9.0))(@types/node@25.9.5)(@types/react@19.2.17)(babel-plugin-react-compiler@1.0.0)(immer@10.2.0)(jiti@2.7.0)(lightningcss@1.32.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(styled-components@6.4.4(css-to-react-native@3.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3):
     dependencies:
@@ -15419,7 +15356,6 @@ snapshots:
   tsconfck@3.1.6(typescript@5.9.3):
     optionalDependencies:
       typescript: 5.9.3
-    optional: true
 
   tsconfck@3.1.6(typescript@6.0.3):
     optionalDependencies:
@@ -15649,7 +15585,6 @@ snapshots:
       - terser
       - tsx
       - yaml
-    optional: true
 
   vite-node@5.3.0(@types/node@25.9.5)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.1)(yaml@2.9.0):
     dependencies:
@@ -15680,7 +15615,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
-    optional: true
 
   vite-tsconfig-paths@6.1.1(typescript@5.9.3)(vite@7.3.6(@types/node@25.9.5)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.1)(yaml@2.9.0)):
     dependencies:
@@ -15691,7 +15625,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
-    optional: true
 
   vite-tsconfig-paths@6.1.1(typescript@6.0.3)(vite@7.3.6(@types/node@25.9.5)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.1)(yaml@2.9.0)):
     dependencies:

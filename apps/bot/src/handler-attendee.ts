@@ -3,7 +3,7 @@ import {stepCountIs, streamText} from 'ai'
 // Gateway is a valid optional layer if you want provider failover, cost
 // tracking, and OIDC-issued tokens — swap this import to use the gateway.
 import {createAnthropic} from '@ai-sdk/anthropic'
-import {sanityInsightsIntegration} from '@sanity/agent-context/ai-sdk'
+import {sanityInsightsIntegration} from '@sanity/context/ai-sdk'
 import {createAgentContextClient} from './ai/agent-context'
 import {fetchSystemPrompt} from './ai/prompts'
 import {loadConversationHistory} from './conversation/history'

@@ -17,7 +17,7 @@ import {
   LockIcon,
   DesktopIcon,
 } from '@sanity/icons'
-import {AGENT_CONTEXT_SCHEMA_TYPE_NAME} from '@sanity/agent-context/studio'
+import {CONTEXT_SCHEMA_TYPE_NAME} from '@sanity/context/studio'
 import {EmailPreview} from './components/EmailPreview'
 import {OgPreview} from './components/OgPreview'
 
@@ -387,7 +387,7 @@ export const structure: StructureResolver = (S) =>
       S.listItem()
         .title('Agent Context')
         .icon(RobotIcon)
-        .child(S.documentTypeList(AGENT_CONTEXT_SCHEMA_TYPE_NAME).title('Agent Context')),
+        .child(S.documentTypeList(CONTEXT_SCHEMA_TYPE_NAME).title('Agent Context')),
     ])
 
 export const defaultDocumentNode: DefaultDocumentNodeResolver = (S, {schemaType}) => {

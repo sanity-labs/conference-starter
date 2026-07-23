@@ -5,7 +5,7 @@ import {streamText, stepCountIs, convertToModelMessages, type ToolSet, type UIMe
 // OIDC-issued tokens — swap this import for the gateway provider there.
 import {createAnthropic} from '@ai-sdk/anthropic'
 import {createMCPClient} from '@ai-sdk/mcp'
-import {sanityInsightsIntegration} from '@sanity/agent-context/ai-sdk'
+import {sanityInsightsIntegration} from '@sanity/context/ai-sdk'
 import type {SanityClient} from '@sanity/client'
 import {client} from '@/sanity/client'
 import {createClient} from 'next-sanity'

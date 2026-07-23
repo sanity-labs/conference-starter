@@ -8,18 +8,18 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.76",
+    "@ai-sdk/anthropic": "^3.0.101",
     "@portabletext/to-html": "^5.0.2",
     "@sanity/agent-context": "^0.6.0",
-    "@sanity/client": "^7.22.0",
-    "@sanity/functions": "^1.2.1",
+    "@sanity/client": "^7.24.0",
+    "@sanity/functions": "^1.4.0",
     "@sanity/id-utils": "^1.0.0",
-    "ai": "^6.0.177",
-    "resend": "^6.9.3"
+    "ai": "^6.0.235",
+    "resend": "^6.18.0"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.13.3",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.10"
   }
 }

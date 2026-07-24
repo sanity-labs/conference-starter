@@ -183,14 +183,16 @@ export function ScheduleGrid({
       {slots.map((slot) => {
         if (!slot.room || !slot.startTime || !slot.endTime) return null
         const col = roomColumnMap.get(slot.room._id)
-        if (!col) return null
+        const isPlenary = slot.isPlenary
+        // Plenaries span every visible column, so they render even when their
+        // stored room isn't shown (e.g. single-room view on narrow screens)
+        if (!col && !isPlenary) return null
 
         const startRow = getRowForTime(slot.startTime, intervals) + 1 // +1 for header
         const span = getRowSpan(slot.startTime, slot.endTime)
         const conflictIds = conflicts.get(slot._id)
         const conflictCount = conflictIds?.length ?? 0
 
-        const isPlenary = slot.isPlenary
         const gridColumn = isPlenary ? `2 / -1` : `${col}`
         const gridRow = `${startRow} / span ${span}`
 

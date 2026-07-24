@@ -43,6 +43,7 @@ import {ConferenceHeader} from './ConferenceHeader'
 import {ScheduleGrid} from './ScheduleGrid'
 import type {GhostTarget} from './ScheduleGrid'
 import {UnscheduledPanel} from './UnscheduledPanel'
+import {RoomPicker} from './RoomPicker'
 import {SlotEditDialog} from './SlotEditDialog'
 import {DragOverlayContent} from './DragOverlayContent'
 import {TrackLegend} from './TrackLegend'
@@ -257,6 +258,14 @@ function GridWithActions({
   const [editingSlot, setEditingSlot] = useState<SlotData | null>(null)
   const [ghost, setGhost] = useState<GhostTarget | null>(null)
   const [undo, setUndo] = useState<UndoEntry | null>(null)
+
+  // Narrow screens show one room at a time (calendar-style day view)
+  const [focusedRoomId, setFocusedRoomId] = useState<string | null>(null)
+  const visibleRooms = useMemo(() => {
+    if (!rooms || rooms.length === 0) return []
+    if (!isNarrow) return rooms
+    return [rooms.find((r) => r._id === focusedRoomId) ?? rooms[0]]
+  }, [rooms, isNarrow, focusedRoomId])
 
   // Auto-fit time range; only ever widens while viewing the same day so the
   // grid doesn't jump around during mutations
@@ -626,10 +635,17 @@ function GridWithActions({
         />
       </Suspense>
       <Flex direction="column" flex={1} style={{minWidth: 0}}>
+        {isNarrow && rooms.length > 1 && (
+          <RoomPicker
+            rooms={rooms}
+            selectedRoomId={visibleRooms[0]?._id ?? rooms[0]._id}
+            onSelectRoom={setFocusedRoomId}
+          />
+        )}
         <TrackLegend slots={slots} />
         <ScheduleGrid
           slots={slots}
-          rooms={rooms}
+          rooms={visibleRooms}
           intervals={intervals}
           ghost={ghost}
           showNowLine={selectedDay === todayInTimezone()}

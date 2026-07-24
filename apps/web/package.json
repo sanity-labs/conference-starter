@@ -10,9 +10,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^4.0.19",
-    "@ai-sdk/mcp": "^2.0.16",
-    "@ai-sdk/react": "^4.0.40",
+    "@ai-sdk/anthropic": "^3.0.101",
+    "@ai-sdk/mcp": "^1.0.64",
+    "@ai-sdk/react": "^3.0.237",
     "@portabletext/markdown": "^1.4.4",
     "@portabletext/react": "^7.0.1",
     "@portabletext/types": "^4.0.2",
@@ -24,7 +24,7 @@
     "@sanity/context": "^0.7.1",
     "@sanity/image-url": "^2.1.1",
     "@vercel/og": "^0.11.1",
-    "ai": "^7.0.37",
+    "ai": "^6.0.235",
     "next": "^16.2.11",
     "next-sanity": "13.2.1",
     "pte-interpolation-react": "^1.5.0",

@@ -28,8 +28,7 @@
     ],
     "peerDependencyRules": {
       "allowedVersions": {
-        "@sanity/context>sanity": "6",
-        "@sanity/context>ai": "7"
+        "@sanity/context>sanity": "6"
       }
     }
   }

@@ -1,4 +1,4 @@
-import {stepCountIs, streamText} from 'ai'
+import {isStepCount, streamText} from 'ai'
 // Direct @ai-sdk/anthropic keeps the bot deployable to any host. A Vercel AI
 // Gateway is a valid optional layer if you want provider failover, cost
 // tracking, and OIDC-issued tokens — swap this import to use the gateway.
@@ -35,11 +35,11 @@ export async function handleAttendeeMessage(
   try {
     const result = streamText({
       model: anthropic('claude-sonnet-4-6'),
-      system: systemPrompt,
+      instructions: systemPrompt,
       messages,
       tools,
-      stopWhen: stepCountIs(10),
-      experimental_telemetry: {
+      stopWhen: isStepCount(10),
+      telemetry: {
         isEnabled: true,
         integrations: [
           sanityInsightsIntegration({

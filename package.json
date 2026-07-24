@@ -6,7 +6,7 @@
     "build": "turbo build",
     "type-check": "turbo type-check",
     "lint": "turbo lint",
-    "typegen": "pnpm --filter @repo/studio exec sanity schema extract --enforce-required-fields && pnpm --filter @repo/studio exec sanity typegen generate",
+    "typegen": "pnpm --filter @repo/studio exec sanity schema extract --enforce-required-fields --force && pnpm --filter @repo/studio exec sanity typegen generate",
     "predev": "tsx scripts/check-next-version.ts",
     "clean": "rm -rf .turbo node_modules/.cache apps/*/.next apps/*/.turbo apps/*/dist packages/*/.turbo packages/*/dist",
     "blueprints:plan": "pnpm dlx sanity@latest blueprints plan",
@@ -25,6 +25,12 @@
     "onlyBuiltDependencies": [
       "esbuild",
       "sharp"
-    ]
+    ],
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "@sanity/context>sanity": "6",
+        "@sanity/context>ai": "7"
+      }
+    }
   }
 }

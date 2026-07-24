@@ -25,9 +25,9 @@ export async function handleOpsMessage(
 
   const result = streamText({
     model,
-    instructions: systemPrompt,
+    system: systemPrompt,
     messages,
-    telemetry: {
+    experimental_telemetry: {
       isEnabled: true,
       integrations: [
         sanityInsightsIntegration({

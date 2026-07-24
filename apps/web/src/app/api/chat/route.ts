@@ -1,4 +1,4 @@
-import {streamText, stepCountIs, convertToModelMessages, type ToolSet, type UIMessage} from 'ai'
+import {streamText, isStepCount, convertToModelMessages, type ToolSet, type UIMessage} from 'ai'
 // Direct @ai-sdk/anthropic keeps this starter deployable to any host. A
 // Vercel AI Gateway (anthropic/claude-sonnet-4-6 + AI_GATEWAY_API_KEY) is a
 // valid optional layer if you want provider failover, cost tracking, and
@@ -102,11 +102,11 @@ export async function POST(request: Request) {
 
     const result = streamText({
       model: anthropic('claude-sonnet-4-6'),
-      system: systemPrompt,
+      instructions: systemPrompt,
       messages: await convertToModelMessages(messages),
       tools,
-      stopWhen: stepCountIs(10),
-      experimental_telemetry: {
+      stopWhen: isStepCount(10),
+      telemetry: {
         isEnabled: true,
         integrations: [
           sanityInsightsIntegration({
@@ -116,7 +116,7 @@ export async function POST(request: Request) {
           }),
         ],
       },
-      onFinish: async () => {
+      onEnd: async () => {
         await mcpClient.close()
       },
     })

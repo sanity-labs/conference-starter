@@ -15,10 +15,10 @@ Sprints 0–4 plus signage are complete. The platform has a working Studio, cont
 | Monorepo | Turborepo + pnpm |
 | Frontend | Next.js 16 (App Router, `use cache`) |
 | CMS | Sanity Studio + App SDK custom apps |
-| Sanity integration | `next-sanity@cache-components` (canary) |
+| Sanity integration | `next-sanity` v13 (stable, Cache Components) |
 | Email | Resend + React Email + Portable Text |
 | Registration | Luma (syndication pattern — Sanity → Luma, Luma webhooks → Sanity) |
-| AI | Content Agent Headless API (preview), Agent Actions, `@sanity/agent-context` fallback |
+| AI | Content Agent Headless API (preview), Agent Actions, `@sanity/context` fallback |
 | Automation | Sanity Functions (Blueprints) |
 | Types | `sanity typegen` — end-to-end type safety from schema to frontend |
 
@@ -94,7 +94,7 @@ All specs live in `plans/`:
 - **D-010**: Minimal frontend design — semantic HTML scaffolding, designers handle visual design later
 - **D-014**: Visual Editing on everything, stega by default
 - **D-015**: AI enhances, doesn't enable — platform works without AI features
-- **D-016**: Next.js 16 + `use cache` with guardrails (pinned canary, `defineLive()` fallback, version check)
+- **D-016**: Next.js 16 + `use cache` with guardrails (`defineLive()` fallback, version check; canary pin retired — next-sanity 13 stable)
 - **D-020**: Luma integration last (Sprint 6) — internal systems proven first
 - **D-021**: TypeGen in CI + targeted integration tests + Vercel preview deploys — no blanket UI testing
 

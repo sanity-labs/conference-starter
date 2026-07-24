@@ -24,7 +24,9 @@ export function DragOverlayContent({session}: DragOverlayContentProps) {
       radius={2}
       shadow={2}
       style={{
-        width: 200,
+        // DragOverlay sizes itself to the grabbed element; fill it
+        width: '100%',
+        maxWidth: 320,
         borderLeft: trackColor ? `3px solid ${trackColor}` : undefined,
         cursor: 'grabbing',
       }}

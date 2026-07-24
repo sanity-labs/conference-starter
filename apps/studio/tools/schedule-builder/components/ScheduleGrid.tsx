@@ -1,20 +1,38 @@
-import {useMemo} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import {Text, Card} from '@sanity/ui'
 import type {SlotData, RoomData, TimeInterval} from '../types'
-import {getRowForTime, getRowSpan} from '../utils/timeGrid'
-import {detectRoomConflicts} from '../utils/conflicts'
+import {
+  getRowForTime,
+  getRowSpan,
+  ROW_HEIGHT_PX,
+  INTERVAL_MINUTES,
+} from '../utils/timeGrid'
+import {detectRoomConflicts, assignLanes} from '../utils/conflicts'
 import {TimeAxis} from './TimeAxis'
 import {SlotCard} from './SlotCard'
-import {DroppableCell} from './DroppableCell'
+import {DroppableColumn} from './DroppableColumn'
+
+/** Placement preview rendered while dragging or in click-to-place mode */
+export interface GhostTarget {
+  roomId: string
+  rowIndex: number
+  span: number
+  isPlenary: boolean
+  conflict: boolean
+}
 
 interface ScheduleGridProps {
   slots: SlotData[]
   rooms: RoomData[]
   intervals: TimeInterval[]
+  ghost: GhostTarget | null
+  /** Render the current-time line (selected day is today in conference tz) */
+  showNowLine: boolean
   onSlotClick?: (slot: SlotData) => void
-  onCellClick?: (roomId: string, time: string) => void
-  /** Whether a session is currently selected for placement */
+  /** Click-to-place: a session is selected */
   hasSelectedSession?: boolean
+  onColumnClick?: (roomId: string, rowIndex: number) => void
+  onColumnHover?: (roomId: string, rowIndex: number | null) => void
 }
 
 /** Check if an interval is on the hour (:00) */
@@ -22,20 +40,50 @@ function isHourMark(interval: TimeInterval): boolean {
   return interval.label.endsWith(':00 AM') || interval.label.endsWith(':00 PM')
 }
 
-/** Check if an interval is on the half-hour (:30) */
-function isHalfHourMark(interval: TimeInterval): boolean {
-  return interval.label.endsWith(':30 AM') || interval.label.endsWith(':30 PM')
+function NowLine({intervals}: {intervals: TimeInterval[]}) {
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 60_000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const first = new Date(intervals[0].start).getTime()
+  const last =
+    new Date(intervals[intervals.length - 1].start).getTime() + INTERVAL_MINUTES * 60_000
+  if (now < first || now > last) return null
+
+  const minutes = (now - first) / 60_000
+  const rowIndex = Math.floor(minutes / INTERVAL_MINUTES)
+  const fraction = (minutes % INTERVAL_MINUTES) / INTERVAL_MINUTES
+
+  return (
+    <div
+      style={{
+        gridColumn: '2 / -1',
+        gridRow: rowIndex + 2,
+        marginTop: fraction * ROW_HEIGHT_PX - 1,
+        height: 2,
+        background: 'var(--card-critical-fg-color, #f03e2f)',
+        zIndex: 3,
+        pointerEvents: 'none',
+      }}
+    />
+  )
 }
 
 export function ScheduleGrid({
   slots,
   rooms,
   intervals,
+  ghost,
+  showNowLine,
   onSlotClick,
-  onCellClick,
   hasSelectedSession,
+  onColumnClick,
+  onColumnHover,
 }: ScheduleGridProps) {
   const conflicts = useMemo(() => detectRoomConflicts(slots), [slots])
+  const lanes = useMemo(() => assignLanes(slots), [slots])
 
   // Map room ID to column index (0-based, columns start at 2 in grid)
   const roomColumnMap = useMemo(() => {
@@ -44,20 +92,6 @@ export function ScheduleGrid({
     return map
   }, [rooms])
 
-  // Build set of occupied cells to avoid rendering empty cells where a slot exists
-  const occupiedCells = useMemo(() => {
-    const set = new Set<string>()
-    for (const slot of slots) {
-      if (!slot.room || !slot.startTime || !slot.endTime) continue
-      const startRow = getRowForTime(slot.startTime, intervals)
-      const span = getRowSpan(slot.startTime, slot.endTime)
-      for (let r = startRow; r < startRow + span; r++) {
-        set.add(`${slot.room._id}:${r}`)
-      }
-    }
-    return set
-  }, [slots, intervals])
-
   const totalRows = intervals.length
 
   return (
@@ -65,12 +99,13 @@ export function ScheduleGrid({
       style={{
         display: 'grid',
         gridTemplateColumns: `56px repeat(${rooms.length}, minmax(100px, 1fr))`,
-        gridTemplateRows: `auto repeat(${totalRows}, 24px)`,
+        gridTemplateRows: `auto repeat(${totalRows}, ${ROW_HEIGHT_PX}px)`,
         alignContent: 'start',
         overflow: 'auto',
         flex: 1,
         minHeight: 0,
         minWidth: 0,
+        paddingBottom: 8,
       }}
     >
       {/* Header row: empty corner + room names */}
@@ -80,8 +115,9 @@ export function ScheduleGrid({
           gridColumn: 1,
           position: 'sticky',
           top: 0,
-          zIndex: 3,
+          zIndex: 5,
           background: 'var(--card-bg-color)',
+          borderBottom: '1px solid var(--card-border-color)',
         }}
       />
       {rooms.map((room, idx) => (
@@ -93,15 +129,15 @@ export function ScheduleGrid({
             gridColumn: idx + 2,
             position: 'sticky',
             top: 0,
-            zIndex: 3,
-            borderBottom: '2px solid var(--card-border-color)',
+            zIndex: 5,
+            borderBottom: '1px solid var(--card-border-color)',
             borderLeft: idx > 0 ? '1px solid var(--card-border-color)' : undefined,
           }}
           tone="default"
         >
           <Text size={1} weight="semibold" align="center" textOverflow="ellipsis">
             {room.name}
-            {room.capacity ? ` \u00b7 ${room.capacity}` : ''}
+            {room.capacity ? ` · ${room.capacity}` : ''}
           </Text>
         </Card>
       ))}
@@ -109,21 +145,30 @@ export function ScheduleGrid({
       {/* Time axis */}
       <TimeAxis intervals={intervals} />
 
-      {/* Gridline overlays — hour and half-hour marks spanning all room columns */}
-      {intervals.map((interval) => {
-        const isHour = isHourMark(interval)
-        const isHalf = isHalfHourMark(interval)
-        if (!isHour && !isHalf) return null
+      {/* Column drop targets (one per room, spanning all rows) */}
+      {rooms.map((room, idx) => (
+        <DroppableColumn
+          key={room._id}
+          roomId={room._id}
+          gridColumn={roomColumnMap.get(room._id)!}
+          totalRows={totalRows}
+          isFirst={idx === 0}
+          clickable={!!hasSelectedSession}
+          onRowClick={onColumnClick}
+          onRowHover={onColumnHover}
+        />
+      ))}
 
+      {/* Hour gridlines spanning all room columns */}
+      {intervals.map((interval) => {
+        if (!isHourMark(interval)) return null
         return (
           <div
             key={`gridline-${interval.row}`}
             style={{
               gridRow: interval.row + 1,
               gridColumn: `2 / -1`,
-              borderTop: isHour
-                ? '1px solid var(--card-border-color)'
-                : '1px dashed var(--card-hairline-soft-color, rgba(0,0,0,0.06))',
+              borderTop: '1px solid var(--card-border-color)',
               pointerEvents: 'none',
               zIndex: 0,
             }}
@@ -142,10 +187,19 @@ export function ScheduleGrid({
         const conflictIds = conflicts.get(slot._id)
         const conflictCount = conflictIds?.length ?? 0
 
-        // Plenary: span all room columns
         const isPlenary = slot.isPlenary
         const gridColumn = isPlenary ? `2 / -1` : `${col}`
         const gridRow = `${startRow} / span ${span}`
+
+        // Side-by-side lanes for overlapping slots in the same room
+        const placement = lanes.get(slot._id)
+        const laneStyle =
+          placement && placement.laneCount > 1
+            ? {
+                width: `${100 / placement.laneCount}%`,
+                marginLeft: `${(100 / placement.laneCount) * placement.lane}%`,
+              }
+            : undefined
 
         return (
           <div
@@ -153,49 +207,46 @@ export function ScheduleGrid({
             style={{
               gridColumn,
               gridRow,
-              zIndex: 1,
+              // Room slots above plenaries so both stay clickable/grabbable
+              zIndex: isPlenary ? 1 : 2,
               padding: '0 2px 2px 2px',
-              borderLeft:
-                !isPlenary && col > 2
-                  ? '1px solid var(--card-hairline-soft-color, rgba(0,0,0,0.04))'
-                  : undefined,
+              pointerEvents: 'none',
+              ...laneStyle,
             }}
           >
-            <SlotCard slot={slot} conflictCount={conflictCount} onClick={onSlotClick} rowSpan={span} />
+            <div style={{pointerEvents: 'auto', height: '100%'}}>
+              <SlotCard
+                slot={slot}
+                conflictCount={conflictCount}
+                onClick={onSlotClick}
+                rowSpan={span}
+              />
+            </div>
           </div>
         )
       })}
 
-      {/* Empty cells — droppable targets for DnD + click-to-assign */}
-      {rooms.map((room, roomIdx) =>
-        intervals.map((interval) => {
-          const cellKey = `${room._id}:${interval.row}`
-          if (occupiedCells.has(cellKey)) return null
-
-          return (
-            <DroppableCell
-              key={`empty-${room._id}-${interval.row}`}
-              roomId={room._id}
-              time={interval.start}
-              gridRow={interval.row + 1}
-              gridColumn={roomColumnMap.get(room._id)!}
-              roomIdx={roomIdx}
-              isClickable={!!onCellClick}
-              hasSelectedSession={hasSelectedSession}
-              onClick={onCellClick}
-            />
-          )
-        }),
+      {/* Placement ghost: real footprint of the dragged/selected session */}
+      {ghost && roomColumnMap.get(ghost.roomId) && (
+        <div
+          style={{
+            gridColumn: ghost.isPlenary ? '2 / -1' : `${roomColumnMap.get(ghost.roomId)}`,
+            gridRow: `${ghost.rowIndex + 2} / span ${ghost.span}`,
+            zIndex: 4,
+            pointerEvents: 'none',
+            margin: '0 2px 2px 2px',
+            borderRadius: 3,
+            border: ghost.conflict
+              ? '2px dashed var(--card-critical-fg-color, #f03e2f)'
+              : '2px dashed var(--card-focus-ring-color)',
+            background: ghost.conflict
+              ? 'color-mix(in srgb, var(--card-critical-fg-color, #f03e2f) 10%, transparent)'
+              : 'color-mix(in srgb, var(--card-focus-ring-color) 10%, transparent)',
+          }}
+        />
       )}
 
-      {/* Inline hover styles for droppable cells */}
-      <style>{`
-        .schedule-cell-droppable:hover {
-          background: var(--card-bg-color) !important;
-          outline: 1px dashed var(--card-focus-ring-color, #2563eb);
-          outline-offset: -1px;
-        }
-      `}</style>
+      {showNowLine && intervals.length > 0 && <NowLine intervals={intervals} />}
     </div>
   )
 }

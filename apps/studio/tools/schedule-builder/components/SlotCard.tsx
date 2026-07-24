@@ -26,7 +26,8 @@ export function SlotCard({slot, conflictCount = 0, onClick, rowSpan = 4}: SlotCa
   if (!session) return null
 
   const trackColor = session.track?.color?.hex
-  const tone = conflictCount > 0 ? 'critical' : undefined
+  const isQuiet = session.sessionType === 'break' || session.sessionType === 'social'
+  const tone = conflictCount > 0 ? 'critical' : isQuiet ? 'transparent' : undefined
 
   const {attributes, listeners, setNodeRef, isDragging} = useDraggable({
     id: `slot-${slot._id}`,
@@ -45,12 +46,14 @@ export function SlotCard({slot, conflictCount = 0, onClick, rowSpan = 4}: SlotCa
       padding={1}
       radius={2}
       tone={tone}
-      shadow={1}
+      shadow={isQuiet ? 0 : 1}
       overflow="hidden"
       height="fill"
+      border={isQuiet}
       style={{
         cursor: onClick ? 'grab' : 'default',
         borderLeft: trackColor ? `3px solid ${trackColor}` : undefined,
+        borderStyle: isQuiet ? 'dashed' : undefined,
         opacity: isDragging ? 0.4 : 1,
         touchAction: 'none',
       }}
@@ -60,18 +63,31 @@ export function SlotCard({slot, conflictCount = 0, onClick, rowSpan = 4}: SlotCa
     >
       {isCompact ? (
         <Flex gap={1} align="center" height="fill">
-          <Text size={0} weight="semibold" textOverflow="ellipsis" style={{flex: 1}} title={session.title}>
+          <Text
+            size={0}
+            weight="semibold"
+            muted={isQuiet}
+            textOverflow="ellipsis"
+            style={{flex: 1}}
+            title={session.title}
+          >
             {session.title}
           </Text>
           <ConflictBadge conflictCount={conflictCount} />
         </Flex>
       ) : (
         <Stack space={1}>
-          <Text size={1} weight="semibold" textOverflow="ellipsis" title={session.title}>
+          <Text
+            size={1}
+            weight="semibold"
+            muted={isQuiet}
+            textOverflow="ellipsis"
+            title={session.title}
+          >
             {session.title}
           </Text>
           <Flex gap={1} wrap="wrap" align="center">
-            {session.sessionType && (
+            {session.sessionType && !isQuiet && (
               <Badge
                 tone={TYPE_TONES[session.sessionType] ?? 'default'}
                 fontSize={0}
@@ -89,6 +105,11 @@ export function SlotCard({slot, conflictCount = 0, onClick, rowSpan = 4}: SlotCa
             {session.level && (
               <Text size={0} muted>
                 {session.level}
+              </Text>
+            )}
+            {slot.isPlenary && (
+              <Text size={0} muted>
+                all rooms
               </Text>
             )}
             <ConflictBadge conflictCount={conflictCount} />

@@ -1,7 +1,8 @@
-import {useState, startTransition, useMemo, useEffect} from 'react'
+import {useState, startTransition, useMemo, useEffect, useRef} from 'react'
 import {useQuery} from '@sanity/sdk-react'
+import {useDroppable} from '@dnd-kit/core'
 import {Stack, TextInput, Select, Text, Card, Flex, Heading, Badge, Button} from '@sanity/ui'
-import {SearchIcon, ChevronLeftIcon, ChevronRightIcon} from '@sanity/icons'
+import {SearchIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon} from '@sanity/icons'
 import {UNSCHEDULED_QUERY} from '../queries'
 import type {SessionData} from '../types'
 import {SessionCard} from './SessionCard'
@@ -9,10 +10,18 @@ import {SessionCard} from './SessionCard'
 interface UnscheduledPanelProps {
   selectedSessionId: string | null
   onSelectSession: (session: SessionData | null) => void
+  /** Sessions to hide: pending placements + sessions already on the visible grid */
   hiddenSessionIds?: Set<string>
+  /** A slot is being dragged — the panel becomes a drop-to-unschedule target */
+  isSlotDragging?: boolean
 }
 
-export function UnscheduledPanel({selectedSessionId, onSelectSession, hiddenSessionIds}: UnscheduledPanelProps) {
+export function UnscheduledPanel({
+  selectedSessionId,
+  onSelectSession,
+  hiddenSessionIds,
+  isSlotDragging,
+}: UnscheduledPanelProps) {
   const {data: sessions} = useQuery<SessionData[]>({query: UNSCHEDULED_QUERY})
 
   const [searchText, setSearchText] = useState('')
@@ -20,12 +29,33 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession, hiddenSess
   const [filterType, setFilterType] = useState('')
   const [collapsed, setCollapsed] = useState(false)
 
-  // Auto-collapse when all sessions are scheduled
+  const {setNodeRef, isOver} = useDroppable({id: 'unscheduled-dropzone'})
+
+  // Filter sessions
+  const filtered = useMemo(() => {
+    if (!sessions) return []
+    return sessions.filter((s) => {
+      if (hiddenSessionIds?.has(s._id)) return false
+      if (searchText && !s.title.toLowerCase().includes(searchText.toLowerCase())) return false
+      if (filterTrack && s.track?._id !== filterTrack) return false
+      if (filterType && s.sessionType !== filterType) return false
+      return true
+    })
+  }, [sessions, searchText, filterTrack, filterType, hiddenSessionIds])
+
+  const visibleCount = useMemo(
+    () => (sessions ?? []).filter((s) => !hiddenSessionIds?.has(s._id)).length,
+    [sessions, hiddenSessionIds],
+  )
+
+  // Auto-collapse when everything is scheduled; auto-expand when work returns
+  const prevCountRef = useRef(visibleCount)
   useEffect(() => {
-    if (sessions && sessions.length === 0) {
-      setCollapsed(true)
-    }
-  }, [sessions])
+    const prev = prevCountRef.current
+    prevCountRef.current = visibleCount
+    if (visibleCount === 0 && prev > 0) setCollapsed(true)
+    if (visibleCount > 0 && prev === 0) setCollapsed(false)
+  }, [visibleCount])
 
   // Extract unique tracks and types for filter dropdowns
   const tracks = useMemo(() => {
@@ -45,18 +75,6 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession, hiddenSess
     }
     return Array.from(typeSet).sort()
   }, [sessions])
-
-  // Filter sessions
-  const filtered = useMemo(() => {
-    if (!sessions) return []
-    return sessions.filter((s) => {
-      if (hiddenSessionIds?.has(s._id)) return false
-      if (searchText && !s.title.toLowerCase().includes(searchText.toLowerCase())) return false
-      if (filterTrack && s.track?._id !== filterTrack) return false
-      if (filterType && s.sessionType !== filterType) return false
-      return true
-    })
-  }, [sessions, searchText, filterTrack, filterType, hiddenSessionIds])
 
   const handleSearch = (value: string) => {
     startTransition(() => setSearchText(value))
@@ -78,41 +96,47 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession, hiddenSess
     }
   }
 
-  const sessionCount = filtered.length
+  const dropHighlight = isSlotDragging
+    ? {
+        outline: isOver
+          ? '2px dashed var(--card-critical-fg-color, #f03e2f)'
+          : '2px dashed var(--card-border-color)',
+        outlineOffset: -4,
+      }
+    : undefined
 
-  // Collapsed state: thin strip with count + expand button
+  // Collapsed state: thin strip with count + expand button. Stays collapsed
+  // during drags (a width change would shift the grid mid-drag and desync
+  // pointer→column math); the rail itself is the unschedule drop target.
   if (collapsed) {
     return (
       <Card
+        ref={setNodeRef}
         borderRight
         height="fill"
-        style={{width: 44, minWidth: 44}}
+        tone={isSlotDragging && isOver ? 'critical' : undefined}
+        style={{width: 44, minWidth: 44, ...dropHighlight}}
       >
-        <Flex direction="column" align="center" gap={2} paddingY={3}>
-          <Button
-            icon={ChevronRightIcon}
-            mode="bleed"
-            fontSize={1}
-            padding={2}
-            onClick={() => setCollapsed(false)}
-            title="Expand sidebar"
-          />
-          {sessionCount > 0 && (
-            <Badge tone="primary" fontSize={0}>
-              {sessionCount}
-            </Badge>
+        <Flex direction="column" align="center" gap={3} paddingY={3}>
+          {isSlotDragging ? (
+            <Text size={1} muted={!isOver}>
+              <TrashIcon />
+            </Text>
+          ) : (
+            <>
+              <Button
+                icon={ChevronRightIcon}
+                mode="bleed"
+                fontSize={1}
+                padding={2}
+                onClick={() => setCollapsed(false)}
+                title="Expand sidebar"
+              />
+              <Badge tone={visibleCount > 0 ? 'caution' : 'positive'} fontSize={0}>
+                {visibleCount}
+              </Badge>
+            </>
           )}
-          <Text
-            size={0}
-            muted
-            style={{
-              writingMode: 'vertical-rl',
-              textOrientation: 'mixed',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {sessionCount} unscheduled
-          </Text>
         </Flex>
       </Card>
     )
@@ -120,9 +144,10 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession, hiddenSess
 
   return (
     <Card
+      ref={setNodeRef}
       borderRight
       height="fill"
-      style={{width: 280, minWidth: 200, maxWidth: 320}}
+      style={{width: 280, minWidth: 200, maxWidth: 320, ...dropHighlight}}
     >
       <Flex direction="column" height="fill">
         <Card padding={3} borderBottom>
@@ -179,12 +204,22 @@ export function UnscheduledPanel({selectedSessionId, onSelectSession, hiddenSess
           </Stack>
         </Card>
         <Stack space={2} padding={2} overflow="auto" flex={1}>
-          {filtered.length === 0 && (
+          {isSlotDragging && (
+            <Card padding={3} radius={2} tone={isOver ? 'critical' : 'transparent'} border>
+              <Flex align="center" gap={2} justify="center">
+                <Text size={1} muted={!isOver}>
+                  <TrashIcon />
+                </Text>
+                <Text size={1} muted={!isOver}>
+                  Drop here to unschedule
+                </Text>
+              </Flex>
+            </Card>
+          )}
+          {filtered.length === 0 && !isSlotDragging && (
             <Card padding={3}>
               <Text size={1} muted align="center">
-                {sessions && sessions.length === 0
-                  ? 'All sessions are scheduled!'
-                  : 'No matching sessions.'}
+                {visibleCount === 0 ? 'All sessions are scheduled!' : 'No matching sessions.'}
               </Text>
             </Card>
           )}

@@ -22,10 +22,10 @@ export function TrackLegend({slots}: TrackLegendProps) {
   if (tracks.length === 0) return null
 
   return (
-    <Card paddingX={3} paddingY={2} borderBottom>
-      <Flex gap={4} wrap="wrap" align="center">
+    <Card paddingX={3} paddingY={2} borderBottom style={{overflowX: 'auto'}}>
+      <Flex gap={4} align="center" style={{whiteSpace: 'nowrap'}}>
         {tracks.map((track) => (
-          <Flex key={track.name} gap={2} align="center">
+          <Flex key={track.name} gap={2} align="center" style={{flexShrink: 0}}>
             <span
               style={{
                 width: 8,

@@ -26,10 +26,11 @@ export interface SessionData {
     name: string
     color: {hex: string} | null
   } | null
+  /** Items can be null: `speakers[]->` yields null for unresolvable references */
   speakers: Array<{
     _id: string
     name: string
-  }> | null
+  } | null> | null
 }
 
 /** Projected room for grid columns */

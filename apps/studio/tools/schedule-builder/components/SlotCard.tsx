@@ -55,7 +55,8 @@ export function SlotCard({slot, conflictCount = 0, onClick, rowSpan = 4}: SlotCa
         borderLeft: trackColor ? `3px solid ${trackColor}` : undefined,
         borderStyle: isQuiet ? 'dashed' : undefined,
         opacity: isDragging ? 0.4 : 1,
-        touchAction: 'none',
+        // Long-press activates drags on touch, so normal scrolling must stay possible
+        touchAction: 'manipulation',
       }}
       onClick={onClick ? () => onClick(slot) : undefined}
       {...listeners}
@@ -116,7 +117,7 @@ export function SlotCard({slot, conflictCount = 0, onClick, rowSpan = 4}: SlotCa
           </Flex>
           {isFull && session.speakers && session.speakers.length > 0 && (
             <Text size={0} muted textOverflow="ellipsis">
-              {session.speakers.map((s) => s.name).join(', ')}
+              {session.speakers.flatMap((s) => (s?.name ? [s.name] : [])).join(', ')}
             </Text>
           )}
           {isFull && session.track && (

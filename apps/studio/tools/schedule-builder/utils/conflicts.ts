@@ -1,64 +1,38 @@
 import type {SlotData} from '../types'
 
-/**
- * Build a lookup map: "roomId:timeKey" → SlotData for O(1) cell lookups.
- * timeKey is the ISO start time string.
- */
-export function buildSlotIndex(slots: SlotData[]): Map<string, SlotData> {
-  const map = new Map<string, SlotData>()
-  for (const slot of slots) {
-    if (slot.room && slot.startTime) {
-      map.set(`${slot.room._id}:${slot.startTime}`, slot)
-    }
-  }
-  return map
+function timesOverlap(aStart: string, aEnd: string, bStart: string, bEnd: string): boolean {
+  return (
+    new Date(aStart).getTime() < new Date(bEnd).getTime() &&
+    new Date(bStart).getTime() < new Date(aEnd).getTime()
+  )
 }
 
 /**
- * Group slots by room ID for conflict detection.
+ * Two slots collide when their times overlap AND they compete for space:
+ * same room, or either is plenary (a plenary occupies every room).
  */
-export function groupSlotsByRoom(slots: SlotData[]): Map<string, SlotData[]> {
-  const map = new Map<string, SlotData[]>()
-  for (const slot of slots) {
-    const roomId = slot.room?._id
-    if (!roomId) continue
-    const existing = map.get(roomId) ?? []
-    existing.push(slot)
-    map.set(roomId, existing)
-  }
-  return map
+function slotsCollide(a: SlotData, b: SlotData): boolean {
+  if (!timesOverlap(a.startTime, a.endTime, b.startTime, b.endTime)) return false
+  if (a.isPlenary || b.isPlenary) return true
+  return !!a.room && !!b.room && a.room._id === b.room._id
 }
 
 /**
- * Detect room conflicts: overlapping slots in the same room.
+ * Detect conflicts: overlapping slots in the same room, plus any slot
+ * overlapping a plenary (plenaries span all rooms).
  * Returns a Map from slot ID to an array of conflicting slot IDs.
  */
 export function detectRoomConflicts(slots: SlotData[]): Map<string, string[]> {
   const conflicts = new Map<string, string[]>()
-  const byRoom = groupSlotsByRoom(slots)
 
-  for (const roomSlots of byRoom.values()) {
-    const sorted = [...roomSlots].sort(
-      (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
-    )
-
-    for (let i = 0; i < sorted.length; i++) {
-      for (let j = i + 1; j < sorted.length; j++) {
-        const a = sorted[i]
-        const b = sorted[j]
-        // Overlap: a.start < b.end && b.start < a.end
-        if (
-          new Date(a.startTime).getTime() < new Date(b.endTime).getTime() &&
-          new Date(b.startTime).getTime() < new Date(a.endTime).getTime()
-        ) {
-          const aConflicts = conflicts.get(a._id) ?? []
-          aConflicts.push(b._id)
-          conflicts.set(a._id, aConflicts)
-
-          const bConflicts = conflicts.get(b._id) ?? []
-          bConflicts.push(a._id)
-          conflicts.set(b._id, bConflicts)
-        }
+  for (let i = 0; i < slots.length; i++) {
+    for (let j = i + 1; j < slots.length; j++) {
+      const a = slots[i]
+      const b = slots[j]
+      if (!a.startTime || !a.endTime || !b.startTime || !b.endTime) continue
+      if (slotsCollide(a, b)) {
+        conflicts.set(a._id, [...(conflicts.get(a._id) ?? []), b._id])
+        conflicts.set(b._id, [...(conflicts.get(b._id) ?? []), a._id])
       }
     }
   }
@@ -68,22 +42,85 @@ export function detectRoomConflicts(slots: SlotData[]): Map<string, string[]> {
 
 /**
  * Check if a proposed slot would conflict with existing slots.
+ * Plenary-aware: a plenary proposal conflicts with everything overlapping,
+ * and any proposal conflicts with an overlapping plenary.
  */
 export function wouldConflict(
   startTime: string,
   endTime: string,
   roomId: string,
+  isPlenary: boolean,
   slots: SlotData[],
   excludeSlotId?: string,
 ): SlotData[] {
-  const start = new Date(startTime).getTime()
-  const end = new Date(endTime).getTime()
-
   return slots.filter((slot) => {
     if (slot._id === excludeSlotId) return false
-    if (slot.room?._id !== roomId) return false
-    const slotStart = new Date(slot.startTime).getTime()
-    const slotEnd = new Date(slot.endTime).getTime()
-    return start < slotEnd && slotStart < end
+    if (!slot.startTime || !slot.endTime) return false
+    if (!timesOverlap(startTime, endTime, slot.startTime, slot.endTime)) return false
+    if (isPlenary || slot.isPlenary) return true
+    return slot.room?._id === roomId
   })
+}
+
+export interface LanePlacement {
+  lane: number
+  laneCount: number
+}
+
+/**
+ * Assign side-by-side lanes to overlapping slots within the same room,
+ * calendar-style: overlapping slots split the column width instead of
+ * stacking on top of each other. Plenary slots are excluded (they render
+ * across all rooms). Returns a Map from slot ID to its lane placement.
+ */
+export function assignLanes(slots: SlotData[]): Map<string, LanePlacement> {
+  const placements = new Map<string, LanePlacement>()
+
+  const byRoom = new Map<string, SlotData[]>()
+  for (const slot of slots) {
+    if (slot.isPlenary || !slot.room || !slot.startTime || !slot.endTime) continue
+    const list = byRoom.get(slot.room._id) ?? []
+    list.push(slot)
+    byRoom.set(slot.room._id, list)
+  }
+
+  for (const roomSlots of byRoom.values()) {
+    const sorted = [...roomSlots].sort(
+      (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+    )
+
+    // Build clusters of transitively-overlapping slots
+    let cluster: SlotData[] = []
+    let clusterEnd = 0
+    const flush = () => {
+      if (cluster.length === 0) return
+      // Greedy lane assignment within the cluster
+      const laneEnds: number[] = []
+      const lanes = new Map<string, number>()
+      for (const slot of cluster) {
+        const start = new Date(slot.startTime).getTime()
+        let lane = laneEnds.findIndex((end) => end <= start)
+        if (lane === -1) {
+          lane = laneEnds.length
+          laneEnds.push(0)
+        }
+        laneEnds[lane] = new Date(slot.endTime).getTime()
+        lanes.set(slot._id, lane)
+      }
+      for (const slot of cluster) {
+        placements.set(slot._id, {lane: lanes.get(slot._id)!, laneCount: laneEnds.length})
+      }
+      cluster = []
+    }
+
+    for (const slot of sorted) {
+      const start = new Date(slot.startTime).getTime()
+      if (cluster.length > 0 && start >= clusterEnd) flush()
+      cluster.push(slot)
+      clusterEnd = Math.max(clusterEnd, new Date(slot.endTime).getTime())
+    }
+    flush()
+  }
+
+  return placements
 }

@@ -10,136 +10,87 @@ import {
   Card,
   Badge,
   Heading,
-  TextInput,
 } from '@sanity/ui'
-import type {SlotData, RoomData, SessionData, TimeInterval} from '../types'
+import type {SlotData, RoomData, TimeInterval} from '../types'
 import {wouldConflict} from '../utils/conflicts'
 
-type AssignmentMode = 'create' | 'edit'
-
-export interface AssignTarget {
-  roomId: string
-  time: string
-}
-
-interface AssignmentDialogProps {
-  mode: AssignmentMode
-  /** The session being assigned (create mode) */
-  session?: SessionData | null
-  /** The existing slot being edited (edit mode) */
-  slot?: SlotData | null
-  /** Target room and time (create mode) */
-  target?: AssignTarget | null
+interface SlotEditDialogProps {
+  slot: SlotData
   rooms: RoomData[]
   intervals: TimeInterval[]
   allSlots: SlotData[]
-  conferenceId: string
-  onAssign: (data: {
-    sessionId: string
-    roomId: string
-    startTime: string
-    endTime: string
-    isPlenary: boolean
-  }) => void
   onUpdate: (data: {
-    slotId: string
+    slot: SlotData
     roomId: string
     startTime: string
     endTime: string
     isPlenary: boolean
   }) => void
-  onRemove: (slotId: string) => void
+  onRemove: (slot: SlotData) => void
   onClose: () => void
 }
 
-export function AssignmentDialog({
-  mode,
-  session,
+/**
+ * Edit an existing slot. Placement no longer goes through a dialog —
+ * drops and click-to-place commit immediately (with undo).
+ * Submitting closes instantly; the mutation continues optimistically.
+ */
+export function SlotEditDialog({
   slot,
-  target,
   rooms,
   intervals,
   allSlots,
-  conferenceId,
-  onAssign,
   onUpdate,
   onRemove,
   onClose,
-}: AssignmentDialogProps) {
-  const initialRoomId = mode === 'edit' ? (slot?.room?._id ?? '') : (target?.roomId ?? '')
-  const initialTime = mode === 'edit' ? (slot?.startTime ?? '') : (target?.time ?? '')
-  const initialPlenary = mode === 'edit' ? (slot?.isPlenary ?? false) : false
+}: SlotEditDialogProps) {
+  const [roomId, setRoomId] = useState(slot.room?._id ?? '')
+  const [startTime, setStartTime] = useState(slot.startTime ?? '')
+  const [isPlenary, setIsPlenary] = useState(slot.isPlenary ?? false)
 
-  const [roomId, setRoomId] = useState(initialRoomId)
-  const [startTime, setStartTime] = useState(initialTime)
-  const [isPlenary, setIsPlenary] = useState(initialPlenary)
+  const session = slot.session
+  const durationMs = useMemo(() => {
+    const fromSlot = new Date(slot.endTime).getTime() - new Date(slot.startTime).getTime()
+    return fromSlot > 0 ? fromSlot : (session?.duration ?? 30) * 60_000
+  }, [slot.startTime, slot.endTime, session])
 
-  const sessionData = mode === 'edit' ? slot?.session : session
-  const duration = sessionData?.duration ?? 30
-
-  // Compute end time from start time + duration
   const endTime = useMemo(() => {
     if (!startTime) return ''
-    const start = new Date(startTime)
-    return new Date(start.getTime() + duration * 60 * 1000).toISOString()
-  }, [startTime, duration])
+    return new Date(new Date(startTime).getTime() + durationMs).toISOString()
+  }, [startTime, durationMs])
 
-  // Check for conflicts
   const conflictingSlots = useMemo(() => {
     if (!startTime || !endTime || !roomId) return []
-    const excludeId = mode === 'edit' ? slot?._id : undefined
-    return wouldConflict(startTime, endTime, roomId, allSlots, excludeId)
-  }, [startTime, endTime, roomId, allSlots, mode, slot])
+    return wouldConflict(startTime, endTime, roomId, isPlenary, allSlots, slot._id)
+  }, [startTime, endTime, roomId, isPlenary, allSlots, slot._id])
 
   const handleSubmit = () => {
-    if (!roomId || !startTime || !endTime || !sessionData) return
-
-    if (mode === 'create') {
-      onAssign({
-        sessionId: sessionData._id,
-        roomId,
-        startTime,
-        endTime,
-        isPlenary,
-      })
-    } else if (mode === 'edit' && slot) {
-      onUpdate({
-        slotId: slot._id,
-        roomId,
-        startTime,
-        endTime,
-        isPlenary,
-      })
-    }
+    if (!roomId || !startTime || !endTime) return
+    onUpdate({slot, roomId, startTime, endTime, isPlenary})
+    onClose()
   }
 
-  const title = mode === 'create' ? 'Assign Session' : 'Edit Slot'
+  const handleRemove = () => {
+    onRemove(slot)
+    onClose()
+  }
 
   return (
-    <Dialog
-      id="assignment-dialog"
-      header={title}
-      onClose={onClose}
-      width={1}
-    >
+    <Dialog id="slot-edit-dialog" header="Edit slot" onClose={onClose} width={1}>
       <Card padding={4}>
         <Stack space={4}>
-          {/* Session info */}
-          {sessionData && (
+          {session && (
             <Stack space={2}>
-              <Heading size={1}>{sessionData.title}</Heading>
+              <Heading size={1}>{session.title}</Heading>
               <Flex gap={2}>
-                {sessionData.sessionType && (
-                  <Badge fontSize={0}>{sessionData.sessionType}</Badge>
-                )}
+                {session.sessionType && <Badge fontSize={0}>{session.sessionType}</Badge>}
                 <Text size={1} muted>
-                  {duration} min
+                  {Math.round(durationMs / 60_000)} min
                 </Text>
               </Flex>
             </Stack>
           )}
 
-          {/* Room selector */}
           <Stack space={2}>
             <Text size={1} weight="semibold">
               Room
@@ -159,10 +110,9 @@ export function AssignmentDialog({
             </Select>
           </Stack>
 
-          {/* Start time selector */}
           <Stack space={2}>
             <Text size={1} weight="semibold">
-              Start Time
+              Start time
             </Text>
             <Select
               fontSize={1}
@@ -178,11 +128,10 @@ export function AssignmentDialog({
             </Select>
           </Stack>
 
-          {/* Computed end time */}
           {endTime && (
             <Stack space={2}>
               <Text size={1} weight="semibold">
-                End Time
+                End time
               </Text>
               <Text size={1} muted>
                 {new Date(endTime).toLocaleTimeString('en-US', {
@@ -194,7 +143,6 @@ export function AssignmentDialog({
             </Stack>
           )}
 
-          {/* Plenary checkbox */}
           <Flex align="center" gap={2}>
             <Checkbox
               id="plenary-checkbox"
@@ -206,12 +154,11 @@ export function AssignmentDialog({
             </label>
           </Flex>
 
-          {/* Conflict warning */}
           {conflictingSlots.length > 0 && (
             <Card tone="caution" padding={3} radius={2}>
               <Stack space={2}>
                 <Text size={1} weight="semibold">
-                  Conflict Warning
+                  Conflict warning
                 </Text>
                 {conflictingSlots.map((cs) => (
                   <Text key={cs._id} size={1}>
@@ -222,22 +169,14 @@ export function AssignmentDialog({
             </Card>
           )}
 
-          {/* Actions */}
           <Flex gap={2} justify="flex-end">
-            {mode === 'edit' && slot && (
-              <Button
-                tone="critical"
-                mode="ghost"
-                text="Remove"
-                onClick={() => onRemove(slot._id)}
-              />
-            )}
+            <Button tone="critical" mode="ghost" text="Remove" onClick={handleRemove} />
             <Button mode="ghost" text="Cancel" onClick={onClose} />
             <Button
               tone="primary"
-              text={mode === 'create' ? 'Assign' : 'Update'}
+              text="Update"
               onClick={handleSubmit}
-              disabled={!roomId || !startTime || !sessionData}
+              disabled={!roomId || !startTime}
             />
           </Flex>
         </Stack>

@@ -2,7 +2,36 @@ import type {TimeInterval} from '../types'
 import type {SlotData} from '../types'
 
 const TIMEZONE = 'America/New_York'
-const INTERVAL_MINUTES = 15
+export const INTERVAL_MINUTES = 15
+/** Height of one 15-minute grid row in px — shared by grid rows and pointer math */
+export const ROW_HEIGHT_PX = 24
+
+const offsetCache = new Map<string, string>()
+
+/**
+ * UTC offset string (e.g. "-04:00" or "-05:00") for a calendar date in the
+ * conference timezone. DST-safe: derived via Intl rather than hardcoded.
+ */
+export function tzOffset(dateStr: string, timeZone: string = TIMEZONE): string {
+  const cacheKey = `${dateStr}:${timeZone}`
+  const cached = offsetCache.get(cacheKey)
+  if (cached) return cached
+
+  // Noon UTC is unambiguous for deriving the offset of that calendar date
+  const probe = new Date(`${dateStr}T12:00:00Z`)
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    timeZoneName: 'longOffset',
+  }).formatToParts(probe)
+  const name = parts.find((p) => p.type === 'timeZoneName')?.value ?? 'GMT'
+  // "GMT-4", "GMT-04:00", or "GMT" (UTC)
+  const match = name.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/)
+  const offset = match
+    ? `${match[1]}${match[2].padStart(2, '0')}:${match[3] ?? '00'}`
+    : '+00:00'
+  offsetCache.set(cacheKey, offset)
+  return offset
+}
 
 /**
  * Generate 15-minute time intervals for a given day.
@@ -14,14 +43,14 @@ export function generateTimeIntervals(
   endHour = 18,
 ): TimeInterval[] {
   const intervals: TimeInterval[] = []
+  const offset = tzOffset(dateStr)
   let row = 1
 
   for (let hour = startHour; hour < endHour; hour++) {
     for (let min = 0; min < 60; min += INTERVAL_MINUTES) {
       const hh = String(hour).padStart(2, '0')
       const mm = String(min).padStart(2, '0')
-      // Build ISO string in NYC timezone (EDT = -04:00)
-      const iso = `${dateStr}T${hh}:${mm}:00-04:00`
+      const iso = `${dateStr}T${hh}:${mm}:00${offset}`
 
       const label = new Date(iso).toLocaleTimeString('en-US', {
         hour: 'numeric',
@@ -39,7 +68,6 @@ export function generateTimeIntervals(
 
 /**
  * Compute the optimal start/end hours for the grid based on actual slot data.
- * Adds 1-hour padding on each side, clamped to 7AM–10PM.
  * Falls back to 8AM–6PM when no slots exist.
  */
 export function computeTimeRange(slots: SlotData[]): {startHour: number; endHour: number} {
@@ -54,7 +82,6 @@ export function computeTimeRange(slots: SlotData[]): {startHour: number; endHour
     const startDate = new Date(slot.startTime)
     const endDate = new Date(slot.endTime)
 
-    // Convert to NYC timezone hours
     const startStr = startDate.toLocaleTimeString('en-US', {
       hour: 'numeric',
       hour12: false,
@@ -76,10 +103,8 @@ export function computeTimeRange(slots: SlotData[]): {startHour: number; endHour
     if (effectiveEndHour > maxHour) maxHour = effectiveEndHour
   }
 
-  // If we couldn't parse any valid slots, fallback
   if (minHour > maxHour) return {startHour: 8, endHour: 18}
 
-  // Tight fit: start at earliest hour, add 30-min padding at end only
   const startHour = Math.max(7, minHour)
   const endHour = Math.min(22, maxHour + 1)
 
@@ -137,9 +162,10 @@ export function getConferenceDays(startDate: string, endDate: string): string[] 
  * Compute day start/end boundaries for GROQ filtering.
  */
 export function getDayBounds(dateStr: string): {dayStart: string; dayEnd: string} {
+  const offset = tzOffset(dateStr)
   return {
-    dayStart: `${dateStr}T00:00:00-04:00`,
-    dayEnd: `${dateStr}T23:59:59-04:00`,
+    dayStart: `${dateStr}T00:00:00${offset}`,
+    dayEnd: `${dateStr}T23:59:59${offset}`,
   }
 }
 
@@ -156,4 +182,17 @@ export function formatDayLabel(dateStr: string): string {
     day: 'numeric',
     timeZone: 'UTC',
   })
+}
+
+/**
+ * "YYYY-MM-DD" of the current moment in the conference timezone —
+ * used to decide whether to render the now-line.
+ */
+export function todayInTimezone(timeZone: string = TIMEZONE): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date())
 }

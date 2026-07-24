@@ -5,6 +5,7 @@ import {
   useApplyDocumentActions,
   createDocumentHandle,
   createDocument,
+  editDocument,
   publishDocument,
   deleteDocument,
 } from '@sanity/sdk-react'
@@ -18,8 +19,11 @@ import {
   KeyboardSensor,
   useSensor,
   useSensors,
+  useDndMonitor,
+  pointerWithin,
+  MeasuringStrategy,
 } from '@dnd-kit/core'
-import type {DragStartEvent, DragEndEvent, Active} from '@dnd-kit/core'
+import type {DragStartEvent, DragEndEvent, DragMoveEvent, Active, Over} from '@dnd-kit/core'
 import {CONFERENCE_QUERY, SLOTS_QUERY, ROOMS_QUERY} from '../queries'
 import type {ConferenceData, SlotData, RoomData, SessionData} from '../types'
 import {
@@ -27,22 +31,27 @@ import {
   getDayBounds,
   generateTimeIntervals,
   computeTimeRange,
+  todayInTimezone,
+  ROW_HEIGHT_PX,
+  INTERVAL_MINUTES,
 } from '../utils/timeGrid'
+import {wouldConflict} from '../utils/conflicts'
+import {usePendingOps} from '../hooks/usePendingOps'
 import {ConferenceHeader} from './ConferenceHeader'
 import {ScheduleGrid} from './ScheduleGrid'
+import type {GhostTarget} from './ScheduleGrid'
 import {UnscheduledPanel} from './UnscheduledPanel'
-import {AssignmentDialog} from './AssignmentDialog'
+import {SlotEditDialog} from './SlotEditDialog'
 import {DragOverlayContent} from './DragOverlayContent'
-import type {AssignTarget} from './AssignmentDialog'
+import {TrackLegend} from './TrackLegend'
+import {UndoBar} from './UndoBar'
+import type {UndoEntry} from './UndoBar'
 
-/** Callback exposed by GridWithActions for direct slot moves (no dialog) */
-export type DirectMoveFn = (
-  slotId: string,
-  roomId: string,
-  time: string,
-  duration: number,
-  isPlenary: boolean,
-) => Promise<void>
+type DragData = {type: 'session'; session: SessionData} | {type: 'slot'; slot: SlotData}
+
+function addMinutes(iso: string, minutes: number): string {
+  return new Date(new Date(iso).getTime() + minutes * 60_000).toISOString()
+}
 
 function ScheduleContent() {
   const {data: conference} = useQuery<ConferenceData>({query: CONFERENCE_QUERY})
@@ -82,26 +91,7 @@ function ScheduleWithConference({
   const [selectedDay, setSelectedDay] = useState(days[0])
   const [isPending, setIsPending] = useState(false)
   const [selectedSession, setSelectedSession] = useState<SessionData | null>(null)
-  const [editingSlot, setEditingSlot] = useState<SlotData | null>(null)
-  const [assignTarget, setAssignTarget] = useState<AssignTarget | null>(null)
   const [activeDrag, setActiveDrag] = useState<Active | null>(null)
-
-  // Optimistic: hide sessions from sidebar immediately after assignment
-  const [hiddenSessionIds, setHiddenSessionIds] = useState<Set<string>>(new Set())
-  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const handleOptimisticHideSession = useCallback((sessionId: string) => {
-    setHiddenSessionIds((prev) => new Set(prev).add(sessionId))
-    // Clear previous timer and set a new one — subscription usually fires within 500ms,
-    // 2s is a generous buffer
-    if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
-    hideTimerRef.current = setTimeout(() => {
-      setHiddenSessionIds(new Set())
-    }, 2000)
-  }, [])
-
-  // Ref for direct slot moves — GridWithActions sets this so the drag handler can call it
-  const directMoveRef = useRef<DirectMoveFn | null>(null)
 
   // Sensors: pointer with 5px distance activation (so clicks still work), + keyboard
   const pointerSensor = useSensor(PointerSensor, {
@@ -122,31 +112,11 @@ function ScheduleWithConference({
     setSelectedSession(session)
   }, [])
 
-  const handleSlotClick = useCallback((slot: SlotData) => {
-    setEditingSlot(slot)
-  }, [])
-
-  const handleCellClick = useCallback(
-    (roomId: string, time: string) => {
-      if (selectedSession) {
-        setAssignTarget({roomId, time})
-      }
-    },
-    [selectedSession],
-  )
-
-  const handleCloseDialog = useCallback(() => {
-    setEditingSlot(null)
-    setAssignTarget(null)
-  }, [])
-
-  const handleAssigned = useCallback(() => {
-    setEditingSlot(null)
-    setAssignTarget(null)
+  const handleCancelSelection = useCallback(() => {
     setSelectedSession(null)
   }, [])
 
-  const handleCancelSelection = useCallback(() => {
+  const handlePlaced = useCallback(() => {
     setSelectedSession(null)
   }, [])
 
@@ -154,57 +124,31 @@ function ScheduleWithConference({
     setActiveDrag(event.active)
   }, [])
 
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      setActiveDrag(null)
-
-      const {active, over} = event
-      if (!over?.data?.current) return
-
-      const overData = over.data.current as {roomId: string; time: string}
-      if (!overData.roomId || !overData.time) return
-
-      const activeData = active.data.current as
-        | {type: 'session'; session: SessionData}
-        | {type: 'slot'; slot: SlotData}
-
-      if (activeData.type === 'session') {
-        // Dragged from sidebar: select session + set target → opens dialog
-        setSelectedSession(activeData.session)
-        setAssignTarget({roomId: overData.roomId, time: overData.time})
-      } else if (activeData.type === 'slot') {
-        // Dragged existing slot: move directly without dialog
-        const slot = activeData.slot
-        const duration = slot.session?.duration ?? 30
-        const isPlenary = slot.isPlenary ?? false
-        if (directMoveRef.current) {
-          directMoveRef.current(slot._id, overData.roomId, overData.time, duration, isPlenary)
-        }
-      }
-    },
-    [],
-  )
+  const handleDragFinish = useCallback(() => {
+    setActiveDrag(null)
+  }, [])
 
   const {dayStart, dayEnd} = useMemo(() => getDayBounds(selectedDay), [selectedDay])
 
-  const showDialog = editingSlot || (assignTarget && selectedSession)
-
-  // Determine the session to show in the drag overlay
+  // Session shown in the drag overlay
   const dragSession = useMemo(() => {
     if (!activeDrag?.data?.current) return null
-    const data = activeDrag.data.current as
-      | {type: 'session'; session: SessionData}
-      | {type: 'slot'; slot: SlotData}
+    const data = activeDrag.data.current as DragData
     if (data.type === 'session') return data.session
     if (data.type === 'slot') return data.slot.session
     return null
   }, [activeDrag])
 
+  const isSlotDragging = (activeDrag?.data?.current as DragData | undefined)?.type === 'slot'
+
   return (
     <DndContext
       sensors={sensors}
+      collisionDetection={pointerWithin}
+      measuring={{droppable: {strategy: MeasuringStrategy.Always}}}
       onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      onDragEnd={handleDragFinish}
+      onDragCancel={handleDragFinish}
     >
       <Flex direction="column" height="fill">
         <ConferenceHeader
@@ -219,7 +163,7 @@ function ScheduleWithConference({
           <Card padding={2} paddingX={3} tone="primary" borderBottom>
             <Flex align="center" gap={3}>
               <Text size={1}>
-                Click a cell to place: <strong>{selectedSession.title}</strong>
+                Click the grid to place: <strong>{selectedSession.title}</strong>
               </Text>
               <Button
                 mode="bleed"
@@ -237,6 +181,7 @@ function ScheduleWithConference({
           flex={1}
           overflow="hidden"
           style={{
+            position: 'relative',
             minHeight: 0,
             opacity: isPending ? 0.6 : 1,
             transition: 'opacity 150ms',
@@ -244,23 +189,7 @@ function ScheduleWithConference({
         >
           <Suspense
             fallback={
-              <Card padding={4} style={{width: 280, minWidth: 200, maxWidth: 320}}>
-                <Flex align="center" gap={3}>
-                  <Spinner muted />
-                  <Text muted>Loading sessions...</Text>
-                </Flex>
-              </Card>
-            }
-          >
-            <UnscheduledPanel
-              selectedSessionId={selectedSession?._id ?? null}
-              onSelectSession={handleSelectSession}
-              hiddenSessionIds={hiddenSessionIds}
-            />
-          </Suspense>
-          <Suspense
-            fallback={
-              <Flex padding={4} align="center" gap={3} flex={1}>
+              <Flex padding={4} align="center" justify="center" gap={3} flex={1}>
                 <Spinner muted />
                 <Text muted>Loading schedule...</Text>
               </Flex>
@@ -272,20 +201,14 @@ function ScheduleWithConference({
               dayStart={dayStart}
               dayEnd={dayEnd}
               selectedSession={selectedSession}
-              editingSlot={editingSlot}
-              assignTarget={assignTarget}
-              showDialog={!!showDialog}
-              directMoveRef={directMoveRef}
-              onSlotClick={handleSlotClick}
-              onCellClick={handleCellClick}
-              onCloseDialog={handleCloseDialog}
-              onAssigned={handleAssigned}
-              onOptimisticHideSession={handleOptimisticHideSession}
+              isSlotDragging={isSlotDragging}
+              onSelectSession={handleSelectSession}
+              onPlaced={handlePlaced}
             />
           </Suspense>
         </Flex>
       </Flex>
-      <DragOverlay dropAnimation={null}>
+      <DragOverlay>
         {dragSession ? <DragOverlayContent session={dragSession} /> : null}
       </DragOverlay>
     </DndContext>
@@ -298,32 +221,20 @@ function GridWithActions({
   dayStart,
   dayEnd,
   selectedSession,
-  editingSlot,
-  assignTarget,
-  showDialog,
-  directMoveRef,
-  onSlotClick,
-  onCellClick,
-  onCloseDialog,
-  onAssigned,
-  onOptimisticHideSession,
+  isSlotDragging,
+  onSelectSession,
+  onPlaced,
 }: {
   conferenceId: string
   selectedDay: string
   dayStart: string
   dayEnd: string
   selectedSession: SessionData | null
-  editingSlot: SlotData | null
-  assignTarget: AssignTarget | null
-  showDialog: boolean
-  directMoveRef: React.MutableRefObject<DirectMoveFn | null>
-  onSlotClick: (slot: SlotData) => void
-  onCellClick: (roomId: string, time: string) => void
-  onCloseDialog: () => void
-  onAssigned: () => void
-  onOptimisticHideSession: (sessionId: string) => void
+  isSlotDragging: boolean
+  onSelectSession: (session: SessionData | null) => void
+  onPlaced: () => void
 }) {
-  const {data: slots} = useQuery<SlotData[]>({
+  const {data: serverSlots} = useQuery<SlotData[]>({
     query: SLOTS_QUERY,
     params: {conferenceId, dayStart, dayEnd},
   })
@@ -331,198 +242,345 @@ function GridWithActions({
   const apply = useApplyDocumentActions()
   const toast = useToast()
 
-  // Optimistic override: full replacement array that pre-empts query data
-  const [slotsOverride, setSlotsOverride] = useState<SlotData[] | null>(null)
+  const {slots, addOp, removeOp, pendingSessionIds} = usePendingOps(serverSlots ?? undefined)
 
-  // When query data changes (subscription fires), drop the override
-  const slotsRef = useRef(slots)
-  useEffect(() => {
-    if (slotsRef.current !== slots) {
-      slotsRef.current = slots
-      setSlotsOverride(null)
-    }
-  }, [slots])
+  const [editingSlot, setEditingSlot] = useState<SlotData | null>(null)
+  const [ghost, setGhost] = useState<GhostTarget | null>(null)
+  const [undo, setUndo] = useState<UndoEntry | null>(null)
 
-  const effectiveSlots = slotsOverride ?? (slots ?? [])
+  // Auto-fit time range; only ever widens while viewing the same day so the
+  // grid doesn't jump around during mutations
+  const computed = computeTimeRange(slots)
+  const rangeRef = useRef<{day: string; startHour: number; endHour: number} | null>(null)
+  if (!rangeRef.current || rangeRef.current.day !== selectedDay) {
+    rangeRef.current = {day: selectedDay, ...computed}
+  } else {
+    rangeRef.current.startHour = Math.min(rangeRef.current.startHour, computed.startHour)
+    rangeRef.current.endHour = Math.max(rangeRef.current.endHour, computed.endHour)
+  }
+  const {startHour, endHour} = rangeRef.current
 
-  // Auto-fit time range based on effective slot data
-  const {startHour, endHour} = useMemo(() => computeTimeRange(effectiveSlots), [effectiveSlots])
   const intervals = useMemo(
     () => generateTimeIntervals(selectedDay, startHour, endHour),
     [selectedDay, startHour, endHour],
   )
 
-  const handleAssign = useCallback(
-    async (data: {
-      sessionId: string
-      roomId: string
-      startTime: string
-      endTime: string
-      isPlenary: boolean
-    }) => {
-      const slotId = crypto.randomUUID()
-      const handle = createDocumentHandle({
-        documentId: slotId,
-        documentType: 'scheduleSlot',
-      })
+  // ---- Mutations -----------------------------------------------------------
+  // Every mutation: (1) registers a pending op so the UI updates instantly,
+  // (2) runs a SINGLE atomic transaction, (3) on failure removes its own op
+  // and reports. The op is reconciled away once query data reflects it.
 
-      // Build optimistic slot and apply immediately
-      const room = (rooms ?? []).find((r) => r._id === data.roomId) ?? null
-      const optimisticSlot: SlotData = {
-        _id: slotId,
-        startTime: data.startTime,
-        endTime: data.endTime,
-        isPlenary: data.isPlenary,
-        room,
-        session: selectedSession,
-      }
-      setSlotsOverride([...effectiveSlots, optimisticSlot])
-      onOptimisticHideSession(data.sessionId)
-
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- SDK generic types don't know our schema fields
-        const initialValue: any = {
-          session: {_type: 'reference', _ref: data.sessionId},
-          conference: {_type: 'reference', _ref: conferenceId},
-          room: {_type: 'reference', _ref: data.roomId},
-          startTime: data.startTime,
-          endTime: data.endTime,
-          isPlenary: data.isPlenary,
-        }
-        await apply([createDocument(handle, initialValue), publishDocument(handle)])
-        toast.push({status: 'success', title: 'Session assigned'})
-        onAssigned()
-      } catch (err) {
-        setSlotsOverride(null)
-        toast.push({status: 'error', title: 'Failed to assign session'})
-      }
-    },
-    [apply, conferenceId, rooms, selectedSession, effectiveSlots, toast, onAssigned, onOptimisticHideSession],
+  const buildAttrs = useCallback(
+    (sessionId: string, roomId: string, startTime: string, endTime: string, isPlenary: boolean) => ({
+      session: {_type: 'reference', _ref: sessionId},
+      conference: {_type: 'reference', _ref: conferenceId},
+      room: {_type: 'reference', _ref: roomId},
+      startTime,
+      endTime,
+      isPlenary,
+    }),
+    [conferenceId],
   )
 
-  const handleUpdate = useCallback(
-    async (data: {
-      slotId: string
-      roomId: string
-      startTime: string
-      endTime: string
-      isPlenary: boolean
-    }) => {
-      const handle = createDocumentHandle({
-        documentId: data.slotId,
-        documentType: 'scheduleSlot',
-      })
-
-      // Optimistic: update slot in-place
-      const room = (rooms ?? []).find((r) => r._id === data.roomId) ?? null
-      setSlotsOverride(
-        effectiveSlots.map((s) =>
-          s._id === data.slotId
-            ? {...s, startTime: data.startTime, endTime: data.endTime, isPlenary: data.isPlenary, room}
-            : s,
-        ),
+  const runCreate = useCallback(
+    async (slot: SlotData, undoEntry: UndoEntry | null, successTitle: string) => {
+      if (!slot.session || !slot.room) return
+      const opId = addOp({kind: 'create', slot})
+      const handle = createDocumentHandle({documentId: slot._id, documentType: 'scheduleSlot'})
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- SDK generic types don't know our schema fields
+      const attrs: any = buildAttrs(
+        slot.session._id,
+        slot.room._id,
+        slot.startTime,
+        slot.endTime,
+        slot.isPlenary ?? false,
       )
-
       try {
-        // Delete and recreate to update all fields atomically
-        await apply([deleteDocument(handle)])
-        const newHandle = createDocumentHandle({
-          documentId: data.slotId,
-          documentType: 'scheduleSlot',
-        })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- SDK generic types don't know our schema fields
-        const initialValue: any = {
-          session: {_type: 'reference', _ref: editingSlot?.session?._id ?? ''},
-          conference: {_type: 'reference', _ref: conferenceId},
-          room: {_type: 'reference', _ref: data.roomId},
-          startTime: data.startTime,
-          endTime: data.endTime,
-          isPlenary: data.isPlenary,
-        }
-        await apply([createDocument(newHandle, initialValue), publishDocument(newHandle)])
-        toast.push({status: 'success', title: 'Slot updated'})
-        onAssigned()
+        await apply([createDocument(handle, attrs), publishDocument(handle)])
+        toast.push({status: 'success', title: successTitle})
+        setUndo(undoEntry)
       } catch (err) {
-        setSlotsOverride(null)
-        toast.push({status: 'error', title: 'Failed to update slot'})
+        console.error('[schedule-builder] create failed', err)
+        removeOp(opId)
+        toast.push({status: 'error', title: 'Could not place session'})
       }
     },
-    [apply, conferenceId, rooms, editingSlot, effectiveSlots, toast, onAssigned],
+    [addOp, removeOp, apply, buildAttrs, toast],
   )
 
-  // Direct move: used by DnD drag-end for existing slots (no dialog)
-  const handleDirectMove = useCallback(
-    async (slotId: string, roomId: string, time: string, duration: number, isPlenary: boolean) => {
-      const startTime = time
-      const endTime = new Date(new Date(time).getTime() + duration * 60 * 1000).toISOString()
-
-      // Find the slot to get the session reference
-      const slot = effectiveSlots.find((s) => s._id === slotId)
-      const sessionId = slot?.session?._id
+  const runEdit = useCallback(
+    async (
+      slot: SlotData,
+      target: {roomId: string; startTime: string; endTime: string; isPlenary: boolean},
+      undoEntry: UndoEntry | null,
+      successTitle: string,
+    ) => {
+      const sessionId = slot.session?._id
       if (!sessionId) return
-
-      // Optimistic: move slot to new position
-      const room = (rooms ?? []).find((r) => r._id === roomId) ?? null
-      setSlotsOverride(
-        effectiveSlots.map((s) =>
-          s._id === slotId ? {...s, startTime, endTime, isPlenary, room} : s,
-        ),
+      const room = (rooms ?? []).find((r) => r._id === target.roomId) ?? null
+      const opId = addOp({
+        kind: 'update',
+        slotId: slot._id,
+        patch: {
+          startTime: target.startTime,
+          endTime: target.endTime,
+          isPlenary: target.isPlenary,
+          room,
+        },
+      })
+      const handle = createDocumentHandle({documentId: slot._id, documentType: 'scheduleSlot'})
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- SDK generic types don't know our schema fields
+      const attrs: any = buildAttrs(
+        sessionId,
+        target.roomId,
+        target.startTime,
+        target.endTime,
+        target.isPlenary,
       )
-
-      const handle = createDocumentHandle({
-        documentId: slotId,
-        documentType: 'scheduleSlot',
-      })
-
       try {
-        await apply([deleteDocument(handle)])
-        const newHandle = createDocumentHandle({
-          documentId: slotId,
-          documentType: 'scheduleSlot',
-        })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- SDK generic types don't know our schema fields
-        const initialValue: any = {
-          session: {_type: 'reference', _ref: sessionId},
-          conference: {_type: 'reference', _ref: conferenceId},
-          room: {_type: 'reference', _ref: roomId},
-          startTime,
-          endTime,
-          isPlenary,
-        }
-        await apply([createDocument(newHandle, initialValue), publishDocument(newHandle)])
-        toast.push({status: 'success', title: 'Slot moved'})
+        // Edit then publish (publish preconditions require the edit to have
+        // landed first). No delete involved: if publish fails, the change is
+        // safely parked as a draft rather than lost.
+        await apply([editDocument(handle, attrs)])
+        await apply([publishDocument(handle)])
+        toast.push({status: 'success', title: successTitle})
+        setUndo(undoEntry)
       } catch (err) {
-        setSlotsOverride(null)
-        toast.push({status: 'error', title: 'Failed to move slot'})
+        console.error('[schedule-builder] edit failed', err)
+        removeOp(opId)
+        toast.push({status: 'error', title: 'Could not move slot'})
       }
     },
-    [apply, conferenceId, rooms, effectiveSlots, toast],
+    [addOp, removeOp, apply, buildAttrs, rooms, toast],
   )
 
-  // Expose direct move to parent's drag handler via ref
-  directMoveRef.current = handleDirectMove
-
-  const handleRemove = useCallback(
-    async (slotId: string) => {
-      // Optimistic: remove slot from array
-      setSlotsOverride(effectiveSlots.filter((s) => s._id !== slotId))
-
-      const handle = createDocumentHandle({
-        documentId: slotId,
-        documentType: 'scheduleSlot',
-      })
-
+  const runRemove = useCallback(
+    async (slot: SlotData, undoEntry: UndoEntry | null, successTitle: string) => {
+      const opId = addOp({kind: 'remove', slotId: slot._id})
+      const handle = createDocumentHandle({documentId: slot._id, documentType: 'scheduleSlot'})
       try {
         await apply([deleteDocument(handle)])
-        toast.push({status: 'success', title: 'Slot removed'})
-        onAssigned()
+        toast.push({status: 'success', title: successTitle})
+        setUndo(undoEntry)
       } catch (err) {
-        setSlotsOverride(null)
-        toast.push({status: 'error', title: 'Failed to remove slot'})
+        console.error('[schedule-builder] remove failed', err)
+        removeOp(opId)
+        toast.push({status: 'error', title: 'Could not remove slot'})
       }
     },
-    [apply, effectiveSlots, toast, onAssigned],
+    [addOp, removeOp, apply, toast],
   )
+
+  const placeSession = useCallback(
+    (session: SessionData, roomId: string, startTime: string) => {
+      const room = (rooms ?? []).find((r) => r._id === roomId) ?? null
+      if (!room) return
+      const durationMin = session.duration ?? 30
+      const slot: SlotData = {
+        _id: crypto.randomUUID(),
+        startTime,
+        endTime: addMinutes(startTime, durationMin),
+        isPlenary: false,
+        room,
+        session,
+      }
+      onPlaced()
+      void runCreate(
+        slot,
+        {label: `Placed “${session.title}”`, run: () => void runRemove(slot, null, 'Placement undone')},
+        'Session placed',
+      )
+    },
+    [rooms, runCreate, runRemove, onPlaced],
+  )
+
+  const moveSlot = useCallback(
+    (slot: SlotData, roomId: string, startTime: string) => {
+      const durationMs = new Date(slot.endTime).getTime() - new Date(slot.startTime).getTime()
+      const endTime = new Date(new Date(startTime).getTime() + durationMs).toISOString()
+      const prev = {
+        roomId: slot.room?._id ?? roomId,
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        isPlenary: slot.isPlenary ?? false,
+      }
+      if (prev.roomId === roomId && prev.startTime === startTime) return
+      void runEdit(
+        slot,
+        {roomId, startTime, endTime, isPlenary: slot.isPlenary ?? false},
+        {
+          label: `Moved “${slot.session?.title ?? 'slot'}”`,
+          run: () => void runEdit(slot, prev, null, 'Move undone'),
+        },
+        'Slot moved',
+      )
+    },
+    [runEdit],
+  )
+
+  const updateSlot = useCallback(
+    (data: {slot: SlotData; roomId: string; startTime: string; endTime: string; isPlenary: boolean}) => {
+      const prev = {
+        roomId: data.slot.room?._id ?? data.roomId,
+        startTime: data.slot.startTime,
+        endTime: data.slot.endTime,
+        isPlenary: data.slot.isPlenary ?? false,
+      }
+      void runEdit(
+        data.slot,
+        {roomId: data.roomId, startTime: data.startTime, endTime: data.endTime, isPlenary: data.isPlenary},
+        {
+          label: `Updated “${data.slot.session?.title ?? 'slot'}”`,
+          run: () => void runEdit(data.slot, prev, null, 'Update undone'),
+        },
+        'Slot updated',
+      )
+    },
+    [runEdit],
+  )
+
+  const removeSlot = useCallback(
+    (slot: SlotData) => {
+      void runRemove(
+        slot,
+        {
+          label: `Removed “${slot.session?.title ?? 'slot'}”`,
+          run: () => void runCreate(slot, null, 'Slot restored'),
+        },
+        'Slot removed',
+      )
+    },
+    [runRemove, runCreate],
+  )
+
+  // ---- Drag and drop -------------------------------------------------------
+  // The drop row comes from pointer Y within the room column, so what the
+  // ghost previews is exactly what a drop commits.
+
+  const dropTargetFromEvent = useCallback(
+    (event: {
+      over: Over | null
+      delta: {x: number; y: number}
+      activatorEvent: Event | null
+      active: Active
+    }): {roomId: string; rowIndex: number} | null => {
+      const over = event.over
+      const overData = over?.data?.current as {type?: string; roomId?: string} | undefined
+      if (!over || overData?.type !== 'column' || !overData.roomId || !over.rect) return null
+      const activator = event.activatorEvent as Partial<PointerEvent> | null
+      const pointerY =
+        typeof activator?.clientY === 'number'
+          ? activator.clientY + event.delta.y
+          : (event.active.rect.current?.translated?.top ?? over.rect.top)
+      const rowIndex = Math.max(
+        0,
+        Math.min(intervals.length - 1, Math.floor((pointerY - over.rect.top) / ROW_HEIGHT_PX)),
+      )
+      return {roomId: overData.roomId, rowIndex}
+    },
+    [intervals.length],
+  )
+
+  const ghostForDrag = useCallback(
+    (dragData: DragData, roomId: string, rowIndex: number): GhostTarget => {
+      const isPlenary = dragData.type === 'slot' ? (dragData.slot.isPlenary ?? false) : false
+      const durationMin =
+        dragData.type === 'slot'
+          ? Math.max(
+              INTERVAL_MINUTES,
+              (new Date(dragData.slot.endTime).getTime() -
+                new Date(dragData.slot.startTime).getTime()) /
+                60_000,
+            )
+          : (dragData.session.duration ?? 30)
+      const span = Math.max(1, Math.round(durationMin / INTERVAL_MINUTES))
+      const startTime = intervals[rowIndex].start
+      const endTime = addMinutes(startTime, durationMin)
+      const excludeId = dragData.type === 'slot' ? dragData.slot._id : undefined
+      const conflict =
+        wouldConflict(startTime, endTime, roomId, isPlenary, slots, excludeId).length > 0
+      return {roomId, rowIndex, span, isPlenary, conflict}
+    },
+    [intervals, slots],
+  )
+
+  useDndMonitor({
+    onDragMove: (event: DragMoveEvent) => {
+      const dragData = event.active.data.current as DragData | undefined
+      if (!dragData) return
+      const target = dropTargetFromEvent(event)
+      setGhost(target ? ghostForDrag(dragData, target.roomId, target.rowIndex) : null)
+    },
+    onDragEnd: (event: DragEndEvent) => {
+      setGhost(null)
+      const dragData = event.active.data.current as DragData | undefined
+      if (!dragData) return
+
+      // Drop on the sidebar: unschedule
+      if (event.over?.id === 'unscheduled-dropzone') {
+        if (dragData.type === 'slot') removeSlot(dragData.slot)
+        return
+      }
+
+      const target = dropTargetFromEvent(event)
+      if (!target) return // no valid target — overlay snaps back
+
+      const startTime = intervals[target.rowIndex].start
+      if (dragData.type === 'session') {
+        placeSession(dragData.session, target.roomId, startTime)
+      } else {
+        moveSlot(dragData.slot, target.roomId, startTime)
+      }
+    },
+    onDragCancel: () => setGhost(null),
+  })
+
+  // Click-to-place (session selected in sidebar, then click the grid)
+  const handleColumnClick = useCallback(
+    (roomId: string, rowIndex: number) => {
+      if (!selectedSession) return
+      setGhost(null)
+      placeSession(selectedSession, roomId, intervals[rowIndex].start)
+    },
+    [selectedSession, placeSession, intervals],
+  )
+
+  // Clear a lingering hover ghost when click-to-place mode ends
+  useEffect(() => {
+    if (!selectedSession) setGhost(null)
+  }, [selectedSession])
+
+  const handleColumnHover = useCallback(
+    (roomId: string, rowIndex: number | null) => {
+      if (!selectedSession) return
+      setGhost(
+        rowIndex === null
+          ? null
+          : ghostForDrag({type: 'session', session: selectedSession}, roomId, rowIndex),
+      )
+    },
+    [selectedSession, ghostForDrag],
+  )
+
+  const handleSlotClick = useCallback((slot: SlotData) => {
+    setEditingSlot(slot)
+  }, [])
+
+  const handleCloseDialog = useCallback(() => setEditingSlot(null), [])
+  const handleDismissUndo = useCallback(() => setUndo(null), [])
+  const handleUndo = useCallback(() => {
+    undo?.run()
+    setUndo(null)
+  }, [undo])
+
+  // Hide sessions that are pending placement or already on the visible grid
+  const hiddenSessionIds = useMemo(() => {
+    const ids = new Set(pendingSessionIds)
+    for (const slot of slots) {
+      if (slot.session) ids.add(slot.session._id)
+    }
+    return ids
+  }, [pendingSessionIds, slots])
 
   if (!rooms || rooms.length === 0) {
     return (
@@ -532,34 +590,56 @@ function GridWithActions({
     )
   }
 
-  const dialogMode = editingSlot ? 'edit' : 'create'
+  // Keep the dialog's slot fresh as pending ops / live updates land
+  const editingSlotCurrent = editingSlot
+    ? (slots.find((s) => s._id === editingSlot._id) ?? editingSlot)
+    : null
 
   return (
     <>
-      <ScheduleGrid
-        slots={effectiveSlots}
-        rooms={rooms}
-        intervals={intervals}
-        onSlotClick={onSlotClick}
-        onCellClick={selectedSession ? onCellClick : undefined}
-        hasSelectedSession={!!selectedSession}
-      />
-      {showDialog && (
-        <AssignmentDialog
-          mode={dialogMode as 'create' | 'edit'}
-          session={selectedSession}
-          slot={editingSlot}
-          target={assignTarget}
+      <Suspense
+        fallback={
+          <Card padding={4} style={{width: 280, minWidth: 200, maxWidth: 320}}>
+            <Flex align="center" gap={3}>
+              <Spinner muted />
+              <Text muted>Loading sessions...</Text>
+            </Flex>
+          </Card>
+        }
+      >
+        <UnscheduledPanel
+          selectedSessionId={selectedSession?._id ?? null}
+          onSelectSession={onSelectSession}
+          hiddenSessionIds={hiddenSessionIds}
+          isSlotDragging={isSlotDragging}
+        />
+      </Suspense>
+      <Flex direction="column" flex={1} style={{minWidth: 0}}>
+        <TrackLegend slots={slots} />
+        <ScheduleGrid
+          slots={slots}
           rooms={rooms}
           intervals={intervals}
-          allSlots={effectiveSlots}
-          conferenceId={conferenceId}
-          onAssign={handleAssign}
-          onUpdate={handleUpdate}
-          onRemove={handleRemove}
-          onClose={onCloseDialog}
+          ghost={ghost}
+          showNowLine={selectedDay === todayInTimezone()}
+          onSlotClick={handleSlotClick}
+          hasSelectedSession={!!selectedSession}
+          onColumnClick={handleColumnClick}
+          onColumnHover={handleColumnHover}
+        />
+      </Flex>
+      {editingSlotCurrent && (
+        <SlotEditDialog
+          slot={editingSlotCurrent}
+          rooms={rooms}
+          intervals={intervals}
+          allSlots={slots}
+          onUpdate={updateSlot}
+          onRemove={removeSlot}
+          onClose={handleCloseDialog}
         />
       )}
+      {undo && <UndoBar undo={undo} onUndo={handleUndo} onDismiss={handleDismissUndo} />}
     </>
   )
 }

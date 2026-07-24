@@ -27,7 +27,8 @@ export function renderEmailBody(
 export function wrapInLayout(bodyHtml: string, subject?: string): string {
   let html = emailLayoutHtml.replace('{{EMAIL_BODY}}', bodyHtml)
   if (subject) {
-    html = html.replace('{{EMAIL_PREVIEW}}', escapeHTML(subject))
+    // The layout contains the token twice (title + hidden preview div)
+    html = html.replaceAll('{{EMAIL_PREVIEW}}', escapeHTML(subject))
   }
   return html
 }

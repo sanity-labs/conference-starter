@@ -12,7 +12,7 @@ try {
   if (major < MIN_MAJOR) {
     console.error(
       `\n❌ Next.js ${version} detected — this project requires Next.js ${MIN_MAJOR}+.\n` +
-        `   Run: pnpm --filter @repo/web add next@canary\n`,
+        `   Run: pnpm --filter @repo/web add next@latest\n`,
     )
     process.exit(1)
   }

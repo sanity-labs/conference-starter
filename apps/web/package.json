@@ -24,7 +24,7 @@
     "@sanity/context": "^0.7.1",
     "@sanity/image-url": "^2.1.1",
     "@vercel/og": "^0.11.1",
-    "ai": "^6.0.235",
+    "ai": "^7.0.37",
     "next": "^16.2.11",
     "next-sanity": "13.2.1",
     "pte-interpolation-react": "^1.5.0",

@@ -1,6 +1,6 @@
 import {PortableText as PortableTextReact, type PortableTextComponents} from '@portabletext/react'
 import type {PortableTextBlock} from '@portabletext/types'
-import {Heading, Text, Link} from '@react-email/components'
+import {Heading, Text, Link} from 'react-email'
 
 /**
  * Portable Text serializer for React Email.

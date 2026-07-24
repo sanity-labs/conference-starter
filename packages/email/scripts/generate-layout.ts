@@ -15,7 +15,7 @@ import {EmailLayout} from '../src/components/layout'
 const PLACEHOLDER = '{{EMAIL_BODY}}'
 
 const OUTPUT_PATHS = [
-  resolve(import.meta.dirname, '../../../apps/studio/functions/_shared/email-layout.ts'),
+  resolve(import.meta.dirname, '../../../apps/functions/_shared/email-layout.ts'),
   resolve(import.meta.dirname, '../src/generated/email-layout.ts'),
 ]
 

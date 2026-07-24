@@ -16,6 +16,6 @@
     "sanity-plugin-pte-interpolation": "^1.5.0"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }

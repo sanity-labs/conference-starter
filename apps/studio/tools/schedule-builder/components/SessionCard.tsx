@@ -35,7 +35,8 @@ export function SessionCard({session, isSelected, onClick}: SessionCardProps) {
         cursor: onClick ? 'grab' : 'default',
         borderLeft: trackColor ? `3px solid ${trackColor}` : undefined,
         opacity: isDragging ? 0.4 : 1,
-        touchAction: 'none',
+        // Long-press activates drags on touch, so normal scrolling must stay possible
+        touchAction: 'manipulation',
       }}
       onClick={onClick ? () => onClick(session) : undefined}
       {...listeners}
@@ -69,7 +70,7 @@ export function SessionCard({session, isSelected, onClick}: SessionCardProps) {
         </Flex>
         {session.speakers && session.speakers.length > 0 && (
           <Text size={0} muted>
-            {session.speakers.map((s) => s.name).join(', ')}
+            {session.speakers.flatMap((s) => (s?.name ? [s.name] : [])).join(', ')}
           </Text>
         )}
         {session.track && (

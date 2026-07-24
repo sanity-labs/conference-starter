@@ -15,7 +15,8 @@ import {CloseIcon} from '@sanity/icons'
 import {
   DndContext,
   DragOverlay,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   KeyboardSensor,
   useSensor,
   useSensors,
@@ -37,6 +38,7 @@ import {
 } from '../utils/timeGrid'
 import {wouldConflict} from '../utils/conflicts'
 import {usePendingOps} from '../hooks/usePendingOps'
+import {useIsNarrow} from '../hooks/useIsNarrow'
 import {ConferenceHeader} from './ConferenceHeader'
 import {ScheduleGrid} from './ScheduleGrid'
 import type {GhostTarget} from './ScheduleGrid'
@@ -92,13 +94,18 @@ function ScheduleWithConference({
   const [isPending, setIsPending] = useState(false)
   const [selectedSession, setSelectedSession] = useState<SessionData | null>(null)
   const [activeDrag, setActiveDrag] = useState<Active | null>(null)
+  const isNarrow = useIsNarrow()
 
-  // Sensors: pointer with 5px distance activation (so clicks still work), + keyboard
-  const pointerSensor = useSensor(PointerSensor, {
+  // Sensors: mouse drags start after 5px (clicks still work); touch drags
+  // start after a 250ms hold so one-finger scrolling isn't hijacked
+  const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {distance: 5},
   })
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {delay: 250, tolerance: 8},
+  })
   const keyboardSensor = useSensor(KeyboardSensor)
-  const sensors = useSensors(pointerSensor, keyboardSensor)
+  const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor)
 
   const handleSelectDay = (day: string) => {
     setIsPending(true)
@@ -202,6 +209,7 @@ function ScheduleWithConference({
               dayEnd={dayEnd}
               selectedSession={selectedSession}
               isSlotDragging={isSlotDragging}
+              isNarrow={isNarrow}
               onSelectSession={handleSelectSession}
               onPlaced={handlePlaced}
             />
@@ -222,6 +230,7 @@ function GridWithActions({
   dayEnd,
   selectedSession,
   isSlotDragging,
+  isNarrow,
   onSelectSession,
   onPlaced,
 }: {
@@ -231,6 +240,7 @@ function GridWithActions({
   dayEnd: string
   selectedSession: SessionData | null
   isSlotDragging: boolean
+  isNarrow: boolean
   onSelectSession: (session: SessionData | null) => void
   onPlaced: () => void
 }) {
@@ -612,6 +622,7 @@ function GridWithActions({
           onSelectSession={onSelectSession}
           hiddenSessionIds={hiddenSessionIds}
           isSlotDragging={isSlotDragging}
+          isNarrow={isNarrow}
         />
       </Suspense>
       <Flex direction="column" flex={1} style={{minWidth: 0}}>

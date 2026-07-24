@@ -14,6 +14,8 @@ interface UnscheduledPanelProps {
   hiddenSessionIds?: Set<string>
   /** A slot is being dragged — the panel becomes a drop-to-unschedule target */
   isSlotDragging?: boolean
+  /** Narrow viewport: the expanded panel overlays the grid as a drawer */
+  isNarrow?: boolean
 }
 
 export function UnscheduledPanel({
@@ -21,13 +23,14 @@ export function UnscheduledPanel({
   onSelectSession,
   hiddenSessionIds,
   isSlotDragging,
+  isNarrow,
 }: UnscheduledPanelProps) {
   const {data: sessions} = useQuery<SessionData[]>({query: UNSCHEDULED_QUERY})
 
   const [searchText, setSearchText] = useState('')
   const [filterTrack, setFilterTrack] = useState('')
   const [filterType, setFilterType] = useState('')
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(!!isNarrow)
 
   const {setNodeRef, isOver} = useDroppable({id: 'unscheduled-dropzone'})
 
@@ -49,13 +52,14 @@ export function UnscheduledPanel({
   )
 
   // Auto-collapse when everything is scheduled; auto-expand when work returns
+  // (skip auto-expand on narrow screens — the drawer would cover the grid)
   const prevCountRef = useRef(visibleCount)
   useEffect(() => {
     const prev = prevCountRef.current
     prevCountRef.current = visibleCount
     if (visibleCount === 0 && prev > 0) setCollapsed(true)
-    if (visibleCount > 0 && prev === 0) setCollapsed(false)
-  }, [visibleCount])
+    if (visibleCount > 0 && prev === 0 && !isNarrow) setCollapsed(false)
+  }, [visibleCount, isNarrow])
 
   // Extract unique tracks and types for filter dropdowns
   const tracks = useMemo(() => {
@@ -93,6 +97,8 @@ export function UnscheduledPanel({
       onSelectSession(null)
     } else {
       onSelectSession(session)
+      // Close the drawer so the full grid is visible for tap-to-place
+      if (isNarrow) setCollapsed(true)
     }
   }
 
@@ -105,49 +111,63 @@ export function UnscheduledPanel({
       }
     : undefined
 
-  // Collapsed state: thin strip with count + expand button. Stays collapsed
-  // during drags (a width change would shift the grid mid-drag and desync
-  // pointer→column math); the rail itself is the unschedule drop target.
-  if (collapsed) {
-    return (
-      <Card
-        ref={setNodeRef}
-        borderRight
-        height="fill"
-        tone={isSlotDragging && isOver ? 'critical' : undefined}
-        style={{width: 44, minWidth: 44, ...dropHighlight}}
-      >
-        <Flex direction="column" align="center" gap={3} paddingY={3}>
-          {isSlotDragging ? (
-            <Text size={1} muted={!isOver}>
-              <TrashIcon />
-            </Text>
-          ) : (
-            <>
-              <Button
-                icon={ChevronRightIcon}
-                mode="bleed"
-                fontSize={1}
-                padding={2}
-                onClick={() => setCollapsed(false)}
-                title="Expand sidebar"
-              />
-              <Badge tone={visibleCount > 0 ? 'caution' : 'positive'} fontSize={0}>
-                {visibleCount}
-              </Badge>
-            </>
-          )}
-        </Flex>
-      </Card>
-    )
-  }
-
-  return (
+  // Thin rail: collapsed state, and the always-present anchor on narrow
+  // screens. Stays fixed-width during drags (a width change would shift the
+  // grid mid-drag and desync pointer→column math); doubles as the
+  // unschedule drop target when the full panel isn't mounted.
+  const rail = (
     <Card
-      ref={setNodeRef}
+      ref={collapsed ? setNodeRef : undefined}
       borderRight
       height="fill"
-      style={{width: 280, minWidth: 200, maxWidth: 320, ...dropHighlight}}
+      tone={collapsed && isSlotDragging && isOver ? 'critical' : undefined}
+      style={{width: 44, minWidth: 44, ...(collapsed ? dropHighlight : undefined)}}
+    >
+      <Flex direction="column" align="center" gap={3} paddingY={3}>
+        {collapsed && isSlotDragging ? (
+          <Text size={1} muted={!isOver}>
+            <TrashIcon />
+          </Text>
+        ) : (
+          <>
+            <Button
+              icon={collapsed ? ChevronRightIcon : ChevronLeftIcon}
+              mode="bleed"
+              fontSize={1}
+              padding={2}
+              onClick={() => setCollapsed(!collapsed)}
+              title={collapsed ? 'Show unscheduled sessions' : 'Hide unscheduled sessions'}
+            />
+            <Badge tone={visibleCount > 0 ? 'caution' : 'positive'} fontSize={0}>
+              {visibleCount}
+            </Badge>
+          </>
+        )}
+      </Flex>
+    </Card>
+  )
+
+  const panel = (
+    <Card
+      ref={collapsed ? undefined : setNodeRef}
+      borderRight
+      height="fill"
+      style={{
+        width: 280,
+        minWidth: 200,
+        maxWidth: 320,
+        ...(isNarrow
+          ? {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              bottom: 0,
+              zIndex: 15,
+              boxShadow: '0 0 0 1px var(--card-border-color), 8px 0 24px rgba(0,0,0,0.12)',
+            }
+          : undefined),
+        ...dropHighlight,
+      }}
     >
       <Flex direction="column" height="fill">
         <Card padding={3} borderBottom>
@@ -165,7 +185,7 @@ export function UnscheduledPanel({
                 fontSize={1}
                 padding={2}
                 onClick={() => setCollapsed(true)}
-                title="Collapse sidebar"
+                title="Hide unscheduled sessions"
               />
             </Flex>
             <TextInput
@@ -235,4 +255,16 @@ export function UnscheduledPanel({
       </Flex>
     </Card>
   )
+
+  // Narrow: the rail is always mounted (stable layout); the panel overlays
+  // the grid as a drawer when expanded. Wide: rail or panel, side by side.
+  if (isNarrow) {
+    return (
+      <>
+        {rail}
+        {!collapsed && panel}
+      </>
+    )
+  }
+  return collapsed ? rail : panel
 }

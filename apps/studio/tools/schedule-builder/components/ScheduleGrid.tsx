@@ -98,7 +98,9 @@ export function ScheduleGrid({
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: `56px repeat(${rooms.length}, minmax(100px, 1fr))`,
+        // 140px floor keeps cards readable on narrow screens; the container
+        // scrolls horizontally and the time axis stays pinned
+        gridTemplateColumns: `56px repeat(${rooms.length}, minmax(140px, 1fr))`,
         gridTemplateRows: `auto repeat(${totalRows}, ${ROW_HEIGHT_PX}px)`,
         alignContent: 'start',
         overflow: 'auto',
@@ -115,7 +117,8 @@ export function ScheduleGrid({
           gridColumn: 1,
           position: 'sticky',
           top: 0,
-          zIndex: 5,
+          left: 0,
+          zIndex: 6,
           background: 'var(--card-bg-color)',
           borderBottom: '1px solid var(--card-border-color)',
         }}

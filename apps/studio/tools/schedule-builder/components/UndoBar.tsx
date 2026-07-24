@@ -37,7 +37,7 @@ export function UndoBar({undo, onUndo, onDismiss}: UndoBarProps) {
       }}
     >
       <Flex align="center" gap={3}>
-        <Text size={1} textOverflow="ellipsis" style={{maxWidth: 320}}>
+        <Text size={1} textOverflow="ellipsis" style={{maxWidth: 'min(320px, 55vw)'}}>
           {undo.label}
         </Text>
         <Button

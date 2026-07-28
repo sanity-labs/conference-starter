@@ -33,8 +33,8 @@ importers:
         specifier: ^3.0.14
         version: 3.0.14
       '@chat-adapter/telegram':
-        specifier: ^4.34.0
-        version: 4.34.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)
+        specifier: ^4.35.0
+        version: 4.35.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)
       '@sanity/client':
         specifier: ^7.24.0
         version: 7.24.0
@@ -48,8 +48,8 @@ importers:
         specifier: ^6.0.235
         version: 6.0.235(zod@4.4.3)
       chat:
-        specifier: ^4.34.0
-        version: 4.34.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)
+        specifier: ^4.35.0
+        version: 4.35.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)
       content-agent:
         specifier: ^1.2.1
         version: 1.2.1(@ai-sdk/react@3.0.237(react@19.2.8)(zod@4.4.3))(ai@6.0.235(zod@4.4.3))(react@19.2.8)
@@ -1060,12 +1060,12 @@ packages:
     resolution: {integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==}
     hasBin: true
 
-  '@chat-adapter/shared@4.34.0':
-    resolution: {integrity: sha512-3j1LIWNLp91du8y78FEUNATOEnXyVGrY3JcTNmO5/KARwHTAa17LMVMuWusj0WQj2KsKW4w/K9wytaOj7ToppA==}
+  '@chat-adapter/shared@4.35.0':
+    resolution: {integrity: sha512-C0GvfiSk6JMdLlydbLIOmT9frMicFic++HBaD69JqmgyaT/CUvOII83Tsq+Yf5DKp53BXbK1NswKg5CId0PW9A==}
     engines: {node: '>=20'}
 
-  '@chat-adapter/telegram@4.34.0':
-    resolution: {integrity: sha512-xM/RhozNVPYpQ4k0bhjV1rGljjsjTWzie8seaN1OpdUqEkbxKlSQtrFIfTW1MnGKAzmBaE0x9HBH/l2MDKvW9w==}
+  '@chat-adapter/telegram@4.35.0':
+    resolution: {integrity: sha512-QqEoFDbXa1o+AnXCMMoLG7Y2FyabJ3dZsNPXjWfHU/hjoiQ8Noofp12SnckIF2OPWF8zgDgDZuq76hrKGsxFsQ==}
     engines: {node: '>=20'}
 
   '@chevrotain/types@11.1.2':
@@ -3607,14 +3607,17 @@ packages:
   chardet@2.2.0:
     resolution: {integrity: sha512-rddelWYNPRrXq6PtNEN2S3f6t9ILzvqaN5pVgi4kqt9jHQaXIial9PznB5iSPVlQSLNaaH22ItWz3EJtQ10+OA==}
 
-  chat@4.34.0:
-    resolution: {integrity: sha512-g3c9ANavtCX7BwHcB5c3lWKIUm+8Oo7qlbgQ7/ni1rmVLLeCQa7FiMfeIyEyTAd/4HlRQu5jcS4EPdb0VyhUDQ==}
+  chat@4.35.0:
+    resolution: {integrity: sha512-IUbdgTBvgs/XYhKcpKGrpmZgcl8KcA5NZ+eOww+0rBdhPf+95INjcUauQTk5e48UI1V4PRg9stToPsT4vle07g==}
     engines: {node: '>=20'}
     peerDependencies:
       ai: ^6.0.182 || ^7.0.0
+      workflow: ^5.0.0-beta.35
       zod: ^3.0.0 || ^4.0.0
     peerDependenciesMeta:
       ai:
+        optional: true
+      workflow:
         optional: true
       zod:
         optional: true
@@ -7727,21 +7730,23 @@ snapshots:
     dependencies:
       css-tree: 3.2.1
 
-  '@chat-adapter/shared@4.34.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)':
+  '@chat-adapter/shared@4.35.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)':
     dependencies:
-      chat: 4.34.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)
+      chat: 4.35.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)
     transitivePeerDependencies:
       - ai
       - supports-color
+      - workflow
       - zod
 
-  '@chat-adapter/telegram@4.34.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)':
+  '@chat-adapter/telegram@4.35.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)':
     dependencies:
-      '@chat-adapter/shared': 4.34.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)
-      chat: 4.34.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)
+      '@chat-adapter/shared': 4.35.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)
+      chat: 4.35.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3)
     transitivePeerDependencies:
       - ai
       - supports-color
+      - workflow
       - zod
 
   '@chevrotain/types@11.1.2': {}
@@ -10720,7 +10725,7 @@ snapshots:
 
   chardet@2.2.0: {}
 
-  chat@4.34.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3):
+  chat@4.35.0(ai@6.0.235(zod@4.4.3))(zod@4.4.3):
     dependencies:
       '@workflow/serde': 4.1.0-beta.2
       mdast-util-to-string: 4.0.0

@@ -10,7 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@sanity/color-input": "^6.0.19",
+    "@sanity/color-input": "^6.1.0",
     "@sanity/icons": "^3.8.0",
     "sanity": "^6.6.0",
     "sanity-plugin-pte-interpolation": "^1.5.0"

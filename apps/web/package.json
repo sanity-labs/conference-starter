@@ -12,7 +12,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.101",
     "@ai-sdk/mcp": "^1.0.64",
-    "@ai-sdk/react": "^3.0.237",
+    "@ai-sdk/react": "^4.0.44",
     "@portabletext/markdown": "^1.4.4",
     "@portabletext/react": "^7.0.1",
     "@portabletext/types": "^4.0.2",

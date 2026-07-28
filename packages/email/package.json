@@ -29,6 +29,6 @@
     "@portabletext/types": "^4.0.2",
     "@react-email/render": "^2.1.0",
     "react-email": "^6.9.1",
-    "resend": "^6.18.0"
+    "resend": "^6.18.1"
   }
 }

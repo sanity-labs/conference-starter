@@ -14,7 +14,7 @@
     "@sanity/client": "^7.24.0",
     "@sanity/functions": "^1.4.0",
     "@sanity/id-utils": "^1.0.0",
-    "ai": "^6.0.235",
+    "ai": "^7.0.41",
     "resend": "^6.18.0"
   },
   "devDependencies": {

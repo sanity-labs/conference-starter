@@ -14,6 +14,7 @@ import {submission} from './documents/submission'
 import {emailTemplate} from './documents/emailTemplate'
 export {emailVariables} from './documents/emailTemplate'
 import {emailLog} from './documents/emailLog'
+import {reminderLog} from './documents/reminderLog'
 import {prompt} from './documents/prompt'
 import {faq} from './documents/faq'
 import {chatState} from './documents/chatState'
@@ -46,6 +47,7 @@ export const schemaTypes = [
   submission,
   emailTemplate,
   emailLog,
+  reminderLog,
   prompt,
   faq,
   chatState,

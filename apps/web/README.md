@@ -127,7 +127,7 @@ Metadata (`generateMetadata`) always uses `perspective: 'published'` and `stega:
 
 ## Production hardening
 
-- **Sanity-backed rate limiter** — `src/lib/rate-limit-sanity.ts` writes `chat.state.ratelimit.*` documents with `ifRevisionId` optimistic concurrency. In-memory burst guard (10 req / 10 s per instance) + Sanity fleet-wide window (100 req / 1 h). No Redis / KV. See D-023.
+- **Sanity-backed rate limiter** — `src/lib/rate-limit-sanity.ts` writes `chat.state.ratelimit.*` documents with `ifRevisionId` optimistic concurrency. Window creation is a `createIfNotExists` + `inc` transaction and window reset is revision-guarded, so requests racing at a window boundary all count. In-memory burst guard (10 req / 10 s per instance) + Sanity fleet-wide window (100 req / 1 h). No Redis / KV. See D-023.
 - **Conversation cap** — `/api/chat` caps `agent.conversation.web-*` message arrays at 100 entries via a splice in the append transaction.
 - **Auth gates** — `/api/send-test-email` requires `x-studio-secret` when `STUDIO_SEND_SECRET` is set; `/api/webhooks/resend` requires a valid svix signature (fails closed in production).
 - **CSP headers** — baseline `Content-Security-Policy-Report-Only` in `next.config.ts` covers Sanity CDN, Google Fonts, Anthropic API, MCP URL, Resend webhook origin. Promote to enforcing after a clean 24h of preview traffic.

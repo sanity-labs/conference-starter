@@ -18,12 +18,23 @@ Event-driven serverless functions deployed to the Sanity platform via Blueprints
 
 Scheduled functions (`daily-digest`, `reminder-cron`) exist as source but are commented out in `/sanity.blueprint.ts` — re-enable once the stack is org-scoped.
 
+### Reminder idempotency
+
+Scheduled functions run at-least-once: the platform can retry an invocation, and anyone can re-run one by hand. `reminder-cron` therefore never sends on date math alone. Each matching reminder is first **claimed** in a `reminderLog` document (`_shared/reminder-log.ts`):
+
+- ID is deterministic: `reminderLog.{conferenceId}.{templateSlug}.{milestoneDate}`, where the milestone date is the date the reminder is about (CFP deadline, conference start, or conference end). Moving that date makes it a new reminder.
+- `createIfNotExists` is the atomic claim. The function reads the document back and only proceeds if its own `runId` stuck; otherwise an earlier run owns it and this run skips.
+- The claim is written **before** the email/Telegram sends, so a crash mid-send fails toward "not sent" rather than "sent twice". After sending, the document is patched to `status: "sent"` (or `"error"`) with per-channel `details`.
+- A document stuck at `status: "claimed"` means a run died mid-send. Inspect it under **Reminder Logs** in Studio and delete it to let the next run send again.
+- In dry-run (`context.local`) nothing is written, but an existing log still causes the reminder to be skipped so local output matches production behaviour.
+
 ## Shared utilities
 
 `_shared/` contains helpers reused across functions:
 
 - `email-render.ts` — `renderEmailBody()`, `wrapInLayout()`, `interpolateSubject()` for Portable Text → HTML without pulling React
 - `email-layout.ts` — pre-generated layout HTML (regenerate with `pnpm --filter @repo/email generate-layout`)
+- `reminder-log.ts` — `claimReminder()` / `recordReminderOutcome()` idempotency guard for scheduled sends (see above)
 
 **Why zero-React here**: functions run in Sanity's runtime, but even importing React Email components from `@repo/email` in Next.js API routes triggers a Turbopack React-dedup bug. To keep the rendering pipeline consistent end-to-end, functions use the `@portabletext/to-html` + pre-generated layout approach. See `packages/email/` for the React Email templates used for preview / dev only.
 
@@ -95,6 +106,7 @@ apps/functions/
   _shared/
     email-render.ts                    → PT → HTML + layout wrapping + subject interpolation
     email-layout.ts                    → Pre-generated layout HTML
+    reminder-log.ts                    → reminderLog claim/record helpers (idempotent scheduled sends)
   _fixtures/                           → Test fixtures for local function invocation
   <function-name>/
     index.ts                           → Entry point (documentEventHandler from @sanity/functions)

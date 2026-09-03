@@ -233,6 +233,29 @@ export type Prompt = {
   description?: string;
 };
 
+export type ConferenceReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "conference";
+};
+
+export type ReminderLog = {
+  _id: string;
+  _type: "reminderLog";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  conference?: ConferenceReference;
+  reminder?: string;
+  milestoneDate?: string;
+  status?: "claimed" | "sent" | "error";
+  runId?: string;
+  claimedAt?: string;
+  sentAt?: string;
+  details?: string;
+};
+
 export type SubmissionReference = {
   _ref: string;
   _type: "reference";
@@ -306,13 +329,6 @@ export type Slug = {
   _type: "slug";
   current: string;
   source?: string;
-};
-
-export type ConferenceReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "conference";
 };
 
 export type Submission = {
@@ -1067,11 +1083,12 @@ export type AllSanitySchemaTypes =
   | ChatState
   | Faq
   | Prompt
+  | ConferenceReference
+  | ReminderLog
   | SubmissionReference
   | EmailLog
   | EmailTemplate
   | Slug
-  | ConferenceReference
   | Submission
   | VenueReference
   | Announcement

@@ -353,6 +353,14 @@ export const structure: StructureResolver = (S) =>
             .title('Email Logs')
             .defaultOrdering([{field: 'sentAt', direction: 'desc'}]),
         ),
+      S.listItem()
+        .title('Reminder Logs')
+        .icon(ClockIcon)
+        .child(
+          S.documentTypeList('reminderLog')
+            .title('Reminder Logs')
+            .defaultOrdering([{field: 'claimedAt', direction: 'desc'}]),
+        ),
 
       S.divider(),
 

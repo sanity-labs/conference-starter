@@ -14,6 +14,9 @@ import {createHash} from 'node:crypto'
  * keeps IPs out of document IDs while preserving determinism for retrieval.
  *
  * Optimistic concurrency via `ifRevisionId`; retries on 409 up to MAX_RETRIES.
+ * Window creation is a `createIfNotExists` + `inc` transaction and window reset
+ * is revision-guarded, so two requests racing at a window boundary both count
+ * instead of one silently resetting the other to `count: 1`.
  */
 
 const BURST_WINDOW_MS = 10_000
@@ -89,14 +92,32 @@ async function checkWindow(
     try {
       const existing = await client.fetch<Doc | null>(`*[_id == $id][0]`, {id})
 
-      if (!existing || existing.expiresAt < now) {
-        await client.createOrReplace({
-          _id: id,
-          _type: 'chat.state',
-          kind: 'ratelimit',
-          count: 1,
-          expiresAt: now + WINDOW_MS,
-        })
+      if (!existing) {
+        // Create and count in one transaction. Concurrent first requests all
+        // land on the same document: one creates it, the rest no-op on the
+        // create, and every one of them increments — no lost writes.
+        await client
+          .transaction()
+          .createIfNotExists({
+            _id: id,
+            _type: 'chat.state',
+            kind: 'ratelimit',
+            count: 0,
+            expiresAt: now + WINDOW_MS,
+          })
+          .patch(id, (patch) => patch.inc({count: 1}))
+          .commit()
+        return {allowed: true}
+      }
+
+      if (existing.expiresAt < now) {
+        // Start a fresh window, guarded by the revision we read. If another
+        // request reset it first this 409s and the retry re-reads and increments.
+        await client
+          .patch(id)
+          .ifRevisionId(existing._rev)
+          .set({count: 1, expiresAt: now + WINDOW_MS})
+          .commit()
         return {allowed: true}
       }
 

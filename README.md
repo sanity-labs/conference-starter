@@ -172,6 +172,7 @@ pnpm type-check
 | `submission` | CFP submissions with AI screening (score, summary, scoredAt) |
 | `emailTemplate` | Email designs with Portable Text body and variable interpolation |
 | `emailLog` | Email delivery audit trail |
+| `reminderLog` | Idempotency record per scheduled reminder — claimed before send so retries never re-send |
 | `prompt` | Editable AI instructions (live-edited, no publish workflow) |
 | `faq` | Categorized FAQ items |
 | `agent.conversation` | Telegram bot conversation history with classification |

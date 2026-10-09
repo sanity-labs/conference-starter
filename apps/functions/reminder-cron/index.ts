@@ -8,6 +8,11 @@
  * - Conference starts in 1 week
  * - Conference starts tomorrow
  * - Conference ended yesterday (thank-you)
+ *
+ * Idempotent across retries: each reminder is claimed in a `reminderLog`
+ * document (keyed by conference + reminder + milestone date) before anything
+ * is sent, so a platform retry or manual re-run skips what already went out.
+ * See `_shared/reminder-log.ts`.
  */
 
 import {scheduledEventHandler} from '@sanity/functions'
@@ -22,6 +27,12 @@ import {
 } from '../_shared/conference-date-utils'
 import {CONFERENCE_CONFIG_QUERY, EMAIL_TEMPLATE_BY_SLUG_QUERY} from '../_shared/scheduled-queries'
 import {renderEmailBody, wrapInLayout, interpolateSubject} from '../_shared/email-render'
+import {
+  claimReminder,
+  recordReminderOutcome,
+  reminderLogId,
+  type ReminderLogDoc,
+} from '../_shared/reminder-log'
 
 const TIMEZONE = process.env.CONFERENCE_TIMEZONE || 'America/New_York'
 const FROM_ADDRESS = process.env.RESEND_FROM_ADDRESS || 'ContentOps Conf <noreply@contentops.dev>'
@@ -49,6 +60,8 @@ interface ReminderMatch {
   slug: string
   variables: Record<string, string>
   label: string
+  /** The date this reminder is about (YYYY-MM-DD) — part of the idempotency key. */
+  milestoneDate: string
 }
 
 export const handler = scheduledEventHandler(async ({context}) => {
@@ -82,6 +95,7 @@ export const handler = scheduledEventHandler(async ({context}) => {
       reminders.push({
         slug: 'cfp-closing-soon',
         label: 'CFP closing in 2 days',
+        milestoneDate: cfpDeadlineStr,
         variables: {
           conferenceName,
           cfpDeadlineDate: formatDatetimeForDisplay(conf.cfpDeadline),
@@ -94,6 +108,7 @@ export const handler = scheduledEventHandler(async ({context}) => {
       reminders.push({
         slug: 'cfp-closing-today',
         label: 'CFP closing today',
+        milestoneDate: cfpDeadlineStr,
         variables: {
           conferenceName,
           cfpDeadlineDate: formatDatetimeForDisplay(conf.cfpDeadline),
@@ -107,6 +122,7 @@ export const handler = scheduledEventHandler(async ({context}) => {
     reminders.push({
       slug: 'event-reminder-week',
       label: 'Conference in 1 week',
+      milestoneDate: startDateStr,
       variables: {
         conferenceName,
         daysUntilEvent: daysUntilLabel(daysToStart),
@@ -118,6 +134,7 @@ export const handler = scheduledEventHandler(async ({context}) => {
     reminders.push({
       slug: 'event-reminder-tomorrow',
       label: 'Conference starts tomorrow',
+      milestoneDate: startDateStr,
       variables: {conferenceName},
     })
   }
@@ -127,6 +144,7 @@ export const handler = scheduledEventHandler(async ({context}) => {
     reminders.push({
       slug: 'post-event-thanks',
       label: 'Post-event thank you',
+      milestoneDate: endDateStr,
       variables: {conferenceName},
     })
   }
@@ -156,9 +174,37 @@ export const handler = scheduledEventHandler(async ({context}) => {
       continue
     }
 
+    // Claim before sending. If a previous run (or a platform retry of this
+    // one) already owns this reminder, skip it rather than re-send.
+    const reminderKey = {
+      conferenceId: conf._id,
+      reminder: reminder.slug,
+      milestoneDate: reminder.milestoneDate,
+    }
+    const logId = reminderLogId(reminderKey)
+
+    if (dryRun) {
+      const existing = await client.getDocument<ReminderLogDoc>(logId)
+      if (existing) {
+        console.log(`[dry-run] "${reminder.label}" already ${existing.status} (${logId}) — would skip.`)
+        continue
+      }
+      console.log(`[dry-run] Would claim ${logId} before sending.`)
+    } else {
+      const claim = await claimReminder(client, reminderKey)
+      if (!claim.claimed) {
+        const status = claim.log?.status ?? 'claimed'
+        console.log(`"${reminder.label}" already ${status} by an earlier run (${logId}) — skipping.`)
+        continue
+      }
+    }
+
     const subject = interpolateSubject(template.subject, reminder.variables)
     const bodyHtml = renderEmailBody(template.body as unknown[], reminder.variables)
     const html = wrapInLayout(bodyHtml, subject)
+
+    const outcomes: string[] = []
+    let anyChannelSent = false
 
     // Send email
     if (dryRun) {
@@ -173,12 +219,16 @@ export const handler = scheduledEventHandler(async ({context}) => {
       })
       if (error) {
         console.error(`Failed to send "${reminder.label}" email:`, error)
+        outcomes.push(`email: failed (${error.message})`)
       } else {
         const target = audienceId ? `audience ${audienceId}` : 'delivered@resend.dev'
         console.log(`Reminder email sent: "${subject}" to ${target}`)
+        outcomes.push(`email: sent to ${target}`)
+        anyChannelSent = true
       }
     } else {
       console.error('RESEND_API_KEY not configured — skipping email.')
+      outcomes.push('email: skipped (RESEND_API_KEY not configured)')
     }
 
     // Post to Telegram
@@ -201,10 +251,22 @@ export const handler = scheduledEventHandler(async ({context}) => {
         if (!response.ok) {
           const body = await response.text()
           console.error(`Telegram send failed for "${reminder.label}" (${response.status}): ${body}`)
+          outcomes.push(`telegram: failed (${response.status})`)
         } else {
           console.log(`Reminder posted to Telegram: "${reminder.label}"`)
+          outcomes.push('telegram: sent')
+          anyChannelSent = true
         }
       }
+    } else {
+      outcomes.push('telegram: skipped (not configured)')
+    }
+
+    if (!dryRun) {
+      await recordReminderOutcome(client, logId, {
+        status: anyChannelSent ? 'sent' : 'error',
+        details: outcomes.join('; '),
+      })
     }
   }
 

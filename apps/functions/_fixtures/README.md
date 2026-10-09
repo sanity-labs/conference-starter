@@ -28,4 +28,5 @@ npx sanity functions test send-announcement-email \
 
 - Scheduled functions (`daily-digest`, `reminder-cron`) don't use payload files — they query Sanity directly. Use `--with-user-token` so they can authenticate.
 - `context.local` is `true` during local testing, which activates dry-run mode in all email/Telegram sends.
+- `reminder-cron` in dry-run does not write `reminderLog` claims, but it does read them — a reminder that already went out is reported as "would skip", matching production.
 - The `CONFERENCE_TIMEZONE` env var can override the default `America/New_York` timezone.
